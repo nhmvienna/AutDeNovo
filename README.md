@@ -19,4 +19,13 @@ In addition, you can optionally also provide the name of the BUSCO database, whi
 
 ## Command
 
-The pipeline is a simple shell script that executes a series of sub-shells that 
+The pipeline is a simple shell script that executes a series of sub-shells that serially send jobs to OpenPBS. A typcial command lines looks like this:
+
+```bash
+./AutDeNovo.sh \
+Name=Yeti_01 \
+OutputFolder=/media/output \
+Fwd=/media/seq/fwd.fq.gz \
+Rev=/media/seq/rev.fq.gz \
+BuscoDB=vertebrata_odb10
+```
