@@ -29,3 +29,9 @@ Fwd=/media/seq/fwd.fq.gz \
 Rev=/media/seq/rev.fq.gz \
 BuscoDB=vertebrata_odb10
 ```
+
+## Pipeline
+
+Below, you will find a brief description of the consecutive analysis steps in the pipeline, as well as links to further literature.
+
+### (1) Trimming and base quality control
