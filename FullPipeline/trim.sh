@@ -43,3 +43,7 @@ trim_galore \
 """ > ${out}/shell/qsub_trim_${name}.sh
 
 qsub -W block=true ${out}/shell/qsub_trim_${name}.sh
+
+## show results in firefox
+firefox --new-tab ${out}/data/${name}_1_val_1_fastqc.html
+firefox --new-tab ${out}/data/${name}_2_val_2_fastqc.html

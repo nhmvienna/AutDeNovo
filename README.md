@@ -34,4 +34,14 @@ BuscoDB=vertebrata_odb10
 
 Below, you will find a brief description of the consecutive analysis steps in the pipeline, as well as links to further literature.
 
-### (1) Trimming and base quality control
+### (1) [Trimming and base quality control](FullPipeline/trim.sh)
+
+In the first step, the pipeline uses [trim_galore](https://github.com/FelixKrueger/TrimGalore) for quality trimming and for quality control. More specifically, Trim Galore is a Perl-based wrapper around [Cutadapt](https://github.com/marcelm/cutadapt) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently apply adapter and quality trimming to FastQ files. The parameters used by AutDeNovo are (1) automated adapter detection, (2) a minimum base quality of 20 and (3) a minimum read length of 75. This means that terminal bases with base-quality &lt;20 will be trimmed away and that only intact read-pairs with a minimum length of 75bp each will be retained. After that, FASTQC is generating a html output for a visual inspection of the filtered and trimmed data quality. A browser window will autmatically load once this step is finished. Please check the [trim_galore](https://github.com/FelixKrueger/TrimGalore) and [Cutadapt](https://github.com/marcelm/cutadapt) documentation for more details about the trimming algorithm.
+
+### (2) [Detection of microbial and human contamination](FullPipeline/kraken_reads.sh)
+
+In the second step, the pipeline invoces [kraken2](https://ccb.jhu.edu/software/kraken2/), which was originally conceived for metagenomic analyses, for detecting and removing contamination with human or microbial DNA in the filtered reads. In brief, Kraken2 is a taxonomic classification system using exact k-mer matches to a reference database for high accuracy and fast classification speeds. This step retains decontaminated reads without hits in the reference database. After this step is completed Firefox will load the browser-based application [Pavian](https://ccb.jhu.edu/software/pavian/) which allows to visulaize the Kraken output, i.e. &lt;out>/results/kraken_reads/&lt;name>.report, where &lt;out> is the output directory and name is the sample name, see above.
+
+### (3) [Genome-size estimation](FullPipeline/kraken_reads.sh)
+
+After that, the pipeline uses JELLYFISH for counting of k-mers in the filtered and decontaminated reads. The number of unique k-mers and their coverage allows for a rough estimation of the genome-size, which should be a function of the sequencing depth and the number of unique kmers.
