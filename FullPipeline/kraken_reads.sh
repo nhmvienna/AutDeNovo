@@ -48,6 +48,3 @@ echo """
 """ > ${out}/shell/qsub_kraken_reads_${name}.sh
 
 qsub -W block=true ${out}/shell/qsub_kraken_reads_${name}.sh
-
-docker run -p 5000:80 florianbw/pavian &
-firefox --new-tab http://127.0.0.1:5000

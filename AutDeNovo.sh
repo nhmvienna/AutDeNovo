@@ -200,14 +200,35 @@ $busco
 printf "########################\n\n"
 
 printf "______________________\n"
-echo "Anlayses done!!"
+printf "Anlayses done!!\nNow copying results to output folder and starting Firefox with summaries"
 date
 printf "______________________\n"
 
-echo """
+mkdir ${out}/output
 
-To show these results in firefox again, run the following commands:
+## trimming
+firefox --new-tab ${out}/data/${name}_1_val_1_fastqc.html
+firefox --new-tab ${out}/data/${name}_2_val_2_fastqc.html
 
+cp ${out}/data/${name}_1_val_1_fastqc.zip > ${out}/output/${name}_1_fastqc.zip
+cp ${out}/data/${name}_2_val_2_fastqc.zip > ${out}/output/${name}_2_fastqc.zip
+
+## kraken
+cp ${out}/results/kraken_reads/${name}_filtered.report > ${out}/output/${name}_kraken.txt
+cp ${out}/results/kraken_reads/${name}_filtered.report > ${out}/output/${name}_kraken.txt
+
+docker run -p 5000:80 florianbw/pavian &
+firefox --new-tab http://127.0.0.1:5000
+
+## genomesize
+cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
+firefox --new-tab ${out}/output/${name}_genomesize/linear_plot.png
+
+##QUAST
+cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
+firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html
+
+##blobtools
 docker rm -f \$(docker ps -a -q)
 
 docker run -d --rm --name ${name} \
@@ -217,6 +238,4 @@ docker run -d --rm --name ${name} \
   genomehubs/blobtoolkit:latest
 
 awhile=10
-sleep $awhile && firefox http://localhost:8080/view/all
-
-"""
+sleep $awhile && firefox --new-tab http://localhost:8080/view/all

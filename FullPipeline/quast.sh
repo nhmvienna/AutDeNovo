@@ -41,6 +41,3 @@ echo """
 """ > ${out}/shell/qsub_quast_${name}.sh
 
 qsub ${out}/shell/qsub_quast_${name}.sh
-
-## show results in firefox
-firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html

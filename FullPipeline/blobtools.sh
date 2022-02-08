@@ -96,15 +96,3 @@ echo """
 """ > ${out}/shell/qsub_blobtools_${name}.sh
 
 qsub -W block=true ${out}/shell/qsub_blobtools_${name}.sh
-
-## Show results in firefox
-docker rm -f $(docker ps -a -q)
-
-docker run -d --rm --name ${name} \
-  -v ${out}/results/AssemblyQC/blobtools/datasets:/blobtoolkit/datasets \
-  -p 8000:8000 -p 8080:8080 \
-  -e VIEWER=true \
-  genomehubs/blobtoolkit:latest
-
-awhile=10
-sleep $awhile && firefox http://localhost:8080/view/all
