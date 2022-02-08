@@ -37,6 +37,7 @@ echo """
     -o ${name} \
     -m genome \
     -c 200 \
+    -f \
     -l ${busco}
 
 """ > ${out}/shell/qsub_busco_${name}.sh
