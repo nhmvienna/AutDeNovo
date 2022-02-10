@@ -31,10 +31,6 @@ echo """
   module load Assembly/Jellyfish-2.3.0
   module load Assembly/genomescope-2.0
 
-  ## in a QSUB bash script add the following lines to activate
-  source /opt/anaconda3/etc/profile.d/conda.sh
-  conda activate smudgeplot-0.2.4
-
   ## unzip files
 
   gunzip -c ${out}/data/kraken_${name}_1.fq.gz > ${out}/data/kraken_${name}_1.fq &
@@ -74,15 +70,22 @@ echo """
 
   ## run SmudgePlot
 
-  L=$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo L)
-  U=$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo U)
+  source /opt/anaconda3/etc/profile.d/conda.sh
+  conda activate smudgeplot-0.2.4
 
+  L=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo L)
+  U=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo U)
+  if [ $((U-L)) -lt 100 ]
+    then
+      L=1
+      U=100
+  fi
   #echo $L $U
 
   jellyfish-linux dump \
   -c \
-  -L $L \
-  -U $U \
+  -L \$L \
+  -U \$U \
   ${out}/results/GenomeSize/${name}_reads.jf \
   | smudgeplot.py hetkmers \
   -o ${out}/results/GenomeSize/${name}_kmer_pairs
