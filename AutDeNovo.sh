@@ -134,7 +134,7 @@ printf "########################\n\n"
 ###############################################
 ########### (4) Denovo assembly ###############
 
-## using Jellyfish to calculate kmer-coverage and genomoscope for formal analyses
+## denovo assembly with Spades
 
 echo "Starting denovo assembly with Spades"
 date
