@@ -207,35 +207,33 @@ printf "______________________\n"
 mkdir ${out}/output
 
 ## trimming
-firefox --new-tab ${out}/data/${name}_1_val_1_fastqc.html
-firefox --new-tab ${out}/data/${name}_2_val_2_fastqc.html
+firefox --new-tab ${out}/data/${name}_1_val_1_fastqc.html &
+firefox --new-tab ${out}/data/${name}_2_val_2_fastqc.html &
 
-cp ${out}/data/${name}_1_val_1_fastqc.zip > ${out}/output/${name}_1_fastqc.zip
-cp ${out}/data/${name}_2_val_2_fastqc.zip > ${out}/output/${name}_2_fastqc.zip
+cp ${out}/data/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_fastqc.zip
+cp ${out}/data/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_fastqc.zip
 
 ## kraken
-cp ${out}/results/kraken_reads/${name}_filtered.report > ${out}/output/${name}_kraken.txt
-cp ${out}/results/kraken_reads/${name}_filtered.report > ${out}/output/${name}_kraken.txt
+cp ${out}/results/kraken_reads/${name}_filtered.report ${out}/output/${name}_kraken.txt
+cp ${out}/results/kraken_reads/${name}_filtered.report ${out}/output/${name}_kraken.txt
 
 docker run -p 5000:80 florianbw/pavian &
-firefox --new-tab http://127.0.0.1:5000
+firefox --new-tab http://127.0.0.1:5000 &
 
 ## genomesize
 cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
-firefox --new-tab ${out}/output/${name}_genomesize/linear_plot.png
+firefox --new-tab ${out}/output/${name}_genomesize/linear_plot.png &
 
 ##QUAST
 cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
-firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html
+firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html &
 
 ##blobtools
-docker rm -f \$(docker ps -a -q)
-
-docker run -d --rm --name ${name} \
-  -v ${out}/results/AssemblyQC/blobtools/datasets:/blobtoolkit/datasets \
-  -p 8000:8000 -p 8080:8080 \
-  -e VIEWER=true \
-  genomehubs/blobtoolkit:latest
-
 awhile=10
-sleep $awhile && firefox --new-tab http://localhost:8080/view/all
+source /opt/venv/blobtools-3.0.0/bin/activate
+
+blobtools view \
+  --out ${out}/results/AssemblyQC/blobtools/out \
+  --view snail \
+  --interactive \
+  ${out}/results/AssemblyQC/blobtools/datasets & sleep $awhile && firefox --new-tab http://localhost:8001/view/all &

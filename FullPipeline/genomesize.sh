@@ -25,11 +25,15 @@ echo """
   #PBS -l walltime=48:00:00
 
   ## Select a maximum of 100 cores and 200gb of RAM
-  #PBS -l select=1:ncpus=100:mem=200gb
+  #PBS -l select=1:ncpus=100:mem=500gb
 
   ## load all necessary software into environment
   module load Assembly/Jellyfish-2.3.0
   module load Assembly/genomescope-2.0
+
+  ## in a QSUB bash script add the following lines to activate
+  source /opt/anaconda3/etc/profile.d/conda.sh
+  conda activate smudgeplot-0.2.4
 
   ## unzip files
 
@@ -67,6 +71,24 @@ echo """
   -k 31 \
   -p 2 \
   -o ${out}/results/GenomeSize/${name}
+
+  ## run SmudgePlot
+
+  L=$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo L)
+  U=$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo U)
+
+  #echo $L $U
+
+  jellyfish-linux dump \
+  -c \
+  -L $L \
+  -U $U \
+  ${out}/results/GenomeSize/${name}_reads.jf \
+  | smudgeplot.py hetkmers \
+  -o ${out}/results/GenomeSize/${name}_kmer_pairs
+
+  smudgeplot.py plot ${out}/results/GenomeSize/${name}_kmer_pairs_coverages.tsv \
+  -o ${out}/results/GenomeSize/${name} -k 31
 
   rm -f ${out}/data/kraken_${name}_*.fq
 

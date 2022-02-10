@@ -7,6 +7,7 @@ busco=$3
 ##########################
 
 ### and BlobTools
+### and BlobTools
 mkdir ${out}/results/AssemblyQC/blobtools
 echo """
   #!/bin/sh
@@ -23,75 +24,35 @@ echo """
   ## Select a maximum of 20 cores and 200gb of RAM
   #PBS -l select=1:ncpus=200:mem=200gb
 
-  ## create all project directories
-  export btkroot=${out}/results/AssemblyQC/blobtools
-  mkdir \$btkroot
-  mkdir \$btkroot/datasets
-  mkdir \$btkroot/data
-  mkdir \$btkroot/taxdump
+  ###### load dependencies
 
-  ## download taxdump from NCBI
-  cd \$btkroot/taxdump
-  curl -L ftp://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.tar.gz | tar xzf -
-  cd ..
+  source /opt/venv/blobtools-3.0.0/bin/activate
 
-  ##put all your input data files into the directory \$btkroot/data
-  ##Here you can use the test examples in /programs/blobtoolkit_test/
-  cp ${out}/results/assembly/${name}/scaffolds.fasta  \$btkroot/data/
-  cp ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/full_table.tsv  \$btkroot/data/
-  cp ${out}/results/mapping/${name}.bam  \$btkroot/data/
-  cp ${out}/results/BLAST/blastn_${name}.txt \$btkroot/data/
-
-  docker rm -f \$(docker ps -a -q)
+  mkdir ${out}/results/AssemblyQC/blobtools
 
   ## create a genome BlobDir
-  docker run --rm --name ${name} \
-    -u \$UID:\$GROUPS \
-    -v \$btkroot/datasets:/blobtoolkit/datasets \
-    -v \$btkroot/data:/blobtoolkit/data \
-    -v \$btkroot/taxdump:/blobtoolkit/taxdump \
-    genomehubs/blobtoolkit:latest \
-    ./blobtools2/blobtools create \
-    --fasta data/scaffolds.fasta  \
-    --taxdump taxdump \
-    datasets/${name}
-
-  ## add BUSCO results
-  docker run --rm --name ${name} \
-    -u \$UID:\$GROUPS \
-    -v \$btkroot/datasets:/blobtoolkit/datasets \
-    -v \$btkroot/data:/blobtoolkit/data \
-    -v \$btkroot/taxdump:/blobtoolkit/taxdump \
-    genomehubs/blobtoolkit:latest \
-    ./blobtools2/blobtools add \
-    --busco data/full_table.tsv  \
-    datasets/${name}
+  blobtools add \
+      --fasta ${out}/results/assembly/${name}/scaffolds.fasta  \
+      ${out}/results/AssemblyQC/blobtools
 
   ## add BLAST results
-  docker run --rm --name ${name} \
-    -u \$UID:\$GROUPS \
-    -v \$btkroot/datasets:/blobtoolkit/datasets \
-    -v \$btkroot/data:/blobtoolkit/data \
-    -v \$btkroot/taxdump:/blobtoolkit/taxdump \
-    genomehubs/blobtoolkit:latest \
-    ./blobtools2/blobtools add \
-    --hits data/blastn_${name}.txt  \
-    --taxdump taxdump \
-    datasets/${name}
+  blobtools add \
+      --hits ${out}/results/BLAST/blastn_${name}.txt \
+      --taxdump /media/scratch/NCBI_taxdump/ \
+      --threads 200 \
+      ${out}/results/AssemblyQC/blobtools
 
-  ## add coverage info
-  docker run --rm --name ${name} \
-    -u \$UID:\$GROUPS \
-    -v \$btkroot/datasets:/blobtoolkit/datasets \
-    -v \$btkroot/data:/blobtoolkit/data \
-    -v \$btkroot/taxdump:/blobtoolkit/taxdump \
-    genomehubs/blobtoolkit:latest \
-    ./blobtools2/blobtools add \
-    --cov data/${name}.bam  \
-    --threads 100 \
-    datasets/${name}
+  ## add BUSCO results
+  blobtools add \
+      --busco ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/full_table.tsv  \
+      --threads 200 \
+      ${out}/results/AssemblyQC/blobtools
 
-  chmod a+rX \$btkroot
+  ## add coverage data
+  blobtools add \
+      --cov ${out}/results/mapping/${name}.bam \
+      --threads 200 \
+      ${out}/results/AssemblyQC/blobtools
 
 """ > ${out}/shell/qsub_blobtools_${name}.sh
 
