@@ -46,13 +46,13 @@ After that, the pipeline uses JELLYFISH for counting k-mers in the filtered and 
 
 ### (4) [de-novo assembly](FullPipeline/denovo.sh)
 
-De novo assembly based on SPAdes with standard parameters using trimmed and decontaminated reads. More details will be added soon
+De novo assembly based on SPAdes with standard parameters using trimmed and decontaminated reads. See [here](https://cab.spbu.ru/files/release3.15.4/manual.html) for more details on how SPAdes works. Currently, this pipelilne only accepts paired-end Illumina reads. Additional options will be added in the future. More details on the pipeline will be added soon.
 
 ### (5) Assembly QC
 
 #### (a) [Quast](FullPipeline/denovo.sh)
 
-Summary statistics of the SPAdes assembly, i.e. #contigs, N50, N90, etc. with QUAST. More details will be added soon.
+Summary statistics of the SPAdes assembly, i.e. #contigs, N50, N90, etc. with QUAST. Check out the QUAST [manual](<>) for more details. More details on the  pipeline will be added soon.
 
 #### (b) [BLAST](FullPipeline/blast.sh)
 
@@ -69,3 +69,7 @@ The trimmed reads are remapped to the assembled scaffolds to investigate the var
 #### (e) [BlobTools](FullPipeline/blobtools.sh)
 
 Quantitative analysis of assembly quality based on variation of read-depth, GC-content and taxonomic assignment of each scaffold. The summary plots and tables are accessible through an interactive browser window.
+
+* * *
+
+After the pipeline is finished, the most important summary outputs will be copied over to the output folder. In addition, various html-based results will be loaded in Firefox.
