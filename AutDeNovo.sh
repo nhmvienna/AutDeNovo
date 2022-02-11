@@ -236,4 +236,4 @@ blobtools view \
   --out ${out}/results/AssemblyQC/blobtools/out \
   --view snail \
   --interactive \
-  ${out}/results/AssemblyQC/blobtools/datasets & sleep $awhile && firefox --new-tab http://localhost:8001/view/all &
+  ${out}/results/AssemblyQC/blobtools & sleep $awhile && firefox --new-tab http://localhost:8001/view/all &
