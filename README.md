@@ -68,8 +68,8 @@ The trimmed reads are remapped to the assembled scaffolds to investigate the var
 
 #### (e) [BlobTools](FullPipeline/blobtools.sh)
 
-Quantitative analysis of assembly quality based on variation of read-depth, GC-content and taxonomic assignment of each scaffold. The summary plots and tables are accessible through an interactive browser window.
+Quantitative analysis of assembly quality based on variation of read-depth, GC-content and taxonomic assignment of each scaffold. The summary plots and tables are accessible through an interactive browser window. Note, occasionally port 8001 may be already occuppied. In this case, you can retry to load the html page with ports of increasing number, e.g. 8002, 8003, etc.
 
 * * *
 
-After the pipeline is finished, the most important summary outputs will be copied over to the output folder. In addition, various html-based results will be loaded in Firefox.
+After the pipeline is finished, the most important summary outputs will be copied over to an output folder. In addition, various html-based results will be loaded in Firefox. The file `HTML_outputs.sh` contains all commands to load the HTML output in Firefox at a later timepoint.

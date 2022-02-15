@@ -91,7 +91,15 @@ printf "########################\n\n"
 wait
 
 ###############################################
-############# (1) Trimming and QC #############
+############# (1) QC and Trimming #############
+
+echo "Start raw QC"
+date
+
+sh FullPipeline/fastqc.sh \
+$out \
+$name
+printf "########################\n\n"
 
 ## minimum PHRED basequality: 20
 ## minimum read length 75bp
@@ -206,12 +214,37 @@ printf "______________________\n"
 
 mkdir ${out}/output
 
+printf"""
+############### HTML output #####################
+# run the following commands in terminal to open up Firefox and view the HTML output files
+""" > ${out}/output/HTML_outputs.sh
+
+## raw read QC
+firefox --new-tab ${out}/results/rawQC/${name}_1_fastqc.html &
+firefox --new-tab ${out}/results/rawQC/${name}_2_fastqc.html &
+
+printf """
+## FASTQC of raw reads
+firefox --new-tab ${out}/results/rawQC/${name}_1_fastqc.html
+firefox --new-tab ${out}/results/rawQC/${name}_2_fastqc.html
+""" >> ${out}/output/HTML_outputs.sh
+
+cp ${out}/results/rawQC/${name}_1_fastqc.zip ${out}/output/${name}_1_raw_fastqc.zip
+cp ${out}/results/rawQC/${name}_2_fastqc.zip ${out}/output/${name}_2_raw_fastqc.zip
+
+
 ## trimming
 firefox --new-tab ${out}/data/${name}_1_val_1_fastqc.html &
 firefox --new-tab ${out}/data/${name}_2_val_2_fastqc.html &
 
-cp ${out}/data/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_fastqc.zip
-cp ${out}/data/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_fastqc.zip
+printf """
+## FASTQC after trimming
+firefox --new-tab ${out}/data/${name}_1_val_1_fastqc.html
+firefox --new-tab ${out}/data/${name}_2_val_2_fastqc.html
+""" >> ${out}/output/HTML_outputs.sh
+
+cp ${out}/data/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_fastqc.zip
+cp ${out}/data/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_fastqc.zip
 
 ## kraken
 cp ${out}/results/kraken_reads/${name}_filtered.report ${out}/output/${name}_kraken.txt
@@ -219,6 +252,12 @@ cp ${out}/results/kraken_reads/${name}_filtered.report ${out}/output/${name}_kra
 
 docker run -p 5000:80 florianbw/pavian &
 firefox --new-tab http://127.0.0.1:5000 &
+
+printf """
+## run Pavian to explore the Kraken output
+docker run -p 5000:80 florianbw/pavian &
+firefox --new-tab http://127.0.0.1:5000
+""" >> ${out}/output/HTML_outputs.sh
 
 ## genomesize
 cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
@@ -228,12 +267,30 @@ firefox --new-tab ${out}/output/${name}_genomesize/linear_plot.png &
 cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
 firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html &
 
+printf """
+## QUAST
+firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html
+""" >> ${out}/output/HTML_outputs.sh
+
+
 ##blobtools
 awhile=10
 source /opt/venv/blobtools-3.0.0/bin/activate
 
 blobtools view \
   --out ${out}/results/AssemblyQC/blobtools/out \
-  --view snail \
   --interactive \
-  ${out}/results/AssemblyQC/blobtools & sleep $awhile && firefox --new-tab http://localhost:8001/view/all &
+  ${out}/results/AssemblyQC/blobtools \
+  & sleep $awhile && firefox --new-tab http://localhost:8001/view/all &
+
+printf """
+## Blobtools
+source /opt/venv/blobtools-3.0.0/bin/activate
+
+blobtools view \
+  --out ${out}/results/AssemblyQC/blobtools/out \
+  --interactive \
+  ${out}/results/AssemblyQC/blobtools \
+  & sleep $awhile && firefox --new-tab http://localhost:8001/view/all
+
+""" >> ${out}/output/HTML_outputs.sh
