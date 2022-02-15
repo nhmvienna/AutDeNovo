@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+pwd=$3
 
 #############################
 
@@ -28,6 +29,9 @@ echo """
   ## load all necessary software into environment
   module load Assembly/kraken-2.1.2
 
+  ## Go to pwd
+  cd ${pwd}
+
   kraken2 \
   --threads 200 \
   --output - \
@@ -44,6 +48,8 @@ echo """
   > ${out}/results/kraken_reads/${name}_filtered.report
 
   pigz -p200 ${out}/data/kraken*.fq
+
+  rm -f ${out}/data/kraken*.fq
 
 """ > ${out}/shell/qsub_kraken_reads_${name}.sh
 

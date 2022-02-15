@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+pwd=$3
 
 #############################
 
@@ -30,6 +31,9 @@ echo """
   ## load all necessary software into environment
   module load Assembly/Jellyfish-2.3.0
   module load Assembly/genomescope-2.0
+
+  ## Go to pwd
+  cd ${pwd}
 
   ## unzip files
 

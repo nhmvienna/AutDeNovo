@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+pwd=$3
 
 #############################
 
@@ -27,6 +28,9 @@ echo """
 
   ## load all necessary software into environment
   module load Assembly/SPAdes_3.15.3
+
+  ## Go to pwd
+  cd ${pwd}
 
   ## execute first command, i.e. indexing a reference genome for mapping
   spades.py \

@@ -5,9 +5,9 @@ git clone https://github.com/nhmvienna/AutDeNovo
 cd AutDeNovo
 
 ## run pipeline on test dataset
-AutDeNovo.sh \
-  Name=Garra \
-  OutputFolder=Test/Garra \
+./AutDeNovo.sh \
+  Name=SomeFish \
+  OutputFolder=Test/SomeFish \
   Fwd=Test/subset/Garra474_1.fq.gz \
   Rev=Test/subset/Garra474_2.fq.gz \
   BuscoDB=vertebrata_odb10

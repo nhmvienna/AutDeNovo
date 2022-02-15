@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+pwd=$3
 
 #############################
 
@@ -28,6 +29,9 @@ echo """
   module load Tools/samtools-1.12
 
   ######## run analyses #######
+
+  ## Go to pwd
+  cd ${pwd}
 
   bwa index ${out}/results/assembly/${name}/scaffolds.fasta
 

@@ -3,6 +3,7 @@
 out=$1
 name=$2
 busco=$3
+pwd=$4
 
 #############################
 
@@ -30,6 +31,9 @@ echo """
   conda activate busco_5.2.2
 
   ######## run analyses #######
+
+  ## Go to pwd
+  cd ${pwd}
 
   cd ${out}/results/AssemblyQC/Busco
 

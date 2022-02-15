@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+pwd=$3
 
 #############################
 
@@ -24,6 +25,9 @@ echo """
 
 source /opt/anaconda3/etc/profile.d/conda.sh
 conda activate trim-galore-0.6.2
+
+## Go to pwd
+cd ${pwd}
 
 ## Go to output folder
 cd ${out}/data

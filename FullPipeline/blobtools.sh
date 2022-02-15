@@ -3,6 +3,7 @@
 out=$1
 name=$2
 busco=$3
+pwd=$4
 
 ##########################
 
@@ -27,6 +28,9 @@ echo """
   ###### load dependencies
 
   source /opt/venv/blobtools-3.0.0/bin/activate
+
+  ## Go to pwd
+  cd ${pwd}
 
   mkdir ${out}/results/AssemblyQC/blobtools
 

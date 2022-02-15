@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+pwd=$3
 
 #############################
 
@@ -28,6 +29,9 @@ echo """
   module load Assembly/Quast-5.1.0rc1
 
   ######## run analyses #######
+
+  ## Go to pwd
+  cd ${pwd}
 
   ### NOTE THAT QUAST ONLY ALLOWS 64 CORES MAX
 

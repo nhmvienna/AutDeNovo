@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+pwd=$3
 
 #############################
 
@@ -27,6 +28,9 @@ echo """
   module load Alignment/ncbi-BLAST-2.12.0
 
   ######## run analyses #######
+
+  ## Go to pwd
+  cd ${pwd}
 
   blastn \
     -num_threads 200 \

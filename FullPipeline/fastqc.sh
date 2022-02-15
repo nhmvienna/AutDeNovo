@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+pwd=$3
 
 #############################
 
@@ -24,15 +25,18 @@ echo """
 
 module load Tools/FastQC-0.11.9
 
-## Go to output folder
-cd ${out}/data
+## Go to pwd
+cd ${pwd}
 
 mkdir -p ${out}/results/rawQC
+
+## Go to output folder
+cd ${out}/data
 
 ## loop through all raw FASTQ and test quality
 
 fastqc \
-  --outdir ${out}/results/rawQC \
+  --outdir ../results/rawQC \
   --threads 200 \
   ${name}_1.fq.gz \
   ${name}_2.fq.gz

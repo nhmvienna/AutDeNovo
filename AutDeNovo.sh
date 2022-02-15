@@ -98,7 +98,8 @@ date
 
 sh FullPipeline/fastqc.sh \
 $out \
-$name
+$name \
+$PWD
 printf "########################\n\n"
 
 ## minimum PHRED basequality: 20
@@ -110,7 +111,8 @@ date
 
 sh FullPipeline/trim.sh \
 $out \
-$name
+$name \
+$PWD
 printf "########################\n\n"
 
 ###############################################
@@ -123,7 +125,8 @@ date
 
 sh FullPipeline/kraken_reads.sh \
 $out \
-$name
+$name \
+$PWD
 printf "########################\n\n"
 
 ###############################################
@@ -131,12 +134,13 @@ printf "########################\n\n"
 
 ## using Jellyfish to calculate kmer-coverage and genomoscope for formal analyses
 
-echo "Estimation of genomesize starting"
+echo "Estimation of genomesize"
 date
 
 sh FullPipeline/genomesize.sh \
 $out \
-$name
+$name \
+$PWD
 printf "########################\n\n"
 
 ###############################################
@@ -149,7 +153,8 @@ date
 
 sh FullPipeline/denovo.sh \
 $out \
-$name
+$name \
+$PWD
 printf "########################\n\n"
 
 ###############################################
@@ -162,7 +167,8 @@ date
 
 sh FullPipeline/quast.sh \
 $out \
-$name
+$name \
+$PWD
 printf "########################\n\n"
 
 ## (B) BUSCO analysis
@@ -173,7 +179,8 @@ date
 sh FullPipeline/busco.sh \
 $out \
 $name \
-$busco
+$busco \
+$PWD
 printf "########################\n\n"
 
 # (C) Mapping reads
@@ -183,7 +190,8 @@ date
 
 sh FullPipeline/mapping.sh \
 $out \
-$name
+$name \
+$PWD
 printf "########################\n\n"
 
 ## (D) Blast genome against the nt database
@@ -193,7 +201,8 @@ date
 
 sh FullPipeline/blast.sh \
 $out \
-$name
+$name \
+$PWD
 printf "########################\n\n"
 
 ## (E) Summarize results with blobtools
@@ -204,7 +213,8 @@ date
 sh FullPipeline/blobtools.sh \
 $out \
 $name \
-$busco
+$busco \
+$PWD
 printf "########################\n\n"
 
 printf "______________________\n"
@@ -286,6 +296,7 @@ printf """
 ## Blobtools
 source /opt/venv/blobtools-3.0.0/bin/activate
 
+## if you get an error message, try other ports, 8002, 8003, etc.
 blobtools view \
   --out ${out}/results/AssemblyQC/blobtools/out \
   --interactive \
