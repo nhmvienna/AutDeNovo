@@ -214,7 +214,7 @@ printf "______________________\n"
 
 mkdir ${out}/output
 
-printf"""
+printf """
 ############### HTML output #####################
 # run the following commands in terminal to open up Firefox and view the HTML output files
 """ > ${out}/output/HTML_outputs.sh
