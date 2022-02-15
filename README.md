@@ -6,8 +6,8 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 The pipeline requires four obligatory input parameters:
 
--   **Name**:   The name (without spaces and special characters) of the sample to be used for naming the output folder, e.g. _Garra_474_
--   **OutputFolder**: The full path to the output folder where are the processed data and output should be stored, e.g. _/media/inter/GarraDenovo_
+-   **Name**:   The name (without spaces and special characters) of the sample to be used for naming the output folder, e.g. _SomeFish_
+-   **OutputFolder**: The full path to the output folder where are the processed data and output should be stored, e.g. _/media/inter/SomeFish_
 -   **Fwd**: The full path to the raw foward-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_1.fq.gz_
 -   **Rev**: The full path to the corresponding raw reverse-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_2.fq.gz_
 
@@ -90,5 +90,3 @@ This is just the very first version and I will implement more functionality in t
 -   Allow ONT or PacBio data or a combination of Illumina and single molecule sequencing data for de-novo assemblies
 
 Please le me know if you have further ideas or need help by posting an issue in this repository.
-
-(c) Martin Kapun
