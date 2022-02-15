@@ -6,7 +6,7 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 The pipeline requires four obligatory input parameters:
 
--   **Name**:   The name (without spacesand special characters) of the sample to be used for naming the output folder, e.g. _Garra_474_
+-   **Name**:   The name (without spaces and special characters) of the sample to be used for naming the output folder, e.g. _Garra_474_
 -   **OutputFolder**: The full path to the output folder where are the processed data and output should be stored, e.g. _/media/inter/GarraDenovo_
 -   **Fwd**: The full path to the raw foward-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_1.fq.gz_
 -   **Rev**: The full path to the corresponding raw reverse-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_2.fq.gz_
@@ -20,12 +20,19 @@ In addition, you can optionally also provide the name of the BUSCO database, whi
 The pipeline is a simple shell script that executes a series of sub-shells that serially send jobs to OpenPBS. A typcial command lines looks like this:
 
 ```bash
-./AutDeNovo.sh \
-Name=Yeti_01 \
-OutputFolder=/media/output \
-Fwd=/media/seq/fwd.fq.gz \
-Rev=/media/seq/rev.fq.gz \
-BuscoDB=vertebrata_odb10
+## get repository
+git clone https://github.com/nhmvienna/AutDeNovo
+
+## change to repository folder
+cd AutDeNovo
+
+## run pipeline on test dataset
+AutDeNovo.sh \
+  Name=SomeFish \
+  OutputFolder=Test/SomeFish \
+  Fwd=Test/subset/Garra474_1.fq.gz \
+  Rev=Test/subset/Garra474_2.fq.gz \
+  BuscoDB=vertebrata_odb10
 ```
 
 ## Pipeline
@@ -72,4 +79,4 @@ Quantitative analysis of assembly quality based on variation of read-depth, GC-c
 
 * * *
 
-After the pipeline is finished, the most important summary outputs will be copied over to an output folder. In addition, various html-based results will be loaded in Firefox. The file `HTML_outputs.sh` contains all commands to load the HTML output in Firefox at a later timepoint.
+After the pipeline is finished, the scaffolds of the de-novo assembly and the most important summary outputs will be copied to an output folder. In addition, various html-based results will be loaded in Firefox. In addition, the file `HTML_outputs.sh` contains all commands to load the HTML output in Firefox at a later timepoint.

@@ -272,7 +272,6 @@ printf """
 firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html
 """ >> ${out}/output/HTML_outputs.sh
 
-
 ##blobtools
 awhile=10
 source /opt/venv/blobtools-3.0.0/bin/activate
@@ -294,3 +293,8 @@ blobtools view \
   & sleep $awhile && firefox --new-tab http://localhost:8001/view/all
 
 """ >> ${out}/output/HTML_outputs.sh
+
+## finally, copy scaffolds file from
+
+pigz -c ${out}/results/assembly/${name}/scaffolds.fasta \
+> ${out}/output/${name}_scaffolds.fa.gz
