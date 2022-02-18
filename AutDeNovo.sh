@@ -2,8 +2,7 @@
 
 ## AutDeNovo -v 0.0.1 - 31/01/2022
 
-## Author: Martin Kapun, largely based on the pipleine of TBG Loewe@Senkenberg/Frankfurt from Tilman Schell
-## test if Shell is indeed BASH
+## Author: Martin Kapun, largely based on the pipeline of TBG Loewe@Senkenberg/Frankfurt from Tilman Schell
 
 ###############################################
 ######### READ COMMANDLINE ARGUMENTS ##########
@@ -48,8 +47,8 @@ AutDeNovo v. 0.01 - 31/01/2022
 
 A typcial command line looks like this:
 
-~/AutDeNovo.sh \             ## The script name
-Name=Yeti_01 \                  ## The sample name
+~/AutDeNovo.sh \                ## The script name
+Name=SomeFish \                 ## The sample name
 OutputFolder=/media/output \    ## The full path to the output folder
 Fwd=/media/seq/fwd.fq.gz \      ## The full path to the raw read forward FASTQ file
 Rev=/media/seq/rev.fq.gz \      ## The full path to the raw read reverse FASTQ file
