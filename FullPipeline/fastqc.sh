@@ -28,7 +28,7 @@ module load Tools/FastQC-0.11.9
 ## Go to pwd
 cd ${pwd}
 
-mkdir -p ${out}/results/rawQC
+mkdir -p ${out}/results/rawQC/Illumina_fastqc
 
 ## Go to output folder
 cd ${out}/data
@@ -36,7 +36,7 @@ cd ${out}/data
 ## loop through all raw FASTQ and test quality
 
 fastqc \
-  --outdir ../results/rawQC \
+  --outdir ../results/rawQC/Illumina_fastqc \
   --threads 200 \
   ${name}_1.fq.gz \
   ${name}_2.fq.gz
