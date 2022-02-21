@@ -27,7 +27,7 @@ git clone https://github.com/nhmvienna/AutDeNovo
 cd AutDeNovo
 
 ## run pipeline on test dataset
-AutDeNovo.sh \
+AutDeNovoFull.sh \
   Name=SomeFish \
   OutputFolder=Test/SomeFish \
   Fwd=Test/subset/Illumina/Garra474_1.fq.gz \
