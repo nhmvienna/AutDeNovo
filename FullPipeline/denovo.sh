@@ -56,7 +56,7 @@ echo """
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
-      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
 
   elif [[ ( $data == 'ILL_PB' ) ]]
   then
@@ -69,7 +69,7 @@ echo """
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
-      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
 
   elif [[ ( $data == 'ILL_ONT' ) ]]
   then
@@ -82,7 +82,7 @@ echo """
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
-      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
 
   elif [[ ( $data == 'ILL_ONT_PB' ) ]]
   then
@@ -95,6 +95,8 @@ echo """
       -t 200 \
       -m 1200 \
       -o ${out}/results/assembly/${name}
+
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
 
   elif [[ ( $data == 'ONT' ) ]]
   then

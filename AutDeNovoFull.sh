@@ -281,7 +281,7 @@ $data \
 $PWD
 printf "########################\n\n"
 
-(C) Mapping reads
+## (C) Mapping reads
 
 echo "Mapping reads against reference"
 date
@@ -318,16 +318,13 @@ $data \
 $PWD
 printf "########################\n\n"
 
-printf "______________________\n"
 printf "Anlayses done!!\nNow copying results to output folder and starting Firefox with summaries"
 date
-printf "______________________\n"
-
-mkdir ${out}/output
+printf "########################\n\n"
 
 printf """
 # ############### HTML output #####################
-# # run the following commands in terminal to open up Firefox and view the HTML output files
+# # run the following commands in terminal to open Firefox and view the HTML output files
 # """ > ${out}/output/HTML_outputs.sh
 
 if [[ !(-z $fwd) ]]
