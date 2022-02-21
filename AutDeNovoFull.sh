@@ -169,6 +169,7 @@ then
   sh FullPipeline/nanoplot.sh \
   $out \
   $name \
+  "ONT" \
   $PWD
 
 fi
@@ -180,11 +181,12 @@ then
   echo "of PacBio data"
   date
 
-  sh FullPipeline/sequeltools.sh \
+  sh FullPipeline/nanoplot.sh \
   $out \
   $name \
-  $PWD \
-  $pb
+  "PB" \
+  $PWD
+
 
 fi
 

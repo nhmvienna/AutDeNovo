@@ -2,7 +2,8 @@
 
 out=$1
 name=$2
-pwd=$3
+type=$3
+pwd=$4
 
 #############################
 
@@ -13,7 +14,7 @@ echo """
 #PBS -N nanoplot_${name}
 
 ## Redirect output stream to this file.
-#PBS -o ${out}/log/raw_nanoplot_${name}_log.txt
+#PBS -o ${out}/log/raw_nanoplot_${name}_${type}_log.txt
 
 ## Stream Standard Output AND Standard Error to outputfile (see above)
 #PBS -j oe
@@ -35,23 +36,47 @@ mkdir -p ${out}/results/rawQC
 
 ## loop through all raw FASTQ and test quality
 
-NanoPlot \
-  -t 200 \
-  --summary ${out}/data/ONT/${name}_sequencing_summary.txt \
-  --plots dot \
-  -o ${out}/results/rawQC/${name}_ONT_nanoplot
+if [[ ( $type == 'ONT' ) ]]
+then
+
+  NanoPlot \
+    -t 200 \
+    --summary ${out}/data/ONT/${name}_sequencing_summary.txt \
+    --plots dot \
+    -o ${out}/results/rawQC/${name}_ONT_nanoplot
+
+    ## convert HTML Report to PDF
+
+    source /opt/anaconda3/etc/profile.d/conda.sh
+    conda activate base
+
+    pandoc -f html \
+    -t pdf \
+    -o ${out}/results/rawQC/${name}_ONT_nanoplot/${name}_ONT_nanoplot-report.pdf \
+    ${out}/results/rawQC/${name}_ONT_nanoplot/NanoPlot-report.html
 
 
-## convert HTML Report to PDF
+else
 
-source /opt/anaconda3/etc/profile.d/conda.sh
-conda activate base
+  NanoPlot \
+    -t 200 \
+    --fastq ${out}/data/PB/${name}_pb.fq.gz \
+    --plots dot \
+    -o ${out}/results/rawQC/${name}_PB_nanoplot
 
-pandoc -f html \
--t pdf \
--o ${out}/results/rawQC/${name}_ONT_nanoplot/${name}_ONT_nanoplot-report.pdf \
-${out}/results/rawQC/${name}_ONT_nanoplot/NanoPlot-report.html
+  ## convert HTML Report to PDF
+
+  source /opt/anaconda3/etc/profile.d/conda.sh
+  conda activate base
+
+  pandoc -f html \
+  -t pdf \
+  -o ${out}/results/rawQC/${name}_PB_nanoplot/${name}_PB_nanoplot-report.pdf \
+  ${out}/results/rawQC/${name}_PB_nanoplot/NanoPlot-report.html
+
+fi
+
 
 """ > ${out}/shell/qsub_nanoplot_${name}.sh
 
-qsub -W block=true ${out}/shell/qsub_nanoplot_${name}.sh
+qsub -W block=true ${out}/shell/qsub_nanoplot_${name}_${type}.sh
