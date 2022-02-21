@@ -3,7 +3,8 @@
 out=$1
 name=$2
 busco=$3
-pwd=$4
+data=$4
+pwd=$5
 
 ##########################
 
@@ -36,7 +37,7 @@ echo """
 
   ## create a genome BlobDir
   blobtools add \
-      --fasta ${out}/results/assembly/${name}/scaffolds.fasta  \
+      --fasta ${out}/output/${name}_${data}.fa  \
       ${out}/results/AssemblyQC/blobtools
 
   ## add BLAST results

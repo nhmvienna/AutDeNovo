@@ -2,11 +2,25 @@
 
 out=$1
 name=$2
-pwd=$3
+data=$3
+pwd=$4
 
 #############################
 
 mkdir ${out}/results/assembly
+
+if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
+then
+
+  echo "Assembly of $data with Spades"
+  date
+
+else
+
+  echo "Assembly of $data with Flye"
+  date
+
+fi
 
 echo """
   #!/bin/sh
@@ -32,14 +46,108 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  ## execute first command, i.e. indexing a reference genome for mapping
-  spades.py \
-    -1 ${out}/data/kraken_${name}_1.fq.gz \
-    -2 ${out}/data/kraken_${name}_2.fq.gz \
-    -t 200 \
-    -m 1200 \
-    -o ${out}/results/assembly/${name}
+  if [[ ( $data == 'ILL' ) ]]
+  then
 
+    spades.py \
+      -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
+      -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
+      -t 200 \
+      -m 1200 \
+      -o ${out}/results/assembly/${name}
+
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+
+  elif [[ ( $data == 'ILL_PB' ) ]]
+  then
+
+    spades.py \
+      -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
+      -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
+      --nanopore ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+      -t 200 \
+      -m 1200 \
+      -o ${out}/results/assembly/${name}
+
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+
+  elif [[ ( $data == 'ILL_ONT' ) ]]
+  then
+
+    spades.py \
+      -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
+      -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
+      --pacbio ${out}/data/PB/kraken_pb_${name}.fq.gz \
+      -t 200 \
+      -m 1200 \
+      -o ${out}/results/assembly/${name}
+
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+
+  elif [[ ( $data == 'ILL_ONT_PB' ) ]]
+  then
+
+    spades.py \
+      -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
+      -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
+      --pacbio ${out}/data/PB/kraken_pb_${name}.fq.gz \
+      --nanopore ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+      -t 200 \
+      -m 1200 \
+      -o ${out}/results/assembly/${name}
+
+  elif [[ ( $data == 'ONT' ) ]]
+  then
+
+    source /opt/anaconda3/etc/profile.d/conda.sh
+    conda activate flye-2.9
+
+    flye \
+    --nano-raw ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+    --out-dir ${out}/results/assembly/${name} \
+    --threads 200 \
+    --scaffold
+
+    mv ${out}/results/assembly/${name}/assembly.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+
+  elif [[ ( $data == 'PB' ) ]]
+  then
+
+    source /opt/anaconda3/etc/profile.d/conda.sh
+    conda activate flye-2.9
+
+    flye \
+    --pacbio-raw ${out}/data/PB/kraken_pb_${name}.fq.gz \
+    --out-dir ${out}/results/assembly/${name} \
+    --threads 128 \
+    --scaffold
+
+    mv ${out}/results/assembly/${name}/assembly.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+
+  elif [[ ( $data == 'ONT_PB' ) ]]
+  then
+
+    source /opt/anaconda3/etc/profile.d/conda.sh
+    conda activate flye-2.9
+
+    ## see here: https://github.com/fenderglass/Flye/blob/flye/docs/FAQ.md#can-i-use-both-pacbio-and-ont-reads-for-assembly
+
+    flye \
+    --pacbio-raw ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+    ${out}/data/PB/kraken_pb_${name}.fq.gz \
+    --iterations 0 \
+    --out-dir ${out}/results/assembly/${name} \
+    --threads 128
+
+    flye \
+    --nano-raw ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+     --resume-from polishing \
+    --out-dir ${out}/results/assembly/${name} \
+    --threads 128 \
+    --scaffold
+
+    mv ${out}/results/assembly/${name}/assembly.fasta ${out}/output/${name}_${data}.fa
+  fi
 """ > ${out}/shell/qsub_assembly_${name}.sh
 
 qsub -W block=true ${out}/shell/qsub_assembly_${name}.sh

@@ -2,7 +2,8 @@
 
 out=$1
 name=$2
-pwd=$3
+data=$3
+pwd=$4
 
 #############################
 
@@ -39,7 +40,7 @@ echo """
     -max_hsps 1 \
     -evalue 1e-25 \
     -db /media/scratch/NCBI_nt_DB_210714/nt \
-    -query ${out}/results/assembly/${name}/scaffolds.fasta  \
+    -query ${out}/output/${name}_${data}.fa \
     > ${out}/results/BLAST/blastn_${name}.txt
 
 """ > ${out}/shell/qsub_blastn_${name}.sh

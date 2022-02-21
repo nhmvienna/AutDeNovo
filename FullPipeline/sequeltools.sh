@@ -31,6 +31,8 @@ module load Tools/SequelTools
 ## Go to pwd
 cd ${pwd}
 
+mkdir -p ${out}/results/rawQC
+
 echo ${pb}/*subreads.bam > ${out}/results/rawQC/${name}_PB_subFiles.txt
 echo ${pb}/*scraps.bam > ${out}/results/rawQC/${name}_PB_scrFiles.txt
 

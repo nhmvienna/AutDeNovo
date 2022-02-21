@@ -2,7 +2,8 @@
 
 out=$1
 name=$2
-pwd=$3
+data=$3
+pwd=$4
 
 #############################
 
@@ -35,29 +36,87 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  ## unzip files
+  if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
+  then
 
-  gunzip -c ${out}/data/kraken_${name}_1.fq.gz > ${out}/data/kraken_${name}_1.fq &
-  gunzip -c ${out}/data/kraken_${name}_2.fq.gz > ${out}/data/kraken_${name}_2.fq
+    ## unzip files
 
-  wait
+    gunzip -c ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz > ${out}/data/Illumina/kraken_illumina_${name}_1.fq &
+    gunzip -c ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz > ${out}/data/Illumina/kraken_illumina_${name}_2.fq
 
-  ## run Jellyfish
+    wait
 
-  ## parameters
-  # -C canononical; count both strands
-  # -m 31 Length of mers
-  # -s initial hash size
-  jellyfish-linux count \
-    -C \
-    -m 31 \
-    -s 200000000000 \
-    -t 100 \
-    -F 2 \
-    -o ${out}/results/GenomeSize/${name}_reads.jf \
-    ${out}/data/kraken_${name}_1.fq \
-    ${out}/data/kraken_${name}_2.fq
+    ## run Jellyfish
 
+    ## parameters
+    # -C canononical; count both strands
+    # -m 31 Length of mers
+    # -s initial hash size
+    jellyfish-linux count \
+      -C \
+      -m 31 \
+      -s 200000000000 \
+      -t 100 \
+      -F 2 \
+      -o ${out}/results/GenomeSize/${name}_reads.jf \
+      ${out}/data/Illumina/kraken_illumina_${name}_1.fq \
+      ${out}/data/Illumina/kraken_illumina_${name}_2.fq
+
+    rm -f ${out}/data/Illumina/kraken_illumina_${name}_*.fq
+
+  fi
+
+  if [[ ( $data == 'ONT' ) || ( $data == 'ONT_PB' ) ]]
+  then
+
+    ## unzip ONT file
+
+    gunzip -c ${out}/data/ONT/kraken_ont_${name}.fq.gz > ${out}/data/ONT/kraken_ont_${name}.fq
+
+    ## run Jellyfish
+
+    ## parameters
+    # -C canononical; count both strands
+    # -m 31 Length of mers
+    # -s initial hash size
+    jellyfish-linux count \
+      -C \
+      -m 31 \
+      -s 200000000000 \
+      -t 100 \
+      -F 2 \
+      -o ${out}/results/GenomeSize/${name}_reads.jf \
+      ${out}/data/ONT/kraken_ont_${name}.fq
+
+    rm -f  ${out}/data/ONT/kraken_ont_${name}.fq
+
+  fi
+
+  if [[ ( $data == 'PB' ) ]]
+  then
+
+    ## unzip file
+
+    gunzip -c ${out}/data/PB/kraken_pb_${name}.fq.gz > ${out}/data/PB/kraken_pb_${name}.fq
+
+    ## run Jellyfish
+
+    ## parameters
+    # -C canononical; count both strands
+    # -m 31 Length of mers
+    # -s initial hash size
+    jellyfish-linux count \
+      -C \
+      -m 31 \
+      -s 200000000000 \
+      -t 100 \
+      -F 2 \
+      -o ${out}/results/GenomeSize/${name}_reads.jf \
+      ${out}/data/PB/kraken_pb_${name}.fq
+
+    rm -f  ${out}/data/PB/kraken_pb_${name}.fq
+
+  fi
 
   jellyfish-linux histo \
     -t 100 \
@@ -79,6 +138,8 @@ echo """
 
   L=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo L)
   U=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo U)
+
+  ## cheat if limits are COMPLETELY off
   if [ $((U-L)) -lt 100 ]
     then
       L=1

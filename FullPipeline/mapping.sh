@@ -2,7 +2,8 @@
 
 out=$1
 name=$2
-pwd=$3
+data=$3
+pwd=$4
 
 #############################
 
@@ -26,6 +27,7 @@ echo """
   ######## load dependencies #######
 
   module load NGSmapper/bwa-0.7.13
+  module load NGSmapper/minimap2-2.17
   module load Tools/samtools-1.12
 
   ######## run analyses #######
@@ -33,15 +35,47 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  bwa index ${out}/results/assembly/${name}/scaffolds.fasta
+  if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
+  then
 
-  bwa mem \
-    -t 200 \
-    ${out}/results/assembly/${name}/scaffolds.fasta \
-    ${out}/data/kraken_${name}_1.fq.gz \
-    ${out}/data/kraken_${name}_2.fq.gz \
+    ## index reference
+    bwa index ${out}/results/output/${name}_${data}.fa
+
+    bwa mem \
+      -t 200 \
+      ${out}/results/output/${name}_${data}.fa \
+      ${out}/data/kraken_${name}_1.fq.gz \
+      ${out}/data/kraken_${name}_2.fq.gz \
+      | samtools view -bh | samtools sort \
+      > ${out}/results/mapping/${name}.bam
+
+  elif [[ ( $data == 'ONT' ) || ( $data == 'ONT_PB' ) ]]
+  then
+
+    ## index reference
+    minimap2 -d ${out}/results/assembly/${name}/${name}_${data}.mmi \
+      ${out}/results/output/${name}_${data}.fa
+
+    minimap2 -ax map-ont \
+    -t 100 \
+    ${out}/results/output/${name}_${data}.fa \
+    ${out}/data/ONT/kraken_ont_${name}.fq.gz \
     | samtools view -bh | samtools sort \
     > ${out}/results/mapping/${name}.bam
+
+  else
+
+    ## index reference
+    minimap2 -d ${out}/results/assembly/${name}/${name}_${data}.mmi \
+      ${out}/results/output/${name}_${data}.fa
+
+    minimap2 -ax map-pb \
+    -t 100 \
+    ${out}/results/output/${name}_${data}.fa \
+    ${out}/data/PB/kraken_pb_${name}.fq.gz \
+    | samtools view -bh | samtools sort \
+    > ${out}/results/mapping/${name}.bam
+  fi
 
 """ > ${out}/shell/qsub_bwa_${name}.sh
 

@@ -2,7 +2,8 @@
 
 out=$1
 name=$2
-pwd=$3
+data=$3
+pwd=$4
 
 #############################
 
@@ -40,7 +41,7 @@ echo """
   --threads 64 \
   --eukaryote \
   -f \
-  ${out}/results/assembly/${name}/scaffolds.fasta
+  ${out}/output/${name}_${data}.fa
 
 """ > ${out}/shell/qsub_quast_${name}.sh
 

@@ -30,7 +30,7 @@ conda activate trim-galore-0.6.2
 cd ${pwd}
 
 ## Go to output folder
-cd ${out}/data
+cd ${out}/data/Illumina
 
 ## loop through all FASTQ pairs and trim by quality PHRED 20, min length 85bp and automatically detect & remove adapters
 

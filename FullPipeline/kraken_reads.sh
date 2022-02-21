@@ -2,7 +2,8 @@
 
 out=$1
 name=$2
-pwd=$3
+data=$3
+pwd=$4
 
 #############################
 
@@ -32,24 +33,71 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  kraken2 \
-  --threads 200 \
-  --output - \
-  --report ${out}/results/kraken_reads/${name}.report \
-  --use-names \
-  --gzip-compressed \
-  --unclassified-out ${out}/data/kraken_${name}#.fq ${name}_1.fq ${name}_2.fq \
-  --paired \
-  --db /media/scratch/kraken-2.1.2/db/standard_20210517 \
-  ${out}/data/${name}_1_val_1.fq.gz \
-  ${out}/data/${name}_2_val_2.fq.gz
+  if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
+  then
 
-  awk '\$1> 0.0' ${out}/results/kraken_reads/${name}.report \
-  > ${out}/results/kraken_reads/${name}_filtered.report
+    kraken2 \
+    --threads 200 \
+    --output - \
+    --report ${out}/results/kraken_reads/${name}_Illumina.report \
+    --use-names \
+    --gzip-compressed \
+    --unclassified-out ${out}/data/Illumina/kraken_illumina_${name}#.fq ${name}_1.fq ${name}_2.fq \
+    --paired \
+    --db /media/scratch/kraken-2.1.2/db/standard_20210517 \
+    ${out}/data/Illumina/${name}_1_val_1.fq.gz \
+    ${out}/data/Illumina/${name}_2_val_2.fq.gz
 
-  pigz -p200 ${out}/data/kraken*.fq
+    awk '\$1> 0.0' ${out}/results/kraken_reads/${name}_Illumina.report \
+    > ${out}/results/kraken_reads/${name}_Illumina_filtered.report
 
-  rm -f ${out}/data/kraken*.fq
+    pigz -p200 ${out}/data/Illumina/kraken*.fq
+
+    rm -f ${out}/data/Illumina/kraken*.fq
+  fi
+
+  if [[ ( $data == 'ONT' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_ONT_PB' ) || ( $data == 'ONT_PB' ) ]]
+  then
+
+    kraken2 \
+    --threads 200 \
+    --output - \
+    --report ${out}/results/kraken_reads/${name}_ONT.report \
+    --use-names \
+    --gzip-compressed \
+    --unclassified-out ${out}/data/ONT/kraken_ont_${name}.fq \
+    --db /media/scratch/kraken-2.1.2/db/standard_20210517 \
+    ${out}/data/ONT/${name}_ont.fq.gz \
+
+    awk '\$1> 0.0' ${out}/results/kraken_reads/${name}_ONT.report \
+    > ${out}/results/kraken_reads/${name}_ONT_filtered.report
+
+    pigz -p200 ${out}/data/ONT/kraken_ont_${name}.fq
+
+    rm -f ${out}/data/ONT/kraken_ont_${name}.fq
+
+  fi
+
+  if [[ ( $data == 'PB' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) || ( $data == 'ONT_PB' ) ]]
+    then
+
+      kraken2 \
+      --threads 200 \
+      --output - \
+      --report ${out}/results/kraken_reads/${name}_PB.report \
+      --use-names \
+      --gzip-compressed \
+      --unclassified-out ${out}/data/PB/kraken_pb_${name}.fq \
+      --db /media/scratch/kraken-2.1.2/db/standard_20210517 \
+      ${out}/data/PB/${name}_pb.fq.gz \
+
+      awk '\$1> 0.0' ${out}/results/kraken_reads/${name}_PB.report \
+      > ${out}/results/kraken_reads/${name}_PB_filtered.report
+
+      pigz -p200 ${out}/data/PB/kraken_pb_${name}.fq
+
+      rm -f ${out}/data/PB/kraken_pb_${name}.fq
+    fi
 
 """ > ${out}/shell/qsub_kraken_reads_${name}.sh
 

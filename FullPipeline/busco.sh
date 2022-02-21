@@ -3,7 +3,8 @@
 out=$1
 name=$2
 busco=$3
-pwd=$4
+data=$4
+pwd=$5
 
 #############################
 
@@ -37,7 +38,7 @@ echo """
 
   cd ${out}/results/AssemblyQC/Busco
 
-  busco -i ${out}/results/assembly/${name}/scaffolds.fasta \
+  busco -i ../../../output/${name}_${data}.fa \
     -o ${name} \
     -m genome \
     -c 200 \

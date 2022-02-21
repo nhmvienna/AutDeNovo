@@ -37,7 +37,7 @@ mkdir -p ${out}/results/rawQC
 
 NanoPlot \
   -t 200 \
-  --summary ${out}/data/${name}_sequencing_summary.txt \
+  --summary ${out}/data/ONT/${name}_sequencing_summary.txt \
   --plots dot \
   -o ${out}/results/rawQC/${name}_ONT_nanoplot
 
