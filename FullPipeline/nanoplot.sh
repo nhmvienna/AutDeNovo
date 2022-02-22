@@ -78,6 +78,6 @@ else
 fi
 
 
-""" > ${out}/shell/qsub_nanoplot_${name}.sh
+""" > ${out}/shell/qsub_nanoplot_${name}_${type}.sh
 
 qsub -W block=true ${out}/shell/qsub_nanoplot_${name}_${type}.sh

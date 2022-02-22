@@ -29,7 +29,7 @@ echo """
   #PBS -l walltime=48:00:00
 
   ## Select a maximum of 100 cores and 200gb of RAM
-  #PBS -l select=1:ncpus=100:mem=500gb
+  #PBS -l select=1:ncpus=200:mem=500gb
 
   ## load all necessary software into environment
   module load Assembly/Jellyfish-2.3.0
@@ -58,7 +58,7 @@ echo """
       -C \
       -m 31 \
       -s 200000000000 \
-      -t 100 \
+      -t 200 \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
       ${out}/data/Illumina/kraken_illumina_${name}_1.fq \
@@ -85,7 +85,7 @@ echo """
       -C \
       -m 31 \
       -s 200000000000 \
-      -t 100 \
+      -t 200 \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
       ${out}/data/ONT/kraken_ont_${name}.fq
@@ -111,7 +111,7 @@ echo """
       -C \
       -m 31 \
       -s 200000000000 \
-      -t 100 \
+      -t 200 \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
       ${out}/data/PB/kraken_pb_${name}.fq
@@ -155,10 +155,15 @@ echo """
   ## Select a maximum of 100 cores and 200gb of RAM
   #PBS -l select=1:ncpus=1:mem=500gb
 
-  ## run SmudgePlot
-
+  ## load all necessary software into environment
+  module load Assembly/Jellyfish-2.3.0
   source /opt/anaconda3/etc/profile.d/conda.sh
   conda activate smudgeplot-0.2.4
+
+  ## run SmudgePlot
+
+  ## Go to pwd
+  cd ${pwd}
 
   L=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo L)
   U=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo U)

@@ -54,7 +54,7 @@ echo """
     spades.py \
       -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
       -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
-      -t 200 \
+      -t 199 \
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
@@ -67,7 +67,7 @@ echo """
       -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
       -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
       --nanopore ${out}/data/ONT/kraken_ont_${name}.fq.gz \
-      -t 200 \
+      -t 199 \
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
@@ -80,7 +80,7 @@ echo """
       -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
       -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
       --pacbio ${out}/data/PB/kraken_pb_${name}.fq.gz \
-      -t 200 \
+      -t 199 \
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
@@ -94,7 +94,7 @@ echo """
       -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
       --pacbio ${out}/data/PB/kraken_pb_${name}.fq.gz \
       --nanopore ${out}/data/ONT/kraken_ont_${name}.fq.gz \
-      -t 200 \
+      -t 199 \
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
