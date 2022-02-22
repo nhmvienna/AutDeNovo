@@ -5,6 +5,8 @@ name=$2
 data=$3
 pwd=$4
 
+echo "sh FullPipeline/denovo.sh $1 $2 $3 $4"
+
 #############################
 
 mkdir ${out}/results/assembly
@@ -56,7 +58,7 @@ echo """
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
 
   elif [[ ( $data == 'ILL_PB' ) ]]
   then
@@ -69,7 +71,7 @@ echo """
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
 
   elif [[ ( $data == 'ILL_ONT' ) ]]
   then
@@ -82,7 +84,7 @@ echo """
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
 
   elif [[ ( $data == 'ILL_ONT_PB' ) ]]
   then
@@ -96,7 +98,7 @@ echo """
       -m 1200 \
       -o ${out}/results/assembly/${name}
 
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
 
   elif [[ ( $data == 'ONT' ) ]]
   then
@@ -110,7 +112,7 @@ echo """
     --threads 200 \
     --scaffold
 
-    mv ${out}/results/assembly/${name}/assembly.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/assembly.fasta ${out}/output/${name}_${data}.fa
 
   elif [[ ( $data == 'PB' ) ]]
   then
@@ -124,7 +126,7 @@ echo """
     --threads 128 \
     --scaffold
 
-    mv ${out}/results/assembly/${name}/assembly.fasta ${out}/results/assembly/${name}/${name}_${data}.fa
+    mv ${out}/results/assembly/${name}/assembly.fasta ${out}/output/${name}_${data}.fa
 
   elif [[ ( $data == 'ONT_PB' ) ]]
   then

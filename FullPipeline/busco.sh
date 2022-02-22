@@ -6,6 +6,8 @@ busco=$3
 data=$4
 pwd=$5
 
+echo "sh FullPipeline/busco.sh $1 $2 $3 $4 $5"
+
 #############################
 
 mkdir -p ${out}/results/AssemblyQC/Busco

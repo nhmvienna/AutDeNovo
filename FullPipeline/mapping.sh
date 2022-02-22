@@ -5,6 +5,8 @@ name=$2
 data=$3
 pwd=$4
 
+echo "sh FullPipeline/mapping.sh $1 $2 $3 $4"
+
 #############################
 
 mkdir ${out}/results/mapping
@@ -39,11 +41,11 @@ echo """
   then
 
     ## index reference
-    bwa index ${out}/results/output/${name}_${data}.fa
+    bwa index ${out}/output/${name}_${data}.fa
 
     bwa mem \
       -t 200 \
-      ${out}/results/output/${name}_${data}.fa \
+      ${out}/output/${name}_${data}.fa \
       ${out}/data/kraken_${name}_1.fq.gz \
       ${out}/data/kraken_${name}_2.fq.gz \
       | samtools view -bh | samtools sort \
@@ -53,12 +55,12 @@ echo """
   then
 
     ## index reference
-    minimap2 -d ${out}/results/assembly/${name}/${name}_${data}.mmi \
-      ${out}/results/output/${name}_${data}.fa
+    minimap2 -d ${out}/output/${name}_${data}.mmi \
+      ${out}/output/${name}_${data}.fa
 
     minimap2 -ax map-ont \
     -t 100 \
-    ${out}/results/output/${name}_${data}.fa \
+    ${out}/output/${name}_${data}.fa \
     ${out}/data/ONT/kraken_ont_${name}.fq.gz \
     | samtools view -bh | samtools sort \
     > ${out}/results/mapping/${name}.bam
@@ -66,12 +68,12 @@ echo """
   else
 
     ## index reference
-    minimap2 -d ${out}/results/assembly/${name}/${name}_${data}.mmi \
-      ${out}/results/output/${name}_${data}.fa
+    minimap2 -d ${out}/output/${name}_${data}.mmi \
+      ${out}/output/${name}_${data}.fa
 
     minimap2 -ax map-pb \
     -t 100 \
-    ${out}/results/output/${name}_${data}.fa \
+    ${out}/output/${name}_${data}.fa \
     ${out}/data/PB/kraken_pb_${name}.fq.gz \
     | samtools view -bh | samtools sort \
     > ${out}/results/mapping/${name}.bam

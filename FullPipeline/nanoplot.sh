@@ -5,6 +5,8 @@ name=$2
 type=$3
 pwd=$4
 
+echo "sh FullPipeline/nanoplot.sh $1 $2 $3 $4"
+
 #############################
 
 echo """
@@ -54,7 +56,6 @@ then
     -t pdf \
     -o ${out}/results/rawQC/${name}_ONT_nanoplot/${name}_ONT_nanoplot-report.pdf \
     ${out}/results/rawQC/${name}_ONT_nanoplot/NanoPlot-report.html
-
 
 else
 

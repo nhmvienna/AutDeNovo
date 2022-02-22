@@ -4,6 +4,8 @@ out=$1
 name=$2
 pwd=$3
 
+echo "sh FullPipeline/fastqc.sh $1 $2 $3"
+
 #############################
 
 echo """

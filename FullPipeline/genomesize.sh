@@ -5,6 +5,8 @@ name=$2
 data=$3
 pwd=$4
 
+echo "sh FullPipeline/genomesize.sh $1 $2 $3 $4"
+
 #############################
 
 mkdir ${out}/results/GenomeSize
@@ -130,6 +132,28 @@ echo """
   -k 31 \
   -p 2 \
   -o ${out}/results/GenomeSize/${name}
+""" > ${out}/shell/qsub_genomesize_${name}.sh
+
+qsub  -W block=true  ${out}/shell/qsub_genomesize_${name}.sh
+
+
+echo """
+  #!/bin/sh
+
+  ## name of Job
+  #PBS -N smudgeplot_${name}
+
+  ## Redirect output stream to this file.
+  #PBS -o ${out}/log/Smudgeplot_${name}_log.txt
+
+  ## Stream Standard Output AND Standard Error to outputfile (see above)
+  #PBS -j oe
+
+  ## Select a maximum walltime of 2h
+  #PBS -l walltime=48:00:00
+
+  ## Select a maximum of 100 cores and 200gb of RAM
+  #PBS -l select=1:ncpus=1:mem=500gb
 
   ## run SmudgePlot
 
@@ -160,6 +184,6 @@ echo """
 
   rm -f ${out}/data/kraken_${name}_*.fq
 
-""" > ${out}/shell/qsub_genomesize_${name}.sh
+""" > ${out}/shell/qsub_smudgeplot_${name}.sh
 
-qsub  -W block=true  ${out}/shell/qsub_genomesize_${name}.sh
+qsub  ${out}/shell/qsub_smudgeplot_${name}.sh

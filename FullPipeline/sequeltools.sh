@@ -5,6 +5,8 @@ name=$2
 pwd=$3
 pb=$4
 
+echo "sh FullPipeline/sequeltools.sh $1 $2 $3 $4"
+
 #############################
 
 echo """

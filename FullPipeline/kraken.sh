@@ -5,6 +5,8 @@ name=$2
 data=$3
 pwd=$4
 
+echo "sh FullPipeline/kraken.sh $1 $2 $3 $4"
+
 #############################
 
 mkdir ${out}/results/kraken_reads
@@ -25,7 +27,7 @@ echo """
   #PBS -l walltime=48:00:00
 
   ## Select a maximum of 100 cores and 200gb of RAM
-  #PBS -l select=1:ncpus=200:mem=400gb
+  #PBS -l select=1:ncpus=199:mem=400gb
 
   ## load all necessary software into environment
   module load Assembly/kraken-2.1.2
@@ -37,7 +39,7 @@ echo """
   then
 
     kraken2 \
-    --threads 200 \
+    --threads 199 \
     --output - \
     --report ${out}/results/kraken_reads/${name}_Illumina.report \
     --use-names \
@@ -51,7 +53,7 @@ echo """
     awk '\$1> 0.0' ${out}/results/kraken_reads/${name}_Illumina.report \
     > ${out}/results/kraken_reads/${name}_Illumina_filtered.report
 
-    pigz -p200 ${out}/data/Illumina/kraken*.fq
+    pigz -p199 ${out}/data/Illumina/kraken*.fq
 
     rm -f ${out}/data/Illumina/kraken*.fq
   fi
@@ -60,7 +62,7 @@ echo """
   then
 
     kraken2 \
-    --threads 200 \
+    --threads 199 \
     --output - \
     --report ${out}/results/kraken_reads/${name}_ONT.report \
     --use-names \
@@ -94,7 +96,7 @@ echo """
       awk '\$1> 0.0' ${out}/results/kraken_reads/${name}_PB.report \
       > ${out}/results/kraken_reads/${name}_PB_filtered.report
 
-      pigz -p200 ${out}/data/PB/kraken_pb_${name}.fq
+      pigz -p199 ${out}/data/PB/kraken_pb_${name}.fq
 
       rm -f ${out}/data/PB/kraken_pb_${name}.fq
     fi

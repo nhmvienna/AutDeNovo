@@ -81,7 +81,7 @@ elif [[ -z "$fwd" && !(-z "$pb") && !(-z "$ont") ]]; then data="ONT_PB";
 elif [[ -z "$fwd" && -z "$pb" && !(-z "$ont") ]]; then data="ONT";
 elif [[ -z "$fwd" && -z "$ont" && !(-z "$pb") ]]; then data="PB"; fi
 
-echo "Dataset consists of "$data
+echo "Dataset consists of "$data | tee -a ${out}/shell/pipeline.sh
 
 ###############################################
 ######## RUN ALL STEPS IN THE PIPELINE ########
@@ -99,8 +99,10 @@ mkdir ${out}/log
 mkdir ${out}/output
 
 ## (1) make copy of original reads
-echo "Copying data"
-date
+echo "Copying data" \
+| tee -a ${out}/shell/pipeline.sh
+date \
+| tee -a ${out}/shell/pipeline.sh
 
 ## for Illumina data
 if [[ !(-z $fwd) ]]
@@ -109,8 +111,8 @@ then
   cp ${fwd} ${out}/data/Illumina/${name}_1.fq.gz &
   cp ${rev} ${out}/data/Illumina/${name}_2.fq.gz
 
-  echo "Illumina data copied"
-  date
+  echo "Illumina data copied" | tee -a ${out}/shell/pipeline.sh
+  date | tee -a ${out}/shell/pipeline.sh
 fi
 
 ## for ONT data
@@ -120,8 +122,8 @@ then
   cat ${ont}/*fastq.gz > ${out}/data/ONT/${name}_ont.fq.gz &
   cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
 
-  echo "ONT data copied"
-  date
+  echo "ONT data copied" | tee -a ${out}/shell/pipeline.sh
+  date | tee -a ${out}/shell/pipeline.sh
 fi
 
 ## for PacBio
@@ -132,8 +134,8 @@ then
   mkdir -p ${out}/data/PB
   samtools view ${pb}/*subreads.bam | awk '{print "@"$1"\n"$10"\n+\n"$11}' | gzip > ${out}/data/PB/${name}_pb.fq.gz
 
-  echo "PacBio data copied"
-  date
+  echo "PacBio data copied" | tee -a ${out}/shell/pipeline.sh
+  date | tee -a ${out}/shell/pipeline.sh
 fi
 
 printf "########################\n\n"
@@ -143,19 +145,19 @@ wait
 ###############################################
 ############# (1) QC and Trimming #############
 
-echo "Start raw QC"
+echo "Start raw QC" | tee -a ${out}/shell/pipeline.sh
 
 ## Illumina data
 if [[ !(-z $fwd) ]]
 then
 
-  echo "of Illumina data"
-  date
+  echo "of Illumina data" | tee -a ${out}/shell/pipeline.sh
+  date | tee -a ${out}/shell/pipeline.sh
 
   sh FullPipeline/fastqc.sh \
   $out \
   $name \
-  $PWD
+  $PWD | tee -a ${out}/shell/pipeline.sh
 
 fi
 
@@ -163,14 +165,15 @@ fi
 if [[ !(-z $ont) ]]
 then
 
-  echo "of ONT data"
-  date
+  echo "of ONT data" | tee -a ${out}/shell/pipeline.sh
+  date | tee -a ${out}/shell/pipeline.sh
 
   sh FullPipeline/nanoplot.sh \
   $out \
   $name \
   "ONT" \
-  $PWD
+  $PWD \
+  | tee -a ${out}/shell/pipeline.sh
 
 fi
 
@@ -178,19 +181,20 @@ fi
 if [[ !(-z $pb) ]]
 then
 
-  echo "of PacBio data"
-  date
+  echo "of PacBio data" | tee -a ${out}/shell/pipeline.sh
+  date | tee -a ${out}/shell/pipeline.sh
 
   sh FullPipeline/nanoplot.sh \
   $out \
   $name \
   "PB" \
-  $PWD
+  $PWD \
+  | tee -a ${out}/shell/pipeline.sh
 
 
 fi
 
-printf "########################\n\n"
+printf "########################\n\n" | tee -a ${out}/shell/pipeline.sh
 
 ## minimum PHRED basequality: 20
 ## minimum read length 75bp
@@ -199,14 +203,16 @@ printf "########################\n\n"
 if [[ !(-z $fwd) ]]
 then
 
-  echo "Start trimming"
-  date
+  echo "Start trimming" | tee -a ${out}/shell/pipeline.sh
+  date | tee -a ${out}/shell/pipeline.sh
 
   sh FullPipeline/trim.sh \
   $out \
   $name \
-  $PWD
-  printf "########################\n\n"
+  $PWD \
+  | tee -a ${out}/shell/pipeline.sh
+
+  printf "########################\n\n" | tee -a ${out}/shell/pipeline.sh
 
 fi
 
@@ -215,60 +221,68 @@ fi
 
 ## detect human, bacterial and viral contamination in the trimmed reads, make a report and only retain the non-conmatinant reads for de-novo assembly
 
-echo "Start decontamination"
-date
+echo "Start decontamination" | tee -a ${out}/shell/pipeline.sh
+date | tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline/kraken_reads.sh \
+sh FullPipeline/kraken.sh \
 $out \
 $name \
 $data \
-$PWD
-printf "########################\n\n"
+$PWD \
+| tee -a ${out}/shell/pipeline.sh
+printf "########################\n\n" | tee -a ${out}/shell/pipeline.sh
 
 ##############################################
 ######## (3) Estimate Genome Size ############
 
 # using Jellyfish to calculate kmer-coverage and genomoscope for formal analyses
 
-echo "Estimation of genomesize"
-date
+echo "Estimation of genomesize" | tee -a ${out}/shell/pipeline.sh
+date | tee -a ${out}/shell/pipeline.sh
 
 sh FullPipeline/genomesize.sh \
 $out \
 $name \
 $data \
-$PWD
-printf "########################\n\n"
+$PWD \
+| tee -a ${out}/shell/pipeline.sh
+
+printf "########################\n\n" | tee -a ${out}/shell/pipeline.sh
+
 
 ###############################################
 ########### (4) Denovo assembly ###############
 
 ## denovo assembly with Spades
 
-echo "Starting denovo assembly"
-date
+echo "Starting denovo assembly" | tee -a ${out}/shell/pipeline.sh
+date | tee -a ${out}/shell/pipeline.sh
 
 sh FullPipeline/denovo.sh \
 $out \
 $name \
 $data \
-$PWD
-printf "########################\n\n"
+$PWD \
+| tee -a ${out}/shell/pipeline.sh
+
+printf "########################\n\n" | tee -a ${out}/shell/pipeline.sh
 
 ###############################################
 ########### (5) Assembly QC ###############
 
 ## (A) QUAST analysis
 
-echo "Starting assembly QC with Quast"
-date
+echo "Starting assembly QC with Quast" | tee -a ${out}/shell/pipeline.sh
+date | tee -a ${out}/shell/pipeline.sh
 
 sh FullPipeline/quast.sh \
 $out \
 $name \
 $data \
-$PWD
-printf "########################\n\n"
+$PWD \
+| tee -a ${out}/shell/pipeline.sh
+
+printf "########################\n\n" | tee -a ${out}/shell/pipeline.sh
 
 # (B) BUSCO analysis
 
@@ -280,49 +294,73 @@ $out \
 $name \
 $busco \
 $data \
-$PWD
-printf "########################\n\n"
+$PWD \
+| tee -a ${out}/shell/pipeline.sh
+
+printf "########################\n\n" \
+| tee -a ${out}/shell/pipeline.sh
 
 ## (C) Mapping reads
 
-echo "Mapping reads against reference"
-date
+echo "Mapping reads against reference" \
+| tee -a ${out}/shell/pipeline.sh
+date \
+| tee -a ${out}/shell/pipeline.sh
 
 sh FullPipeline/mapping.sh \
 $out \
 $name \
 $data \
-$PWD
-printf "########################\n\n"
+$PWD \
+| tee -a ${out}/shell/pipeline.sh
+
+printf "########################\n\n" \
+| tee -a ${out}/shell/pipeline.sh
 
 ## (D) Blast genome against the nt database
 
-echo "BLASTing genome against the nt database"
-date
+echo "BLASTing genome against the nt database" \
+| tee -a ${out}/shell/pipeline.sh
+date \
+| tee -a ${out}/shell/pipeline.sh
 
 sh FullPipeline/blast.sh \
 $out \
 $name \
 $data \
-$PWD
-printf "########################\n\n"
+$PWD \
+| tee -a ${out}/shell/pipeline.sh
+
+printf "########################\n\n" \
+| tee -a ${out}/shell/pipeline.sh
 
 ## (E) Summarize results with blobtools
 
-echo "Summarize with Blobtools"
-date
+echo "Summarize with Blobtools" \
+| tee -a ${out}/shell/pipeline.sh
+date \
+| tee -a ${out}/shell/pipeline.sh
 
 sh FullPipeline/blobtools.sh \
 $out \
 $name \
 $busco \
 $data \
-$PWD
-printf "########################\n\n"
+$PWD \
+| tee -a ${out}/shell/pipeline.sh
 
-printf "Anlayses done!!\nNow copying results to output folder and starting Firefox with summaries"
-date
-printf "########################\n\n"
+printf "########################\n\n" \
+| tee -a ${out}/shell/pipeline.sh
+
+printf "Anlayses done!!\nNow copying results to output folder and writing commands for HTML output\n" \
+| tee -a ${out}/shell/pipeline.sh
+date \
+| tee -a ${out}/shell/pipeline.sh
+printf "########################\n\n" \
+| tee -a ${out}/shell/pipeline.sh
+
+## gzip assembly FASTA
+pigz ${out}/output/${name}_${data}.fa
 
 printf """
 # ############### HTML output #####################
@@ -331,9 +369,6 @@ printf """
 
 if [[ !(-z $fwd) ]]
 then
-  ## raw read QC
-  firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.html &
-  firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.html &
 
   printf """
   ## Illumina Data - FASTQC of raw reads
@@ -343,11 +378,6 @@ then
 
   cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.zip ${out}/output/${name}_1_raw_Illumina_fastqc.zip &
   cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.zip ${out}/output/${name}_2_raw_Illumina_fastqc.zip
-
-
-  ## trimming
-  firefox --new-tab ${out}/data/Illumina/${name}_1_val_1_fastqc.html &
-  firefox --new-tab ${out}/data/Illumina/${name}_2_val_2_fastqc.html &
 
   printf """
   ## Illumina Data - FASTQC after trimming
@@ -385,10 +415,6 @@ cp ${out}/results/kraken_reads/${name}_PB_filtered.report ${out}/output/${name}_
 
 fi
 
-## Explore Kraken output
-docker run -p 5000:80 florianbw/pavian &
-firefox --new-tab http://127.0.0.1:5000 &
-
 printf """
 ## run Pavian to explore the Kraken output(s)
 docker run -p 5000:80 florianbw/pavian &
@@ -397,40 +423,25 @@ firefox --new-tab http://127.0.0.1:5000
 
 ## genomesize
 cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
-firefox --new-tab ${out}/output/${name}_genomesize/linear_plot.png &
 
 ##QUAST
 cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
-firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html &
 
+#blobtools
 printf """
 ## QUAST
 firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html
 """ >> ${out}/output/HTML_outputs.sh
 
-#blobtools
-awhile=10
-source /opt/venv/blobtools-3.0.0/bin/activate
-
-blobtools view \
-  --out ${out}/results/AssemblyQC/blobtools/out \
-  --interactive \
-  ${out}/results/AssemblyQC/blobtools \
-  & sleep $awhile && firefox --new-tab http://localhost:8001/view/all &
-
 printf """
 ## Blobtools
 source /opt/venv/blobtools-3.0.0/bin/activate
 
-## if you get an error message, try other ports, 8002, 8003, etc.
 blobtools view \
   --out ${out}/results/AssemblyQC/blobtools/out \
   --interactive \
   ${out}/results/AssemblyQC/blobtools \
-  & sleep $awhile && firefox --new-tab http://localhost:8001/view/all
+
+### now copy the URL that is printed in the commandline and paste it in Firefox
 
 """ >> ${out}/output/HTML_outputs.sh
-
-## finally, copy scaffolds file from
-
-pigz ${out}/output/${name}_${data}.fa

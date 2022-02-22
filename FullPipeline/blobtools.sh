@@ -6,6 +6,8 @@ busco=$3
 data=$4
 pwd=$5
 
+echo "sh FullPipeline/blobtools.sh $1 $2 $3 $4 $5"
+
 ##########################
 
 ### and BlobTools
