@@ -382,7 +382,7 @@ $PWD \
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
 
-printf "## Anlayses done!!\nNow copying results to output folder and writing commands for HTML output\n" \
+printf "# Anlayses done!!\n## Now copying results to output folder and writing commands for HTML output\n## check out ${out}/output/HTML_outputs.sh for more details" \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -400,26 +400,26 @@ printf """
 if [[ !(-z $fwd) ]]
 then
 
-  printf """
-  ## Illumina Data - FASTQC of raw reads
-  firefox --new-tab ${out}/results/${name}_Illumina_fastqc/rawQC/${name}_1_fastqc.html
-  firefox --new-tab ${out}/results/${name}_Illumina_fastqc/rawQC/${name}_2_fastqc.html
-  """ >> ${out}/output/HTML_outputs.sh
+printf """
+## Illumina Data - FASTQC of raw reads
+firefox --new-tab ${out}/results/${name}_Illumina_fastqc/rawQC/${name}_1_fastqc.html
+firefox --new-tab ${out}/results/${name}_Illumina_fastqc/rawQC/${name}_2_fastqc.html
+""" >> ${out}/output/HTML_outputs.sh
 
-  cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.zip ${out}/output/${name}_1_raw_Illumina_fastqc.zip &
-  cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.zip ${out}/output/${name}_2_raw_Illumina_fastqc.zip
+cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.zip ${out}/output/${name}_1_raw_Illumina_fastqc.zip &
+cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.zip ${out}/output/${name}_2_raw_Illumina_fastqc.zip
 
-  printf """
-  ## Illumina Data - FASTQC after trimming
-  firefox --new-tab ${out}/data/Illumina/${name}_1_val_1_fastqc.html
-  firefox --new-tab ${out}/data/Illumina/${name}_2_val_2_fastqc.html
-  """ >> ${out}/output/HTML_outputs.sh
+printf """
+## Illumina Data - FASTQC after trimming
+firefox --new-tab ${out}/data/Illumina/${name}_1_val_1_fastqc.html
+firefox --new-tab ${out}/data/Illumina/${name}_2_val_2_fastqc.html
+""" >> ${out}/output/HTML_outputs.sh
 
-  cp ${out}/data/Illumina/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_Illumina_fastqc.zip &
-  cp ${out}/data/Illumina/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_Illumina_fastqc.zip
+cp ${out}/data/Illumina/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_Illumina_fastqc.zip &
+cp ${out}/data/Illumina/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_Illumina_fastqc.zip
 
-  ## kraken
-  cp ${out}/results/kraken_reads/${name}_Illumina_filtered.report ${out}/output/${name}_Illumina_kraken.txt
+## kraken
+cp ${out}/results/kraken_reads/${name}_Illumina_filtered.report ${out}/output/${name}_Illumina_kraken.txt
 
 fi
 
@@ -438,7 +438,7 @@ if [[ !(-z $pb) ]]
 then
 
 ## Nanoplot
-cp -r ${out}/results/rawQC/${name}_PB_sequeltools ${out}/output/
+cp -r ${out}/results/rawQC/${name}_PB_nanoplot ${out}/output/
 
 ##kraken
 cp ${out}/results/kraken_reads/${name}_PB_filtered.report ${out}/output/${name}_PB_kraken.txt

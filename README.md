@@ -1,6 +1,6 @@
 # Automated de-novo assembly pipeline (AutDeNovo)
 
-The purpose of this repository is to provide a simple yet state-of-the-art de-novo assembly pipeline specifically tailored to short-read paired-end Illumina sequencing data of non-human museum samples. This pipeline is largely based on the workflow kindly provided by **Tilman Schell** from the [TBG Loewe](https://tbg.senckenberg.de/de/) of the Senkenberg Gesellschaft in Frankfurt. Note, that this pipeline is specifically tailored to our server infrastructure and can thus only be run at the NHM without further modifications.
+The purpose of this repository is to provide a simple yet state-of-the-art de-novo assembly pipeline of non-human museum samples based on either high-quality short-read Illumina sequencing data, PacBio long reads based on SMRTcell technology or Oxford Nanopore long-read sequencing data after high accuracry basecalling. The workflow allows to use each data type separately or us any combination of sequencing data. The Illumina-specifc steps of this pipeline are largely based on the workflow kindly provided by **Tilman Schell** from the [TBG Loewe](https://tbg.senckenberg.de/de/) of the Senkenberg Gesellschaft in Frankfurt. Note, that this pipeline is specifically tailored to our server infrastructure and can thus only be run at the NHM without further modifications.
 
 ## Input
 
@@ -28,7 +28,7 @@ cd AutDeNovo
 
 ## run pipeline on test dataset
 ## run pipeline on test dataset
-AutDeNovoFull.sh \
+./AutDeNovoFull.sh \
   Name=SomeFish \
   OutputFolder=Test/SomeFish \
   Fwd=Test/subset/Illumina/Garra474_1.fq.gz \
