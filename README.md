@@ -1,15 +1,22 @@
 # Automated de-novo assembly pipeline (AutDeNovo)
 
-The purpose of this repository is to provide a simple yet state-of-the-art de-novo assembly pipeline of non-human museum samples based on either high-quality short-read Illumina sequencing data, PacBio long reads based on SMRTcell technology or Oxford Nanopore long-read sequencing data after high accuracry basecalling. The workflow allows to use each data type separately or us any combination of sequencing data. The QC and Illumina-specifc steps of this pipeline are largely based on the workflow kindly provided by **Tilman Schell** from the **[LOEWE Centre for Translational Biodiversity Genomics​](https://tbg.senckenberg.de/de/)** in Frankfurt. Note, that this pipeline is specifically tailored to our server infrastructure and can thus only be run at the NHM without further modifications.
+The purpose of this repository is to provide a simple yet state-of-the-art de-novo assembly pipeline of non-human museum samples based on either high-quality short-read Illumina sequencing data, PacBio long reads based on SMRTcell technology or Oxford Nanopore long-read sequencing data after high accuracy basecalling. The workflow allows to use each data type separately or us any combination of sequencing data. The QC and Illumina-specifc steps of this pipeline are largely based on the workflow kindly provided by **Tilman Schell** from the **[LOEWE Centre for Translational Biodiversity Genomics​](https://tbg.senckenberg.de/de/)** in Frankfurt. Note, that this pipeline is specifically tailored to our server infrastructure and can thus only be run at the NHM without further modifications.
 
 ## Input
 
-The pipeline requires four obligatory input parameters:
+The pipeline requires these two obligatory input parameters:
 
 -   **Name**:   The name (without spaces and special characters) of the sample to be used for naming the output folder, e.g. _SomeFish_
 -   **OutputFolder**: The full path to the output folder where are the processed data and output should be stored, e.g. _/media/inter/SomeFish_
--   **Fwd**: The full path to the raw foward-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_1.fq.gz_
+
+In addition, you need to provide the paths to **at least one input dataset**, which can be either (1) high-quality short-read Illumina sequencing data, (2) PacBio long reads based on SMRTcell technology or (3) Oxford Nanopore long-read sequencing data after high accuracy basecalling.
+
+**Illumina**
+
+-   **Fwd**: The full path to the raw forward-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_1.fq.gz_
 -   **Rev**: The full path to the corresponding raw reverse-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_2.fq.gz_
+
+-   **ONT**: The full path to the folder that contains the **passed** based-called reads split in one or multiple FASTQ files (a folder usually called `/PASS`) AND the `sequencing_summary.txt` output file from basecalling with [Guppy](https://denbi-nanopore-training-course.readthedocs.io/en/latest/basecalling/basecalling.html). This summary file is needed for QC of the raw reads.
 
 In addition, you can optionally also provide the name of the BUSCO database, which should be used for BUSCO analyses during the quality control steps to evaluate the quality and the completeness of the denovo assembly.
 

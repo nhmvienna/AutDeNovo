@@ -49,7 +49,7 @@ help='''
 ********************************
 
 
-AutDeNovo v. 0.01 - 31/01/2022
+AutDeNovo v. 0.02 - 23/02/2022
 
 A typcial command line looks like this:
 
