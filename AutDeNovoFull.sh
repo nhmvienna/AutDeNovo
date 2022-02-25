@@ -136,7 +136,7 @@ then
   module load Tools/samtools-1.12
 
   mkdir -p ${out}/data/PB
-  samtools view ${pb}/*subreads.bam | awk '{print "@"$1"\n"$10"\n+\n"$11}' | gzip > ${out}/data/PB/${name}_pb.fq.gz
+  cp ${pb}/*fastq.gz | gzip >> ${out}/data/PB/${name}_pb.fq.gz
 
   echo "## PacBio data copied" \
   | tee -a ${out}/shell/pipeline.sh
