@@ -29,7 +29,7 @@ echo """
   #PBS -l walltime=48:00:00
 
   ## Select a maximum of 100 cores and 200gb of RAM
-  #PBS -l select=1:ncpus=100:mem=1500gb
+  #PBS -l select=1:ncpus=100:mem=1499gb
 
   ## load all necessary software into environment
   module load Assembly/Jellyfish-2.3.0
