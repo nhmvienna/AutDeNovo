@@ -11,12 +11,18 @@ The pipeline requires these two obligatory input parameters:
 
 In addition, you need to provide the paths to **at least one input dataset**, which can be either (1) high-quality short-read Illumina sequencing data, (2) PacBio long reads based on SMRTcell technology or (3) Oxford Nanopore long-read sequencing data after high accuracy basecalling.
 
-**Illumina**
+**_Illumina_**
 
 -   **Fwd**: The full path to the raw forward-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_1.fq.gz_
 -   **Rev**: The full path to the corresponding raw reverse-oriented Illumina read-file in gzipped FASTQ-format, e.g. _/media/inter/rawreads/Garra_2.fq.gz_
 
+**_Oxford Nanopore_**
+
 -   **ONT**: The full path to the folder that contains the **passed** based-called reads split in one or multiple FASTQ files (a folder usually called `/PASS`) AND the `sequencing_summary.txt` output file from basecalling with [Guppy](https://denbi-nanopore-training-course.readthedocs.io/en/latest/basecalling/basecalling.html). This summary file is needed for QC of the raw reads.
+
+**_Pacific Biosciences_**
+
+-   **PB**: The full path to the folder that contains the **circular consensus sequences (CCS)** in FASTQ format generated from the raw subreads.bam file using the ccs program from PacBio. See [here](https://ccs.how), for more details.
 
 In addition, you can optionally also provide the name of the BUSCO database, which should be used for BUSCO analyses during the quality control steps to evaluate the quality and the completeness of the denovo assembly.
 
