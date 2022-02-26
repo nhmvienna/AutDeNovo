@@ -3,9 +3,11 @@
 out=$1
 name=$2
 data=$3
-pwd=$4
+decont=$4
+pwd=$5
 
-echo "sh FullPipeline/genomesize.sh $1 $2 $3 $4"
+
+echo "sh FullPipeline/genomesize.sh $1 $2 $3 $4 $5"
 
 #############################
 

@@ -32,6 +32,9 @@ do
     BUSCOdb=*)
       busco="${i#*=}"
       ;;
+    Decont=*)
+      decont="${i#*=}"
+      ;;
     *)
       # unknown option
       ;;
@@ -71,6 +74,7 @@ if [[ -z "$fwd" && !(-z "$rev" ) ]]; then echo "## ${help}Fwd=/media/seq/fwd.fq.
 if [[  -z "$rev" && !(-z "$fwd" ) ]]; then echo "## ${help}Rev=/media/seq/rev.fq.gz is missing: The full path to the Illumina raw read revese FASTQ file needs to be defined"; exit 4; fi
 if [[ -z "$rev" && -z "$fwd" && -z "$ont" && -z "$pb" ]]; then echo "## ${help}No input defined"; exit 4; fi
 if [ -z "$busco" ]; then busco="vertebrata_odb10"; fi
+if [ -z "$decont" ]; then decont="no"; fi
 
 ## Test which data are available
 if [[ !(-z "$fwd") && -z "$ont" && -z "$pb" ]]; then data="ILL";
