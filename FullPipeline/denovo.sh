@@ -14,12 +14,12 @@ mkdir ${out}/results/assembly
 if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
 then
 
-  printf "## Assembly of $data with Spades\n# "
+  printf "# Assembly of $data with Spades\n# "
   date
 
 else
 
-  printf "## Assembly of $data with Flye\n# "
+  printf "# Assembly of $data with Flye\n# "
   date
 
 fi

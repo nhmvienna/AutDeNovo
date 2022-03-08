@@ -387,7 +387,7 @@ $PWD \
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
 
-printf "# Anlayses done!!\n## Now copying results to output folder and writing commands for HTML output\n## check out ${out}/output/${name}_HTML_outputs.sh for more details\n# " \
+printf "# Anlayses done!!\n## Now copying results to output folder and writing commands for HTML output\n## check ${out}/output/${name}_HTML_outputs.sh for more details\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
