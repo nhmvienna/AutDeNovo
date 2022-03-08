@@ -101,8 +101,8 @@ After the pipeline is finished, the scaffolds of the de-novo assembly and the mo
 
 This is just the very first version and I will implement more functionality in the near future. Additional features may include:
 
--   []  Modify more parameters via the commandline or through a config file
--   []  Possibiilty to skip certain steps of the pipeline
+-   [ ]  Modify more parameters via the commandline or through a config file
+-   [ ]  Possibiilty to skip certain steps of the pipeline
 -   [x] Allow ONT or PacBio data or a combination of Illumina and single molecule sequencing data for de-novo assemblies
 
 Please le me know if you have further ideas or need help by posting an issue in this repository.
