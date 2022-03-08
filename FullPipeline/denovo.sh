@@ -5,7 +5,7 @@ name=$2
 data=$3
 pwd=$4
 
-printf "sh FullPipeline/denovo.sh $1 $2 $3 $4\n# "
+printf "sh FullPipeline/denovo.sh $1 $2 $3 $4\n"
 
 #############################
 
@@ -154,4 +154,5 @@ echo """
   fi
 """ > ${out}/shell/qsub_assembly_${name}.sh
 
+printf "# "
 qsub -W block=true ${out}/shell/qsub_assembly_${name}.sh
