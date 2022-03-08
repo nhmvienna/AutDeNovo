@@ -97,7 +97,7 @@ The trimmed reads are remapped with [bwa](http://bio-bwa.sourceforge.net/) (Illu
 
 ## Output
 
-After the pipeline is finished, the scaffolds of the de-novo assembly and the most important QC outputs will be copied to an output folder. These output files include:
+After the pipeline is finished, the scaffolds of the de-novo assembly and the most important QC outputs will be copied to the /output folder. These output files include:
 
 -   FASTQC/Nanoplot outputs before and after trimming (of Illumina data)
 -   The report of the Kraken2 decontamination pipeline
@@ -107,7 +107,7 @@ After the pipeline is finished, the scaffolds of the de-novo assembly and the mo
 -   A table with BLAST hits of each contig
 -   A folder with the amino-acid sequences of all BUSCO hits
 
-In addition, various html-based results can be loaded in Firefox. The file `HTML_outputs.sh` in the output folder contains all commands to load the HTML output in Firefox at a later timepoint.
+In addition, various html-based results can be loaded in Firefox. The file `HTML_outputs.sh` in the /output folder contains all commands to load the HTML output in Firefox at a later timepoint.
 Moreover, the full pipeline including all commands will be written to a file named `pipeline.sh` in the /shell folder. In particular, this file allows to repeat certain analyses in the whole pipeline.
 
 ## Future updates
