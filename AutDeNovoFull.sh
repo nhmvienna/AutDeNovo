@@ -271,6 +271,7 @@ sh FullPipeline/genomesize.sh \
 $out \
 $name \
 $data \
+$decont \
 $PWD \
 | tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" \
@@ -406,8 +407,8 @@ then
 
 printf """
 ## Illumina Data - FASTQC of raw reads
-firefox --new-tab ${out}/results/${name}_Illumina_fastqc/rawQC/${name}_1_fastqc.html
-firefox --new-tab ${out}/results/${name}_Illumina_fastqc/rawQC/${name}_2_fastqc.html
+firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.html
+firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.html
 """ >> ${out}/output/HTML_outputs.sh
 
 cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.zip ${out}/output/${name}_1_raw_Illumina_fastqc.zip &
@@ -461,6 +462,13 @@ cp ${out}/results/GenomeSize/${name}_smudgeplot.png ${out}/output/${name}_genome
 
 ##QUAST
 cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
+
+##BLAST
+cp ${out}/results/${name}/results/BLAST/blastn_${name}.txt ${out}/output/
+pigz ${out}/output/blastn_${name}.txt
+
+## BUSCO
+cp -r ${out}/results/${name}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences
 
 #blobtools
 printf """
