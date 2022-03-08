@@ -468,7 +468,7 @@ cp ${out}/results/BLAST/blastn_${name}.txt ${out}/output/
 pigz ${out}/output/blastn_${name}.txt
 
 ## BUSCO
-cp -r ${out}/results/${name}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences ${out}/output/
+cp -r ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences ${out}/output/
 
 #blobtools
 printf """
