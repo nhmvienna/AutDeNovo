@@ -387,20 +387,21 @@ $PWD \
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
 
-printf "# Anlayses done!!\n## Now copying results to output folder and writing commands for HTML output\n## check out ${out}/output/HTML_outputs.sh for more details\n" \
+printf "# Anlayses done!!\n## Now copying results to output folder and writing commands for HTML output\n## check out ${out}/output/${name}_HTML_outputs.sh for more details\n" \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
 
-## gzip assembly FASTA
+## remove index files and gzip assembly FASTA
+rm -f ${out}/output/${name}_${data}.fa.*
 pigz ${out}/output/${name}_${data}.fa
 
 printf """
 # ############### HTML output #####################
 # # run the following commands in terminal to open Firefox and view the HTML output files
-# """ > ${out}/output/HTML_outputs.sh
+# """ > ${out}/output/${name}_HTML_outputs.sh
 
 if [[ !(-z $fwd) ]]
 then
@@ -409,7 +410,7 @@ printf """
 ## Illumina Data - FASTQC of raw reads
 firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.html
 firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.html
-""" >> ${out}/output/HTML_outputs.sh
+""" >> ${out}/output/${name}_HTML_outputs.sh
 
 cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.zip ${out}/output/${name}_1_raw_Illumina_fastqc.zip &
 cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.zip ${out}/output/${name}_2_raw_Illumina_fastqc.zip
@@ -418,7 +419,7 @@ printf """
 ## Illumina Data - FASTQC after trimming
 firefox --new-tab ${out}/data/Illumina/${name}_1_val_1_fastqc.html
 firefox --new-tab ${out}/data/Illumina/${name}_2_val_2_fastqc.html
-""" >> ${out}/output/HTML_outputs.sh
+""" >> ${out}/output/${name}_HTML_outputs.sh
 
 cp ${out}/data/Illumina/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_Illumina_fastqc.zip &
 cp ${out}/data/Illumina/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_Illumina_fastqc.zip
@@ -454,7 +455,7 @@ printf """
 ## run Pavian to explore the Kraken output(s)
 docker run -p 5000:80 florianbw/pavian &
 firefox --new-tab http://127.0.0.1:5000
-""" >> ${out}/output/HTML_outputs.sh
+""" >> ${out}/output/${name}_HTML_outputs.sh
 
 ## genomesize
 cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
@@ -464,8 +465,8 @@ cp ${out}/results/GenomeSize/${name}_smudgeplot.png ${out}/output/${name}_genome
 cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
 
 ##BLAST
-cp ${out}/results/BLAST/blastn_${name}.txt ${out}/output/
-pigz ${out}/output/blastn_${name}.txt
+cp ${out}/results/BLAST/blastn_${name}.txt ${out}/output/${name}_blastn.txt
+pigz ${out}/output/${name}_blastn.txt
 
 ## BUSCO
 cp -r ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences ${out}/output/
@@ -474,7 +475,7 @@ cp -r ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences ${out
 printf """
 ## QUAST
 firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html
-""" >> ${out}/output/HTML_outputs.sh
+""" >> ${out}/output/${name}_HTML_outputs.sh
 
 printf """
 ## Blobtools
@@ -487,4 +488,4 @@ blobtools view \
 
 ### now copy the URL that is printed in the commandline and paste it in Firefox
 
-""" >> ${out}/output/HTML_outputs.sh
+""" >> ${out}/output/${name}_HTML_outputs.sh
