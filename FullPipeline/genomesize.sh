@@ -193,4 +193,5 @@ echo """
 
 """ > ${out}/shell/qsub_smudgeplot_${name}.sh
 
+printf "# "
 qsub  ${out}/shell/qsub_smudgeplot_${name}.sh
