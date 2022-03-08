@@ -5,7 +5,7 @@ name=$2
 data=$3
 pwd=$4
 
-echo "sh FullPipeline/kraken.sh $1 $2 $3 $4"
+printf "sh FullPipeline/kraken.sh $1 $2 $3 $4\n# "
 
 #############################
 
