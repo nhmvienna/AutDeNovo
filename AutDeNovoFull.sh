@@ -464,11 +464,11 @@ cp ${out}/results/GenomeSize/${name}_smudgeplot.png ${out}/output/${name}_genome
 cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
 
 ##BLAST
-cp ${out}/results/${name}/results/BLAST/blastn_${name}.txt ${out}/output/
+cp ${out}/results/BLAST/blastn_${name}.txt ${out}/output/
 pigz ${out}/output/blastn_${name}.txt
 
 ## BUSCO
-cp -r ${out}/results/${name}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences
+cp -r ${out}/results/${name}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences ${out}/output/
 
 #blobtools
 printf """
