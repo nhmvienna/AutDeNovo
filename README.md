@@ -59,11 +59,11 @@ Below, you will find a brief description of the consecutive analysis steps in th
 
 In the first step, the pipeline uses [trim_galore](https://github.com/FelixKrueger/TrimGalore) for quality trimming and for quality control. More specifically, Trim Galore is a Perl-based wrapper around [Cutadapt](https://github.com/marcelm/cutadapt) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently apply adapter and quality trimming to FastQ files. The parameters used by AutDeNovo are (1) automated adapter detection, (2) a minimum base quality of 20 and (3) a minimum read length of 75. This means that terminal bases with base-quality &lt;20 will be trimmed away and that only intact read-pairs with a minimum length of 75bp each will be retained. After that, FASTQC is generating a html output for a visual inspection of the filtered and trimmed data quality. A browser window will autmatically load once the pipeline is finished. Please check the [trim_galore](https://github.com/FelixKrueger/TrimGalore) and [Cutadapt](https://github.com/marcelm/cutadapt) documentation for more details about the trimming algorithm.
 
-### (2) [Detection of microbial and human contamination](FullPipeline/kraken_reads.sh)
+### (2) [Detection of microbial and human contamination](FullPipeline/kraken.sh)
 
 In the second step, the pipeline invoces [kraken2](https://ccb.jhu.edu/software/kraken2/), which was originally conceived for metagenomic analyses, for detecting and removing contamination with human or microbial DNA in the filtered reads. In brief, Kraken2 is a taxonomic classification system using exact k-mer matches to a reference database for high accuracy and fast classification speeds. This step retains decontaminated reads without hits in the reference database. After the pipeline is completed, Firefox will load the browser-based application [Pavian](https://ccb.jhu.edu/software/pavian/) which allows to visulaize the Kraken output, i.e. &lt;out>/results/kraken_reads/&lt;name>.report, where &lt;out> is the output directory and name is the sample name, see above.
 
-### (3) [Genome-size estimation](FullPipeline/kraken_reads.sh)
+### (3) [Genome-size estimation](FullPipeline/genomesize.sh)
 
 After that, the pipeline uses JELLYFISH for counting k-mers in the filtered and decontaminated reads and Genomescope to estimate the approximate genomesize. Conceptually, the number of unique k-mers and their coverage allows for a rough estimation of the genome-size, which is a function of the sequencing depth and the number of unique kmers. Specifcally, for a given sequence of length L, and a k-mer size of k, the total k-mer’s (N) possible will be given by N = ( L – k ) + 1. In genomes > 1mb, N (theoretically) converges to the true genomesize. Since the genome is usually sequenced more than 1-fold, the number of total kmers further needs to be divided by the coverage. However, the average coverage is usually unknown and influenced by seqencing errors, heterozygosity and repetitive elements. The average coverage is thus estimated from the empirical coverage distribution at unique kmers. For a more detailed description, see this great [tutorial](https://bioinformatics.uconn.edu/genome-size-estimation-tutorial/). Genomescope calculates the estimated genome-size, the prospective ploidy level and the ratio of unique and repetitive sequences in the genome. This is summarized in a historgramm plot and a summary text file.
 
@@ -73,7 +73,7 @@ De novo assembly based on SPAdes with standard parameters using trimmed and deco
 
 ### (5) Assembly QC
 
-#### (a) [Quast](FullPipeline/denovo.sh)
+#### (a) [Quast](FullPipeline/quast.sh)
 
 Summary statistics of the SPAdes assembly, i.e. #contigs, N50, N90, etc. with QUAST. Check out the QUAST [manual](<>) for more details. More details on the  pipeline will be added soon.
 
@@ -93,7 +93,7 @@ The trimmed reads are remapped to the assembled scaffolds to investigate the var
 
 Quantitative analysis of assembly quality based on variation of read-depth, GC-content and taxonomic assignment of each scaffold. The summary plots and tables are accessible through an interactive browser window. Note, occasionally port 8001 may be already occuppied. In this case, you can retry to load the html page with ports of increasing number, e.g. 8002, 8003, etc.
 
-* * *
+## Output
 
 After the pipeline is finished, the scaffolds of the de-novo assembly and the most important summary outputs will be copied to an output folder. In addition, various html-based results will be loaded in Firefox. In addition, the file `HTML_outputs.sh` contains all commands to load the HTML output in Firefox at a later timepoint.
 
@@ -101,8 +101,8 @@ After the pipeline is finished, the scaffolds of the de-novo assembly and the mo
 
 This is just the very first version and I will implement more functionality in the near future. Additional features may include:
 
--   Modify more parameters via the commandline or through a config file
--   Possibiilty to skip certain steps of the pipeline
--   Allow ONT or PacBio data or a combination of Illumina and single molecule sequencing data for de-novo assemblies
+-   \[]  Modify more parameters via the commandline or through a config file
+-   \[]  Possibiilty to skip certain steps of the pipeline
+-   [x] Allow ONT or PacBio data or a combination of Illumina and single molecule sequencing data for de-novo assemblies
 
 Please le me know if you have further ideas or need help by posting an issue in this repository.
