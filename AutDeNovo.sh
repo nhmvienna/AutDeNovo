@@ -103,7 +103,7 @@ mkdir ${out}/log
 mkdir ${out}/output
 
 ## (1) make copy of original reads
-echo "# Copying data" \
+printf "# Copying data\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -115,7 +115,7 @@ then
   cp ${fwd} ${out}/data/Illumina/${name}_1.fq.gz &
   cp ${rev} ${out}/data/Illumina/${name}_2.fq.gz
 
-  echo "## Illumina data copied" \
+  printf "## Illumina data copied\n# " \
   | tee -a ${out}/shell/pipeline.sh
   date \
   | tee -a ${out}/shell/pipeline.sh
@@ -128,7 +128,7 @@ then
   cat ${ont}/*fastq.gz > ${out}/data/ONT/${name}_ont.fq.gz &
   cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
 
-  echo "## ONT data copied" \
+  printf "## ONT data copied\n# " \
   | tee -a ${out}/shell/pipeline.sh
   date \
   | tee -a ${out}/shell/pipeline.sh
@@ -142,7 +142,7 @@ then
   mkdir -p ${out}/data/PB
   cat ${pb}/*fastq.gz >> ${out}/data/PB/${name}_pb.fq.gz
 
-  echo "## PacBio data copied" \
+  printf "## PacBio data copied\n# " \
   | tee -a ${out}/shell/pipeline.sh
   date \
   | tee -a ${out}/shell/pipeline.sh
@@ -156,14 +156,14 @@ wait
 ###############################################
 ############# (1) QC and Trimming #############
 
-echo "# Start raw QC" \
+printf "# Start raw QC\n" \
 | tee -a ${out}/shell/pipeline.sh
 
 ## Illumina data
 if [[ !(-z $fwd) ]]
 then
 
-  echo "## ... of Illumina data" \
+  printf "## ... of Illumina data\# " \
   | tee -a ${out}/shell/pipeline.sh
   date \
   | tee -a ${out}/shell/pipeline.sh
@@ -180,7 +180,7 @@ fi
 if [[ !(-z $ont) ]]
 then
 
-  echo "## ... of ONT data" \
+  printf "## ... of ONT data\n# " \
   | tee -a ${out}/shell/pipeline.sh
   date \
   | tee -a ${out}/shell/pipeline.sh
@@ -198,7 +198,7 @@ fi
 if [[ !(-z $pb) ]]
 then
 
-  echo "## ... of PacBio data" \
+  printf "## ... of PacBio data\n# " \
   | tee -a ${out}/shell/pipeline.sh
   date \
   | tee -a ${out}/shell/pipeline.sh
@@ -222,7 +222,7 @@ printf "########################\n\n" \
 if [[ !(-z $fwd) ]]
 then
 
-  echo "# Start trimming" \
+  printf "# Start trimming\n# " \
   | tee -a ${out}/shell/pipeline.sh
   date \
   | tee -a ${out}/shell/pipeline.sh
@@ -243,7 +243,7 @@ fi
 
 ## detect human, bacterial and viral contamination in the trimmed reads, make a report and only retain the non-conmatinant reads for de-novo assembly
 
-echo "# Start decontamination" \
+printf "# Start decontamination\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -262,7 +262,7 @@ printf "########################\n\n" \
 
 # using Jellyfish to calculate kmer-coverage and genomoscope for formal analyses
 
-echo "# Estimation of genomesize" \
+printf "# Estimation of genomesize\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -283,7 +283,7 @@ printf "########################\n\n" \
 
 ## denovo assembly with Spades
 
-echo "## Starting denovo assembly" \
+printf "## Starting denovo assembly\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -302,7 +302,7 @@ printf "########################\n\n" \
 
 ## (A) QUAST analysis
 
-echo "# Starting assembly QC with Quast" \
+printf "# Starting assembly QC with Quast\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -319,7 +319,7 @@ printf "########################\n\n" \
 
 # (B) BUSCO analysis
 
-echo "# Starting assembly QC with BUSCO" \
+printf "# Starting assembly QC with BUSCO\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -337,7 +337,7 @@ printf "########################\n\n" \
 
 ## (C) Mapping reads
 
-echo "# Mapping reads against reference" \
+printf "# Mapping reads against reference\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -354,7 +354,7 @@ printf "########################\n\n" \
 
 ## (D) Blast genome against the nt database
 
-echo "# BLASTing genome against the nt database" \
+printf "# BLASTing genome against the nt database\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -371,7 +371,7 @@ printf "########################\n\n" \
 
 ## (E) Summarize results with blobtools
 
-echo "# Summarize with Blobtools" \
+printf "# Summarize with Blobtools\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh
@@ -387,7 +387,7 @@ $PWD \
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
 
-printf "# Anlayses done!!\n## Now copying results to output folder and writing commands for HTML output\n## check out ${out}/output/${name}_HTML_outputs.sh for more details\n" \
+printf "# Anlayses done!!\n## Now copying results to output folder and writing commands for HTML output\n## check out ${out}/output/${name}_HTML_outputs.sh for more details\n# " \
 | tee -a ${out}/shell/pipeline.sh
 date \
 | tee -a ${out}/shell/pipeline.sh

@@ -108,6 +108,7 @@ After the pipeline is finished, the scaffolds of the de-novo assembly and the mo
 -   A folder with the amino-acid sequences of all BUSCO hits
 
 In addition, various html-based results can be loaded in Firefox. The file `HTML_outputs.sh` in the output folder contains all commands to load the HTML output in Firefox at a later timepoint.
+Moreover, the full pipeline including all commands will be written to a file named `pipeline.sh` in the /shell folder. In particular, this file allows to repeat certain analyses in the whole pipeline.
 
 ## Future updates
 
