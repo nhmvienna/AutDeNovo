@@ -163,7 +163,7 @@ printf "# Start raw QC\n" \
 if [[ !(-z $fwd) ]]
 then
 
-  printf "## ... of Illumina data\# " \
+  printf "## ... of Illumina data\n# " \
   | tee -a ${out}/shell/pipeline.sh
   date \
   | tee -a ${out}/shell/pipeline.sh
