@@ -69,29 +69,29 @@ After that, the pipeline uses JELLYFISH for counting k-mers in the filtered and 
 
 ### (4) [de-novo assembly](FullPipeline/denovo.sh)
 
-De novo assembly based on SPAdes with standard parameters using trimmed and decontaminated reads. See [here](https://cab.spbu.ru/files/release3.15.4/manual.html) for more details on how SPAdes works. Currently, this pipelilne only accepts paired-end Illumina reads. Additional options will be added in the future. More details on the pipeline will be added soon.
+The pipeline employs the [Flye](https://github.com/fenderglass/Flye) assembler with standard parameters for either ONT or PacBio long-read sequencing data or a combination of both. If ONT and PacBio reads are processed jointly, the pipleine follows the [best practice recommendations](https://github.com/fenderglass/Flye/blob/flye/docs/FAQ.md#can-i-use-both-pacbio-and-ont-reads-for-assembly) and uses the ONT data for the initial assembly and the PacBio data for polishing. In case, Illumina HiFi sequencing data are available, the de-novo assembly is based on [SPAdes](https://github.com/ablab/spades) with standard parameters using trimmed and decontaminated reads. In case a combination of Illumina HiFi sequencing data and long-read data is available, the pipleine will nevertheless employ SPAdes for de-novo assembly based on Illumina reads. The long-read sequencing data will in this case be used for scaffolding. See [here](https://cab.spbu.ru/files/release3.15.4/manual.html) for more details on how SPAdes works.
 
 ### (5) Assembly QC
 
 #### (a) [Quast](FullPipeline/quast.sh)
 
-Summary statistics of the SPAdes assembly, i.e. #contigs, N50, N90, etc. with QUAST. Check out the QUAST [manual](<>) for more details. More details on the  pipeline will be added soon.
+Summary statistics of the SPAdes assembly, i.e. #contigs, N50, N90, etc. with QUAST. Check out the QUAST [manual](https://github.com/ablab/quast) for more details. More details on the  pipeline will be added soon.
 
 #### (b) [BLAST](FullPipeline/blast.sh)
 
-BLASTing each contig against a local copy of the NCBI nt database. Only the Top 10 hits with e &lt; 1e-25 are retained for each hit, which allows estimating off-target DNA contamination in the library. The result table is quantified with BlobTools (see below)
+[BLASTing](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastDocs&DOC_TYPE=Download) each contig against a local copy of the NCBI `nt` database. Only the Top 10 hits with e &lt; 1e-25 are retained for each hit, which allows estimating off-target DNA contamination in the library. The result table is quantified with BlobTools (see below)
 
 #### (c) [BUSCO](FullPipeline/busco.sh)
 
-Detecting of Benchmarking Universal Single-Copy Orthologs (BUSCO) from all vertebrates (vertebrata_odb10) in the de-novo assembled scaffolds to estimate the completeness of the assembly. The result table is quantified with BlobTools (see below).
+Detecting of [Benchmarking Universal Single-Copy Orthologs (BUSCO)](https://busco.ezlab.org/busco_userguide.html) from all vertebrates (by default `vertebrata_odb10`) in the de-novo assembled scaffolds to estimate the completeness of the assembly. The result table is quantified with BlobTools (see below).
 
 #### (d) [Mapping](FullPipeline/mapping.sh)
 
-The trimmed reads are remapped to the assembled scaffolds to investigate the variation in read depth among the different scaffolds, which may indicate off-target DNA contamination in the library. These results are quantified with BlobTools (see below).
+The trimmed reads are remapped with [bwa](http://bio-bwa.sourceforge.net/) (Illumina reads), or [minimap2](https://github.com/lh3/minimap2) (ONT and PacBio reads) to the assembled scaffolds to investigate the variation in read depth among the different scaffolds, which may indicate off-target DNA contamination in the library. These results are quantified with BlobTools (see below).
 
 #### (e) [BlobTools](FullPipeline/blobtools.sh)
 
-Quantitative analysis of assembly quality based on variation of read-depth, GC-content and taxonomic assignment of each scaffold. The summary plots and tables are accessible through an interactive browser window. Note, occasionally port 8001 may be already occuppied. In this case, you can retry to load the html page with ports of increasing number, e.g. 8002, 8003, etc.
+[Blobtools](https://github.com/DRL/blobtools) allows a quantitative analysis of assembly quality based on variation of read-depth, GC-content and taxonomic assignment of each scaffold. The summary plots and tables are accessible through an interactive browser window. Note, occasionally port 8001 may be already occuppied. In this case, you can retry to load the html page with ports of increasing number, e.g. 8002, 8003, etc.
 
 ## Output
 
