@@ -67,11 +67,13 @@ In the second step, the pipeline invoces [kraken2](https://ccb.jhu.edu/software/
 
 After that, the pipeline uses [Jellyfish](https://github.com/gmarcais/Jellyfish) for counting k-mers in the filtered and decontaminated reads and [Genomescope](https://github.com/schatzlab/genomescope) to estimate the approximate genomesize. Conceptually, the number of unique k-mers and their coverage allows for a rough estimation of the genome-size, which is a function of the sequencing depth and the number of unique kmers. Specifcally, for a given sequence of length L, and a k-mer size of k, the total k-mer’s (N) possible will be given by N = ( L – k ) + 1. In genomes > 1mb, N (theoretically) converges to the true genomesize. Since the genome is usually sequenced more than 1-fold, the number of total kmers further needs to be divided by the coverage. However, the average coverage is usually unknown and influenced by seqencing errors, heterozygosity and repetitive elements. The average coverage is thus estimated from the empirical coverage distribution at unique kmers. For a more detailed description, see this great [tutorial](https://bioinformatics.uconn.edu/genome-size-estimation-tutorial/). Genomescope calculates the estimated genome-size, the prospective ploidy level and the ratio of unique and repetitive sequences in the genome. This is summarized in a historgramm plot and a summary text file. In addition, the program [smudgeplot](https://github.com/KamilSJaron/smudgeplot) will estimate the ploidy of the dataset based on the distribution of coverages.
 
-### (4) [de-novo assembly](FullPipeline/denovo.sh)
+### (4) [De-novo assembly](FullPipeline/denovo.sh)
 
 The pipeline employs the [Flye](https://github.com/fenderglass/Flye) assembler with standard parameters for either ONT or PacBio long-read sequencing data or a combination of both. If ONT and PacBio reads are processed jointly, the pipleine follows the [best practice recommendations](https://github.com/fenderglass/Flye/blob/flye/docs/FAQ.md#can-i-use-both-pacbio-and-ont-reads-for-assembly) and uses the ONT data for the initial assembly and the PacBio data for polishing. In case, Illumina HiFi sequencing data are available, the de-novo assembly is based on [SPAdes](https://github.com/ablab/spades) with standard parameters using trimmed and decontaminated reads. In case a combination of Illumina HiFi sequencing data and long-read data is available, the pipleine will nevertheless employ SPAdes for de-novo assembly based on Illumina reads. The long-read sequencing data will in this case be used for scaffolding. See [here](https://cab.spbu.ru/files/release3.15.4/manual.html) for more details on how SPAdes works.
 
 ### (5) Assembly QC
+
+After the assembly is finished, the quality of the assembled genome will be assessed with a combination of different analysis tools as described below:
 
 #### (a) [Quast](FullPipeline/quast.sh)
 
