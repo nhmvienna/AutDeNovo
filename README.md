@@ -95,7 +95,17 @@ Quantitative analysis of assembly quality based on variation of read-depth, GC-c
 
 ## Output
 
-After the pipeline is finished, the scaffolds of the de-novo assembly and the most important summary outputs will be copied to an output folder. In addition, various html-based results will be loaded in Firefox. In addition, the file `HTML_outputs.sh` contains all commands to load the HTML output in Firefox at a later timepoint.
+After the pipeline is finished, the scaffolds of the de-novo assembly and the most important summary outputs will be copied to an output folder. These include:
+
+-   FASTQC/Nanoplot outputs before and after trimming (of Illumina data)
+-   The Kraken Report
+-   Genomesize estimates
+-   The assembled genome
+-   The Quast Report
+-   A table with BLAST hits of each contig
+-   A folder with the amino-acid sequences of all BUSCO hits
+
+In addition, various html-based results can be loaded in Firefox. The file `HTML_outputs.sh` in the output folder contains all commands to load the HTML output in Firefox at a later timepoint.
 
 ## Future updates
 
