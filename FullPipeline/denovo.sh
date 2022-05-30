@@ -3,13 +3,48 @@
 out=$1
 name=$2
 data=$3
-pwd=$4
+decont=$4
+pwd=$5
 
 printf "sh FullPipeline/denovo.sh $1 $2 $3 $4\n"
 
 #############################
 
 mkdir ${out}/results/assembly
+
+
+if [[ $data == *'ILL'* ]]
+then
+  if [[ $decont == 'no' ]]
+  then
+    IllInp1=${name}_1_val_1
+    IllInp2=${name}_2_val_2
+  else
+    IllInp1=kraken_illumina_${name}_1
+    IllInp2=kraken_illumina_${name}_2
+  fi
+fi
+
+if [[ $data == *'ONT'* ]]
+then
+  if [[ $decont == 'no' ]]
+  then
+    OntInp=${name}_ont
+  else
+    OntInp=raken_ont_${name}
+  fi
+fi
+
+if [[ $data == *'PB'* ]]
+then
+  if [[ $decont == 'no' ]]
+  then
+    PbInp=${name}_pb
+  else
+    PbInp=raken_${name}_pb
+  fi
+fi
+
 
 if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
 then
@@ -52,21 +87,8 @@ echo """
   then
 
     spades.py \
-      -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
-      -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
-      -t 199 \
-      -m 1200 \
-      -o ${out}/results/assembly/${name}
-
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
-
-  elif [[ ( $data == 'ILL_PB' ) ]]
-  then
-
-    spades.py \
-      -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
-      -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
-      --nanopore ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+      -1 ${out}/data/Illumina/${IllInp1}.fq.gz \
+      -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
       -t 199 \
       -m 1200 \
       -o ${out}/results/assembly/${name}
@@ -77,9 +99,22 @@ echo """
   then
 
     spades.py \
-      -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
-      -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
-      --pacbio ${out}/data/PB/kraken_pb_${name}.fq.gz \
+      -1 ${out}/data/Illumina/${IllInp1}.fq.gz \
+      -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
+      --nanopore ${out}/data/ONT/${OntInp}.fq.gz \
+      -t 199 \
+      -m 1200 \
+      -o ${out}/results/assembly/${name}
+
+    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+
+  elif [[ ( $data == 'ILL_PB' ) ]]
+  then
+
+    spades.py \
+      -1 ${out}/data/Illumina/${IllInp1}.fq.gz \
+      -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
+      --pacbio ${out}/data/PB/${PbInp}.fq.gz \
       -t 199 \
       -m 1200 \
       -o ${out}/results/assembly/${name}
@@ -90,10 +125,10 @@ echo """
   then
 
     spades.py \
-      -1 ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz \
-      -2 ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz \
-      --pacbio ${out}/data/PB/kraken_pb_${name}.fq.gz \
-      --nanopore ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+      -1 ${out}/data/Illumina/${IllInp1}.fq.gz \
+      -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
+      --pacbio ${out}/data/PB/${PbInp}.fq.gz \
+      --nanopore ${out}/data/ONT/${OntInp}.fq.gz \
       -t 199 \
       -m 1200 \
       -o ${out}/results/assembly/${name}
@@ -107,7 +142,7 @@ echo """
     conda activate flye-2.9
 
     flye \
-    --nano-raw ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+    --nano-raw ${out}/data/ONT/${OntInp}.fq.gz \
     --out-dir ${out}/results/assembly/${name} \
     --threads 200 \
     --scaffold
@@ -121,7 +156,7 @@ echo """
     conda activate flye-2.9
 
     flye \
-    --pacbio-raw ${out}/data/PB/kraken_pb_${name}.fq.gz \
+    --pacbio-raw ${out}/data/PB/${PbInp}.fq.gz \
     --out-dir ${out}/results/assembly/${name} \
     --threads 128 \
     --scaffold
@@ -137,14 +172,14 @@ echo """
     ## see here: https://github.com/fenderglass/Flye/blob/flye/docs/FAQ.md#can-i-use-both-pacbio-and-ont-reads-for-assembly
 
     flye \
-    --pacbio-raw ${out}/data/ONT/kraken_ont_${name}.fq.gz \
-    ${out}/data/PB/kraken_pb_${name}.fq.gz \
+    --pacbio-raw ${out}/data/ONT/${OntInp}.fq.gz \
+    ${out}/data/PB/${PbInp}.fq.gz \
     --iterations 0 \
     --out-dir ${out}/results/assembly/${name} \
     --threads 128
 
     flye \
-    --nano-raw ${out}/data/ONT/kraken_ont_${name}.fq.gz \
+    --nano-raw ${out}/data/ONT/${OntInp}.fq.gz \
      --resume-from polishing \
     --out-dir ${out}/results/assembly/${name} \
     --threads 128 \

@@ -40,13 +40,45 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
+  if [[ $data == *'ILL'* ]]
+  then
+      if [[ $decont == 'no' ]]
+      then
+        IllInp1=${name}_1_val_1
+        IllInp2=${name}_2_val_2
+      else
+        IllInp1=kraken_illumina_${name}_1
+        IllInp2=kraken_illumina_${name}_2
+      fi
+    fi
+
+  if [[ $data == *'ONT'* ]]
+  then
+      if [[ $decont == 'no' ]]
+      then
+        OntInp=${name}_ont
+      else
+        OntInp=raken_ont_${name}
+      fi
+    fi
+
+  if [[ $data == *'PB'* ]]
+  then
+      if [[ $decont == 'no' ]]
+      then
+        PbInp=${name}_pb
+      else
+        PbInp=raken_${name}_pb
+      fi
+    fi
+
   if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
   then
 
     ## unzip files
 
-    gunzip -c ${out}/data/Illumina/kraken_illumina_${name}_1.fq.gz > ${out}/data/Illumina/kraken_illumina_${name}_1.fq &
-    gunzip -c ${out}/data/Illumina/kraken_illumina_${name}_2.fq.gz > ${out}/data/Illumina/kraken_illumina_${name}_2.fq
+    gunzip -c ${out}/data/Illumina/${IllInp1}.fq.gz > ${out}/data/Illumina/${IllInp1}.fq &
+    gunzip -c ${out}/data/Illumina/${IllInp2}.fq.gz > ${out}/data/Illumina/${IllInp2}.fq
 
     wait
 
@@ -63,10 +95,10 @@ echo """
       -t 100 \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
-      ${out}/data/Illumina/kraken_illumina_${name}_1.fq \
-      ${out}/data/Illumina/kraken_illumina_${name}_2.fq
+      ${out}/data/Illumina/${IllInp1}.fq \
+      ${out}/data/Illumina/${IllInp2}.fq
 
-    rm -f ${out}/data/Illumina/kraken_illumina_${name}_*.fq
+    rm -f ${out}/data/Illumina/${IllInp1}.fq ${out}/data/Illumina/${IllInp2}.fq
 
   fi
 
@@ -75,7 +107,7 @@ echo """
 
     ## unzip ONT file
 
-    gunzip -c ${out}/data/ONT/kraken_ont_${name}.fq.gz > ${out}/data/ONT/kraken_ont_${name}.fq
+    gunzip -c ${out}/data/ONT/${OntInp}.fq.gz > ${out}/data/ONT/${OntInp}.fq
 
     ## run Jellyfish
 
@@ -90,9 +122,9 @@ echo """
       -t 100 \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
-      ${out}/data/ONT/kraken_ont_${name}.fq
+      ${out}/data/ONT/${OntInp}.fq
 
-    rm -f  ${out}/data/ONT/kraken_ont_${name}.fq
+    rm -f  ${out}/data/ONT/${OntInp}.fq
 
   fi
 
@@ -101,7 +133,7 @@ echo """
 
     ## unzip file
 
-    gunzip -c ${out}/data/PB/kraken_pb_${name}.fq.gz > ${out}/data/PB/kraken_pb_${name}.fq
+    gunzip -c ${out}/data/PB/${PbInp}.fq.gz > ${out}/data/PB/${PbInp}.fq
 
     ## run Jellyfish
 
@@ -116,9 +148,9 @@ echo """
       -t 100 \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
-      ${out}/data/PB/kraken_pb_${name}.fq
+      ${out}/data/PB/${PbInp}.fq
 
-    rm -f  ${out}/data/PB/kraken_pb_${name}.fq
+    rm -f  ${out}/data/PB/${PbInp}.fq
 
   fi
 

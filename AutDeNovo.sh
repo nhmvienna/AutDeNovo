@@ -238,24 +238,30 @@ then
 
 fi
 
-###############################################
-########## (2) Detect contamination ###########
 
-## detect human, bacterial and viral contamination in the trimmed reads, make a report and only retain the non-conmatinant reads for de-novo assembly
+if [[ $decont == "no" ]]
+then
 
-printf "# Start decontamination\n# " \
-| tee -a ${out}/shell/pipeline.sh
-date \
-| tee -a ${out}/shell/pipeline.sh
+  ###############################################
+  ########## (2) Detect contamination ###########
 
-sh FullPipeline/kraken.sh \
-$out \
-$name \
-$data \
-$PWD \
-| tee -a ${out}/shell/pipeline.sh
-printf "########################\n\n" \
-| tee -a ${out}/shell/pipeline.sh
+  ## detect human, bacterial and viral contamination in the trimmed reads, make a report and only retain the non-conmatinant reads for de-novo assembly
+
+  printf "# Start decontamination\n# " \
+  | tee -a ${out}/shell/pipeline.sh
+  date \
+  | tee -a ${out}/shell/pipeline.sh
+
+  sh FullPipeline/kraken.sh \
+  $out \
+  $name \
+  $data \
+  $PWD \
+  | tee -a ${out}/shell/pipeline.sh
+  printf "########################\n\n" \
+  | tee -a ${out}/shell/pipeline.sh
+
+fi
 
 ##############################################
 ######## (3) Estimate Genome Size ############
@@ -292,6 +298,7 @@ sh FullPipeline/denovo.sh \
 $out \
 $name \
 $data \
+$decont \
 $PWD \
 | tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" \
@@ -346,6 +353,7 @@ sh FullPipeline/mapping.sh \
 $out \
 $name \
 $data \
+$decont \
 $PWD \
 | tee -a ${out}/shell/pipeline.sh
 
@@ -459,7 +467,7 @@ firefox --new-tab http://127.0.0.1:5000
 
 ## genomesize
 cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
-cp ${out}/results/GenomeSize/${name}_smudgeplot.png ${out}/output/${name}_genomesize
+#cp ${out}/results/GenomeSize/${name}_smudgeplot.png ${out}/output/${name}_genomesize
 
 ##QUAST
 cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
