@@ -5,8 +5,10 @@ name=$2
 data=$3
 decont=$4
 pwd=$5
+threads=$6
+RAM=$7
 
-printf "sh FullPipeline/denovo.sh $1 $2 $3 $4\n"
+printf "sh FullPipeline/denovo.sh $1 $2 $3 $4 $5 $6 $7\n"
 
 #############################
 
@@ -74,8 +76,8 @@ echo """
   ## Select a maximum walltime of 2h
   #PBS -l walltime=100:00:00
 
-  ## Select a maximum of 20 cores and 500gb of RAM
-  #PBS -l select=1:ncpus=200:mem=1200gb
+  ## Select ${threads} cores and ${RAM}gb of RAM
+  #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
   ## load all necessary software into environment
   module load Assembly/SPAdes_3.15.3

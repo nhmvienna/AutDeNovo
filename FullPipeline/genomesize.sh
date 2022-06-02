@@ -5,13 +5,48 @@ name=$2
 data=$3
 decont=$4
 pwd=$5
+threads=$6
+RAM=$7
+RAMAssembly=$8
 
-
-printf "sh FullPipeline/genomesize.sh $1 $2 $3 $4 $5\n# "
+printf "sh FullPipeline/genomesize.sh $1 $2 $3 $4 $5 $6 $7 $8\n# "
 
 #############################
 
 mkdir ${out}/results/GenomeSize
+
+
+if [[ $data == *'ILL'* ]]
+then
+  if [[ $decont == 'no' ]]
+  then
+    IllInp1=${name}_1_val_1
+    IllInp2=${name}_2_val_2
+  else
+    IllInp1=kraken_illumina_${name}_1
+    IllInp2=kraken_illumina_${name}_2
+  fi
+fi
+
+if [[ $data == *'ONT'* ]]
+then
+  if [[ $decont == 'no' ]]
+  then
+    OntInp=${name}_ont
+  else
+    OntInp=raken_ont_${name}
+  fi
+fi
+
+if [[ $data == *'PB'* ]]
+then
+  if [[ $decont == 'no' ]]
+  then
+    PbInp=${name}_pb
+  else
+    PbInp=raken_${name}_pb
+  fi
+fi
 
 ### run JellyFish to obtain k-mer histograms
 
@@ -30,8 +65,8 @@ echo """
   ## Select a maximum walltime of 2h
   #PBS -l walltime=48:00:00
 
-  ## Select a maximum of 100 cores and 200gb of RAM
-  #PBS -l select=1:ncpus=100:mem=1499gb
+  ## Select ${threads} cores and ${RAM}gb of RAM
+  #PBS -l select=1:ncpus=${threads}:mem=${RAMAssembly}g
 
   ## load all necessary software into environment
   module load Assembly/Jellyfish-2.3.0
@@ -39,38 +74,6 @@ echo """
 
   ## Go to pwd
   cd ${pwd}
-
-  if [[ $data == *'ILL'* ]]
-  then
-      if [[ $decont == 'no' ]]
-      then
-        IllInp1=${name}_1_val_1
-        IllInp2=${name}_2_val_2
-      else
-        IllInp1=kraken_illumina_${name}_1
-        IllInp2=kraken_illumina_${name}_2
-      fi
-    fi
-
-  if [[ $data == *'ONT'* ]]
-  then
-      if [[ $decont == 'no' ]]
-      then
-        OntInp=${name}_ont
-      else
-        OntInp=raken_ont_${name}
-      fi
-    fi
-
-  if [[ $data == *'PB'* ]]
-  then
-      if [[ $decont == 'no' ]]
-      then
-        PbInp=${name}_pb
-      else
-        PbInp=raken_${name}_pb
-      fi
-    fi
 
   if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
   then
@@ -186,8 +189,8 @@ echo """
   ## Select a maximum walltime of 2h
   #PBS -l walltime=48:00:00
 
-  ## Select a maximum of 100 cores and 200gb of RAM
-  #PBS -l select=1:ncpus=1:mem=500gb
+  ## Select ${threads} cores and ${RAM}gb of RAM
+  #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
   ## load all necessary software into environment
   module load Assembly/Jellyfish-2.3.0

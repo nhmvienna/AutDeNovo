@@ -5,8 +5,10 @@ name=$2
 busco=$3
 data=$4
 pwd=$5
+threads=$6
+RAM=$7
 
-printf "sh FullPipeline/blobtools.sh $1 $2 $3 $4 $5\n# "
+printf "sh FullPipeline/blobtools.sh $1 $2 $3 $4 $5 $6 $7\n# "
 
 ##########################
 
@@ -25,8 +27,8 @@ echo """
   ## Stream Standard Output AND Standard Error to outputfile (see above)
   #PBS -j oe
 
-  ## Select a maximum of 20 cores and 200gb of RAM
-  #PBS -l select=1:ncpus=200:mem=200gb
+  ## Select ${threads} cores and ${RAM}gb of RAM
+  #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
   ###### load dependencies
 

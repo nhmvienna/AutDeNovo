@@ -4,8 +4,15 @@ out=$1
 name=$2
 data=$3
 pwd=$4
+threads=$5
+RAM=$6
 
-printf "sh FullPipeline/quast.sh $1 $2 $3 $4\n# "
+if [ $RAM -gt 64 ]
+then
+  RAM=64
+fi
+
+printf "sh FullPipeline/quast.sh $1 $2 $3 $4 $5 $6\n# "
 
 #############################
 
@@ -24,8 +31,8 @@ echo """
   ## Stream Standard Output AND Standard Error to outputfile (see above)
   #PBS -j oe
 
-  ## Select a maximum of 200 cores and 1000gb of RAM
-  #PBS -l select=1:ncpus=64:mem=500g
+  ## Select ${threads} cores and ${RAM}gb of RAM
+  #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
   ######## load dependencies #######
 

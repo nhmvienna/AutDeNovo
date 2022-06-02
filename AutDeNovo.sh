@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## AutDeNovo -v 0.1.0 - 08/03/2022
+## AutDeNovo -v 0.2.0 - 30/05/2022
 
 ## Author: Martin Kapun, based on the pipeline of TBG Loewe@Senkenberg/Frankfurt from Tilman Schell
 
@@ -34,6 +34,15 @@ do
       ;;
     Decont=*)
       decont="${i#*=}"
+      ;;
+    threads=*)
+      threads="${i#*=}"
+      ;;
+    RAMAssembly=*)
+      RAMAssembly="${i#*=}"
+      ;;
+    RAM=*)
+      RAM="${i#*=}"
       ;;
     *)
       # unknown option
@@ -75,6 +84,9 @@ if [[  -z "$rev" && !(-z "$fwd" ) ]]; then echo "## ${help}Rev=/media/seq/rev.fq
 if [[ -z "$rev" && -z "$fwd" && -z "$ont" && -z "$pb" ]]; then echo "## ${help}No input defined"; exit 4; fi
 if [ -z "$busco" ]; then busco="vertebrata_odb10"; fi
 if [ -z "$decont" ]; then decont="no"; fi
+if [ -z "$threads" ]; then threads="10"; fi
+if [ -z "$RAM" ]; then RAM="20"; fi
+if [ -z "$RAMAssembly" ]; then RAMAssembly="20"; fi
 
 ## Test which data are available
 if [[ !(-z "$fwd") && -z "$ont" && -z "$pb" ]]; then data="ILL";
@@ -172,6 +184,8 @@ then
   $out \
   $name \
   $PWD \
+  $threads \
+  $RAM \
   | tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -190,6 +204,8 @@ then
   $name \
   "ONT" \
   $PWD \
+  $threads \
+  $RAM \
   | tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -208,6 +224,8 @@ then
   $name \
   "PB" \
   $PWD \
+  $threads \
+  $RAM \
   | tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -231,6 +249,8 @@ then
   $out \
   $name \
   $PWD \
+  $threads \
+  $RAM \
   | tee -a ${out}/shell/pipeline.sh
 
   printf "########################\n\n" \
@@ -257,6 +277,8 @@ then
   $name \
   $data \
   $PWD \
+  $threads \
+  $RAM \
   | tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" \
   | tee -a ${out}/shell/pipeline.sh
@@ -279,6 +301,9 @@ $name \
 $data \
 $decont \
 $PWD \
+$threads \
+$RAM \
+$RAMAssembly \
 | tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
@@ -300,6 +325,8 @@ $name \
 $data \
 $decont \
 $PWD \
+$threads \
+$RAMAssembly \
 | tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
@@ -319,6 +346,8 @@ $out \
 $name \
 $data \
 $PWD \
+$threads \
+$RAM \
 | tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" \
@@ -337,6 +366,8 @@ $name \
 $busco \
 $data \
 $PWD \
+$threads \
+$RAM \
 | tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" \
@@ -355,6 +386,8 @@ $name \
 $data \
 $decont \
 $PWD \
+$threads \
+$RAM \
 | tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" \
@@ -372,6 +405,8 @@ $out \
 $name \
 $data \
 $PWD \
+$threads \
+$RAM \
 | tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" \
@@ -390,6 +425,8 @@ $name \
 $busco \
 $data \
 $PWD \
+$threads \
+$RAM \
 | tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" \

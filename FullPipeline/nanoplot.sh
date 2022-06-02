@@ -4,8 +4,10 @@ out=$1
 name=$2
 type=$3
 pwd=$4
+threads=$5
+RAM=$6
 
-printf "sh FullPipeline/nanoplot.sh $1 $2 $3 $4\n# "
+printf "sh FullPipeline/nanoplot.sh $1 $2 $3 $4 $5 $6\n# "
 
 #############################
 
@@ -21,8 +23,8 @@ echo """
 ## Stream Standard Output AND Standard Error to outputfile (see above)
 #PBS -j oe
 
-## Select a maximum of 200 cores and 1000gb of RAM
-#PBS -l select=1:ncpus=200:mem=100g
+## Select ${threads} cores and ${RAM}gb of RAM
+#PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
 ######## load dependencies #######
 
