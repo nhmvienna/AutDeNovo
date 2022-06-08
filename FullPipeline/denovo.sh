@@ -91,8 +91,8 @@ echo """
     spades.py \
       -1 ${out}/data/Illumina/${IllInp1}.fq.gz \
       -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
-      -t 199 \
-      -m 1200 \
+      -t ${threads} \
+      -m ${RAM} \
       -o ${out}/results/assembly/${name}
 
     mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
@@ -104,8 +104,8 @@ echo """
       -1 ${out}/data/Illumina/${IllInp1}.fq.gz \
       -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
       --nanopore ${out}/data/ONT/${OntInp}.fq.gz \
-      -t 199 \
-      -m 1200 \
+      -t ${threads} \
+      -m ${RAM} \
       -o ${out}/results/assembly/${name}
 
     mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
@@ -117,8 +117,8 @@ echo """
       -1 ${out}/data/Illumina/${IllInp1}.fq.gz \
       -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
       --pacbio ${out}/data/PB/${PbInp}.fq.gz \
-      -t 199 \
-      -m 1200 \
+      -t ${threads} \
+      -m ${RAM} \
       -o ${out}/results/assembly/${name}
 
     mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
@@ -131,8 +131,8 @@ echo """
       -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
       --pacbio ${out}/data/PB/${PbInp}.fq.gz \
       --nanopore ${out}/data/ONT/${OntInp}.fq.gz \
-      -t 199 \
-      -m 1200 \
+      -t ${threads} \
+      -m ${RAM} \
       -o ${out}/results/assembly/${name}
 
     mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
@@ -143,10 +143,16 @@ echo """
     source /opt/anaconda3/etc/profile.d/conda.sh
     conda activate flye-2.9
 
+    ## Flye only accepts 128 threads max
+    if [[ $threads -gt 128 ]]
+    then
+      threads=128
+    fi
+
     flye \
     --nano-raw ${out}/data/ONT/${OntInp}.fq.gz \
     --out-dir ${out}/results/assembly/${name} \
-    --threads 200 \
+    --threads ${threads} \
     --scaffold
 
     mv ${out}/results/assembly/${name}/assembly.fasta ${out}/output/${name}_${data}.fa
@@ -157,10 +163,16 @@ echo """
     source /opt/anaconda3/etc/profile.d/conda.sh
     conda activate flye-2.9
 
+    ## Flye only accepts 128 threads max
+    if [[ $threads -gt 128 ]]
+    then
+      threads=128
+    fi
+
     flye \
     --pacbio-raw ${out}/data/PB/${PbInp}.fq.gz \
     --out-dir ${out}/results/assembly/${name} \
-    --threads 128 \
+    --threads ${threads} \
     --scaffold
 
     mv ${out}/results/assembly/${name}/assembly.fasta ${out}/output/${name}_${data}.fa
@@ -173,18 +185,24 @@ echo """
 
     ## see here: https://github.com/fenderglass/Flye/blob/flye/docs/FAQ.md#can-i-use-both-pacbio-and-ont-reads-for-assembly
 
+    ## Flye only accepts 128 threads max
+    if [[ $threads -gt 128 ]]
+    then
+      threads=128
+    fi
+
     flye \
     --pacbio-raw ${out}/data/ONT/${OntInp}.fq.gz \
     ${out}/data/PB/${PbInp}.fq.gz \
     --iterations 0 \
     --out-dir ${out}/results/assembly/${name} \
-    --threads 128
+    --threads ${threads}
 
     flye \
     --nano-raw ${out}/data/ONT/${OntInp}.fq.gz \
      --resume-from polishing \
     --out-dir ${out}/results/assembly/${name} \
-    --threads 128 \
+    --threads ${threads} \
     --scaffold
 
     mv ${out}/results/assembly/${name}/assembly.fasta ${out}/output/${name}_${data}.fa
