@@ -8,8 +8,9 @@ pwd=$5
 threads=$6
 RAM=$7
 RAMAssembly=$8
+SmudgePlot=$9
 
-printf "sh FullPipeline/genomesize.sh $1 $2 $3 $4 $5 $6 $7 $8\n# "
+printf "sh FullPipeline/genomesize.sh $1 $2 $3 $4 $5 $6 $7 $8 $9\n# "
 
 #############################
 
@@ -173,60 +174,62 @@ echo """
 
 qsub  -W block=true  ${out}/shell/qsub_genomesize_${name}.sh
 
+if [[ $SmudgePlot != "no" ]]
+then
+  echo """
+    #!/bin/sh
 
-echo """
-  #!/bin/sh
+    ## name of Job
+    #PBS -N smudgeplot_${name}
 
-  ## name of Job
-  #PBS -N smudgeplot_${name}
+    ## Redirect output stream to this file.
+    #PBS -o ${out}/log/Smudgeplot_${name}_log.txt
 
-  ## Redirect output stream to this file.
-  #PBS -o ${out}/log/Smudgeplot_${name}_log.txt
+    ## Stream Standard Output AND Standard Error to outputfile (see above)
+    #PBS -j oe
 
-  ## Stream Standard Output AND Standard Error to outputfile (see above)
-  #PBS -j oe
+    ## Select a maximum walltime of 2h
+    #PBS -l walltime=48:00:00
 
-  ## Select a maximum walltime of 2h
-  #PBS -l walltime=48:00:00
+    ## Select ${threads} cores and ${RAM}gb of RAM
+    #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
-  ## Select ${threads} cores and ${RAM}gb of RAM
-  #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
+    ## load all necessary software into environment
+    module load Assembly/Jellyfish-2.3.0
+    source /opt/anaconda3/etc/profile.d/conda.sh
+    conda activate smudgeplot-0.2.4
 
-  ## load all necessary software into environment
-  module load Assembly/Jellyfish-2.3.0
-  source /opt/anaconda3/etc/profile.d/conda.sh
-  conda activate smudgeplot-0.2.4
+    ## run SmudgePlot
 
-  ## run SmudgePlot
+    ## Go to pwd
+    cd ${pwd}
 
-  ## Go to pwd
-  cd ${pwd}
+    L=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo L)
+    U=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo U)
 
-  L=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo L)
-  U=\$(smudgeplot.py cutoff ${out}/results/GenomeSize/${name}_reads.histo U)
+    ## cheat if limits are COMPLETELY off
+    if [ $((U-L)) -lt 100 ]
+      then
+        L=1
+        U=100
+    fi
+    #echo $L $U
 
-  ## cheat if limits are COMPLETELY off
-  if [ $((U-L)) -lt 100 ]
-    then
-      L=1
-      U=100
-  fi
-  #echo $L $U
+    jellyfish-linux dump \
+    -c \
+    -L \$L \
+    -U \$U \
+    ${out}/results/GenomeSize/${name}_reads.jf \
+    | smudgeplot.py hetkmers \
+    -o ${out}/results/GenomeSize/${name}_kmer_pairs
 
-  jellyfish-linux dump \
-  -c \
-  -L \$L \
-  -U \$U \
-  ${out}/results/GenomeSize/${name}_reads.jf \
-  | smudgeplot.py hetkmers \
-  -o ${out}/results/GenomeSize/${name}_kmer_pairs
+    smudgeplot.py plot ${out}/results/GenomeSize/${name}_kmer_pairs_coverages.tsv \
+    -o ${out}/results/GenomeSize/${name} -k 31
 
-  smudgeplot.py plot ${out}/results/GenomeSize/${name}_kmer_pairs_coverages.tsv \
-  -o ${out}/results/GenomeSize/${name} -k 31
+    rm -f ${out}/data/kraken_${name}_*.fq
 
-  rm -f ${out}/data/kraken_${name}_*.fq
+  """ > ${out}/shell/qsub_smudgeplot_${name}.sh
 
-""" > ${out}/shell/qsub_smudgeplot_${name}.sh
-
-printf "# "
-qsub  ${out}/shell/qsub_smudgeplot_${name}.sh
+  printf "# "
+  qsub  ${out}/shell/qsub_smudgeplot_${name}.sh
+fi

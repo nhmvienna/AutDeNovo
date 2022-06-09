@@ -44,6 +44,9 @@ do
     RAM=*)
       RAM="${i#*=}"
       ;;
+    SmudgePlot=*)
+      SmudgePlot="${i#*=}"
+      ;;
     *)
       # unknown option
       ;;
@@ -87,6 +90,7 @@ if [ -z "$decont" ]; then decont="no"; fi
 if [ -z "$threads" ]; then threads="10"; fi
 if [ -z "$RAM" ]; then RAM="20"; fi
 if [ -z "$RAMAssembly" ]; then RAMAssembly="20"; fi
+if [ -z "$SmudgePlot" ]; then SmudgePlot="no"; fi
 
 ## Test which data are available
 if [[ !(-z "$fwd") && -z "$ont" && -z "$pb" ]]; then data="ILL";
@@ -304,6 +308,7 @@ $PWD \
 $threads \
 $RAM \
 $RAMAssembly \
+$SmudgePlot \
 | tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
@@ -469,8 +474,11 @@ firefox --new-tab ${out}/data/Illumina/${name}_2_val_2_fastqc.html
 cp ${out}/data/Illumina/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_Illumina_fastqc.zip &
 cp ${out}/data/Illumina/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_Illumina_fastqc.zip
 
-## kraken
-cp ${out}/results/kraken_reads/${name}_Illumina_filtered.report ${out}/output/${name}_Illumina_kraken.txt
+if [[ $decont != "no" ]]
+then
+  ## kraken
+  cp ${out}/results/kraken_reads/${name}_Illumina_filtered.report ${out}/output/${name}_Illumina_kraken.txt
+fi
 
 fi
 
@@ -480,8 +488,11 @@ then
 ## Nanoplot
 cp -r ${out}/results/rawQC/${name}_ONT_nanoplot ${out}/output/
 
-##kraken
-cp ${out}/results/kraken_reads/${name}_ONT_filtered.report ${out}/output/${name}_ONT_kraken.txt
+if [[ $decont != "no" ]]
+then
+  ##kraken
+  cp ${out}/results/kraken_reads/${name}_ONT_filtered.report ${out}/output/${name}_ONT_kraken.txt
+fi
 
 fi
 
@@ -491,8 +502,11 @@ then
 ## Nanoplot
 cp -r ${out}/results/rawQC/${name}_PB_nanoplot ${out}/output/
 
-##kraken
-cp ${out}/results/kraken_reads/${name}_PB_filtered.report ${out}/output/${name}_PB_kraken.txt
+if [[ $decont != "no" ]]
+then
+  ##kraken
+  cp ${out}/results/kraken_reads/${name}_PB_filtered.report ${out}/output/${name}_PB_kraken.txt
+fi
 
 fi
 
