@@ -95,7 +95,7 @@ echo """
       -C \
       -m 31 \
       -s 100M \
-      -t 100 \
+      -t ${threads} \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
       ${out}/data/Illumina/${IllInp1}.fq \
@@ -122,7 +122,7 @@ echo """
       -C \
       -m 31 \
       -s 100M \
-      -t 100 \
+      -t ${threads} \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
       ${out}/data/ONT/${OntInp}.fq
@@ -148,7 +148,7 @@ echo """
       -C \
       -m 31 \
       -s 100M \
-      -t 100 \
+      -t ${threads} \
       -F 2 \
       -o ${out}/results/GenomeSize/${name}_reads.jf \
       ${out}/data/PB/${PbInp}.fq
@@ -158,7 +158,7 @@ echo """
   fi
 
   jellyfish-linux histo \
-    -t 100 \
+    -t ${threads} \
     ${out}/results/GenomeSize/${name}_reads.jf \
     > ${out}/results/GenomeSize/${name}_reads.histo
 

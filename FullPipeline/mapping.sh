@@ -80,7 +80,7 @@ echo """
     bwa index ${out}/output/${name}_${data}.fa
 
     bwa mem \
-      -t 200 \
+      -t ${threads} \
       ${out}/output/${name}_${data}.fa \
       ${out}/data/Illumina/${IllInp1}.fq.gz \
       ${out}/data/Illumina/${IllInp2}.fq.gz \
@@ -95,7 +95,7 @@ echo """
       ${out}/output/${name}_${data}.fa
 
     minimap2 -ax map-ont \
-    -t 100 \
+    -t ${threads} \
     ${out}/output/${name}_${data}.fa \
     ${out}/data/ONT/${OntInp}.fq.gz \
     | samtools view -bh | samtools sort \
@@ -108,7 +108,7 @@ echo """
       ${out}/output/${name}_${data}.fa
 
     minimap2 -ax map-pb \
-    -t 100 \
+    -t ${threads} \
     ${out}/output/${name}_${data}.fa \
     ${out}/data/PB/${PbInp}.fq.gz \
     | samtools view -bh | samtools sort \

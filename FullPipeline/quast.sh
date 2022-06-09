@@ -18,6 +18,14 @@ printf "sh FullPipeline/quast.sh $1 $2 $3 $4 $5 $6\n# "
 
 mkdir -p ${out}/results/AssemblyQC/Quast
 
+### NOTE THAT QUAST ONLY ALLOWS 64 CORES MAX
+
+if [[ $threads -gt 64 ]]
+then
+  threads=64
+fi
+
+
 echo """
 
   #!/bin/sh
@@ -43,11 +51,9 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  ### NOTE THAT QUAST ONLY ALLOWS 64 CORES MAX
-
   quast.py \
   --output-dir ${out}/results/AssemblyQC/Quast \
-  --threads 64 \
+  --threads ${threads} \
   --eukaryote \
   -f \
   ${out}/output/${name}_${data}.fa

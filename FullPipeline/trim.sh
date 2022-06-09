@@ -42,7 +42,7 @@ trim_galore \
   --paired \
   --quality 20 \
   --length 85  \
-  --cores 200 \
+  --cores ${threads} \
   --fastqc \
   --gzip \
   ${name}_1.fq.gz \

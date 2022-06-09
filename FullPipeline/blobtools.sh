@@ -48,19 +48,19 @@ echo """
   blobtools add \
       --hits ${out}/results/BLAST/blastn_${name}.txt \
       --taxdump /media/scratch/NCBI_taxdump/ \
-      --threads 200 \
+      --threads ${threads} \
       ${out}/results/AssemblyQC/blobtools
 
   ## add BUSCO results
   blobtools add \
       --busco ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/full_table.tsv  \
-      --threads 200 \
+      --threads ${threads} \
       ${out}/results/AssemblyQC/blobtools
 
   ## add coverage data
   blobtools add \
       --cov ${out}/results/mapping/${name}.bam \
-      --threads 200 \
+      --threads ${threads} \
       ${out}/results/AssemblyQC/blobtools
 
 """ > ${out}/shell/qsub_blobtools_${name}.sh

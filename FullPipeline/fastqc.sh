@@ -41,7 +41,7 @@ cd ${out}/data
 
 fastqc \
   --outdir ../results/rawQC/${name}_Illumina_fastqc \
-  --threads 200 \
+  --threads ${threads} \
   Illumina/${name}_1.fq.gz \
   Illumina/${name}_2.fq.gz
 

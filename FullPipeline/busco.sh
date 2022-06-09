@@ -45,7 +45,7 @@ echo """
   busco -i ../../../output/${name}_${data}.fa \
     -o ${name} \
     -m genome \
-    -c 200 \
+    -c ${threads} \
     -f \
     -l ${busco}
 

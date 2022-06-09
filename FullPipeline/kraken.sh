@@ -41,7 +41,7 @@ echo """
   then
 
     kraken2 \
-    --threads 200 \
+    --threads ${threads} \
     --output - \
     --report ${out}/results/kraken_reads/${name}_Illumina.report \
     --use-names \
@@ -64,7 +64,7 @@ echo """
   then
 
     kraken2 \
-    --threads 200 \
+    --threads ${threads} \
     --output - \
     --report ${out}/results/kraken_reads/${name}_ONT.report \
     --use-names \
@@ -86,7 +86,7 @@ echo """
     then
 
       kraken2 \
-      --threads 200 \
+      --threads ${threads} \
       --output - \
       --report ${out}/results/kraken_reads/${name}_PB.report \
       --use-names \

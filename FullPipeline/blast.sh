@@ -38,7 +38,7 @@ echo """
   cd ${pwd}
 
   blastn \
-    -num_threads 200 \
+    -num_threads ${threads} \
     -outfmt \"6 qseqid staxids bitscore std\" \
     -max_target_seqs 10 \
     -max_hsps 1 \

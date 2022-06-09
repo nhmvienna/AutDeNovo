@@ -44,7 +44,7 @@ if [[ ( $type == 'ONT' ) ]]
 then
 
   NanoPlot \
-    -t 200 \
+    -t ${threads} \
     --summary ${out}/data/ONT/${name}_sequencing_summary.txt \
     --plots dot \
     -o ${out}/results/rawQC/${name}_ONT_nanoplot
@@ -62,7 +62,7 @@ then
 else
 
   NanoPlot \
-    -t 200 \
+    -t ${threads} \
     --fastq ${out}/data/PB/${name}_pb.fq.gz \
     --plots dot \
     -o ${out}/results/rawQC/${name}_PB_nanoplot
