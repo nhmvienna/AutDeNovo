@@ -4,12 +4,12 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 ## Input
 
-The pipeline requires these two obligatory input parameters:
+##### The pipeline requires these two obligatory input parameters:
 
 -   **Name**:   The name (without spaces and special characters) of the sample to be used for naming the output folder, e.g. _SomeFish_
 -   **OutputFolder**: The full path to the output folder where the processed data and output will be stored, e.g. _/media/inter/SomeFish_
 
-In addition, you need to provide the paths to **at least one input dataset**, which can be either (1) high-quality short-read Illumina sequencing data, (2) PacBio long reads based on SMRTcell technology or (3) Oxford Nanopore long-read sequencing data after high accuracy basecalling.
+##### In addition, you need to provide the paths to **at least one input dataset**, which can be either (1) high-quality short-read Illumina sequencing data, (2) PacBio long reads based on SMRTcell technology or (3) Oxford Nanopore long-read sequencing data after high accuracy basecalling.
 
 **_Illumina_**
 
@@ -24,7 +24,7 @@ In addition, you need to provide the paths to **at least one input dataset**, wh
 
 -   **PB**: The full path to the folder that contains the **circular consensus sequences (CCS)** in FASTQ format generated from the raw subreads.bam file using the [ccs](https://ccs.how/) program from PacBio.
 
-In addition, there are multiple optional parameters to be set:
+##### In addition, there are multiple optional parameters that can be set:
 
 **(1) Threads**  The total number of cores to be used for parallel computation.
 
@@ -34,13 +34,21 @@ In addition, there are multiple optional parameters to be set:
 
 -   **RAM**: <u>Integer in gb (1-1900; default: 20 gb RAM ) </u>. The total amount of RAM memory in gigabytes reserved for the pipeline, **except for the denovo assembly, see below**, :warning: If you want to speed up the analysis, check with `qstat` how much RAM has already been reserverd by other users, before choosing the RAM memory for your job. Note, that "only" 1900gb are available and all new jobs that exceed the sum will be queded until enough sources becaome available. :warning:; For analyses other than de-novo assemblies, no more than 200GB of RAM are usually necessary for genomes &lt;1gb size.
 
-**(2) RAM**  The total amount of RAM memory to be reserved for parallel computation of analyses, except for the de-novo assembly.
+**(3) RAM for thew denovo assmebly**  The total amount of RAM memory to be reserved for the de-novo assembly.
 
--   **RAM**: <u>Integer in gb (1-1900; default: 20 gb RAM ) </u>. The total amount of RAM memory in gigabytes reserved for the pipeline, **except for the denovo assembly, see below**, :warning: If you want to speed up the analysis, check with `qstat` how much RAM has already been reserverd by other users, before choosing the RAM memory for your job. Note, that "only" 1900gb are available and all new jobs that exceed the sum will be queded until enough sources becaome available. :warning:; For analyses other than de-novo assemblies, no more than 200GB of RAM are usually necessary for genomes &lt;1gb size.
+-   **RAMAssembly**: <u>Integer in gb (1-1900; default: 20 gb RAM ) </u>. The total amount of RAM memory in gigabytes reserved for the denovo assembly only, :warning: If you want to speed up the analysis, check with `qstat` how much RAM has already been reserverd by other users, before choosing the RAM memory for your job. Note, that "only" 1900gb are available and all new jobs that exceed the sum will be queded until enough sources becaome available. :warning:; Note, that highly parallelized (>100 threads) assemblies of genomes >1gb with Spades often require more than 1000 GB of RAM. Please check Dr. Google beforehands since choosing not enoug RAM may result in the failure of the assembly.
 
-**(2) BUSCO**  you can optionally also provide the name of the BUSCO database which should be used for BUSCO analyses during the quality control steps to evaluate the quality and the completeness of the denovo assembly.
+**(4) Decontamination with Kraken**  You can optionally decontaminate your raw reads from contamination with bacterial and human DNA using the Kraken pipeline ([see below](#2-detection-of-microbial-and-human-contamination)). However, my experience has shown that this approach results in a high false positive rate (wrongly detected human contamination) when analysing vertebrate data.
 
--   **BuscoDB**: The name of the BUSCO database to be used for the QC analyses, a complete list can be found [here](https://busco.ezlab.org/busco_v4_data.html) and [here](https://busco.ezlab.org/list_of_lineages.html). By default, the database `vertebrata_odb10` is used.
+-   **decont**: <u> String (yes/no; default: "no")</u>
+
+**(5) Estimate ploidy with SmudgePlot**  You can optionally estimate the ploidy of your sample using the program SmudgePlot ([see below](#2-detection-of-microbial-and-human-contamination)) . However, this is EXTREMELY memory hungry and cannot be parallelized. Thus, these analyses may require days or evern weeks to finish; use with caution!
+
+-   **SmudgePlot**: <u> String (yes/no; default: "no")</u>
+
+**(6) BUSCO**  you can optionally also provide the name of the BUSCO database which should be used for BUSCO analyses during the quality control steps to evaluate the quality and the completeness of the denovo assembly.
+
+-   **BuscoDB**: <u>String (default: "vertebrata_odb10")</u> The name of the BUSCO database to be used for the QC analyses, a complete list can be found [here](https://busco.ezlab.org/busco_v4_data.html) and [here](https://busco.ezlab.org/list_of_lineages.html). By default, the database `vertebrata_odb10` is used.
 
 ## Command
 
@@ -73,13 +81,13 @@ Below, you will find a brief description of the consecutive analysis steps in th
 
 In the first step, the pipeline uses [trim_galore](https://github.com/FelixKrueger/TrimGalore) for quality trimming and for quality control in case the input is Illumina sequencing data. More specifically, Trim Galore is a Perl-based wrapper around [Cutadapt](https://github.com/marcelm/cutadapt) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently apply adapter and quality trimming to FastQ files. The parameters used by AutDeNovo are (1) automated adapter detection, (2) a minimum base quality of 20 and (3) a minimum read length of 75. This means that terminal bases with base-quality &lt;20 will be trimmed away and that only intact read-pairs with a minimum length of 75bp each will be retained. After that, FASTQC is generating a html output for a visual inspection of the filtered and trimmed data quality. A browser window will autmatically load once the pipeline is finished. Please check the [trim_galore](https://github.com/FelixKrueger/TrimGalore) and [Cutadapt](https://github.com/marcelm/cutadapt) documentation for more details about the trimming algorithm. In case of ONT and PacBio data, the quality control will be carried out by [NanoPlot](https://github.com/wdecoster/NanoPlot).
 
-### (2) [Detection of microbial and human contamination](FullPipeline/kraken.sh)
+### (2) [\[Optional\]Detection of microbial and human contamination](FullPipeline/kraken.sh)
 
-In a second step, the pipeline invoces [kraken2](https://ccb.jhu.edu/software/kraken2/), which was originally conceived for metagenomic analyses, for detecting and removing contamination with human or microbial DNA in the filtered reads. In brief, Kraken2 is a taxonomic classification system using exact k-mer matches to a reference database for high accuracy and fast classification speeds. This step retains decontaminated reads without hits in the reference database. After the pipeline is completed, Firefox will load the browser-based application [Pavian](https://ccb.jhu.edu/software/pavian/) which allows to visulaize the Kraken output, i.e. &lt;out>/results/kraken_reads/&lt;name>.report, where &lt;out> is the output directory and name is the sample name, see above.
+In a second step, the pipeline invoces [kraken2](https://ccb.jhu.edu/software/kraken2/), which was originally conceived for metagenomic analyses, for detecting and removing contamination with human or microbial DNA in the filtered reads. In brief, Kraken2 is a taxonomic classification system using exact k-mer matches to a reference database for high accuracy and fast classification speeds. This step retains decontaminated reads without hits in the reference database. After the pipeline is completed, Firefox will load the browser-based application [Pavian](https://ccb.jhu.edu/software/pavian/) which allows to visulaize the Kraken output, i.e. &lt;out>/results/kraken_reads/&lt;name>.report, where &lt;out> is the output directory and name is the sample name, see above. However, my experience has shown that this approach results in a high false positive rate (wrongly detected human contamination) when analysing vertebrate data. Use with caution!
 
 ### (3) [Genome-size estimation](FullPipeline/genomesize.sh)
 
-After that, the pipeline uses [Jellyfish](https://github.com/gmarcais/Jellyfish) for counting k-mers in the filtered and decontaminated reads and [Genomescope](https://github.com/schatzlab/genomescope) to estimate the approximate genomesize. Conceptually, the number of unique k-mers and their coverage allows for a rough estimation of the genome-size, which is a function of the sequencing depth and the number of unique kmers. Specifcally, for a given sequence of length _L_, and a k-mer size of _k_, the total k-mer’s (_N_) possible numbers will be given by _N_ = ( _L_ – _k_ ) + 1. In genomes > 1mb, _N_ (theoretically) converges to the true genomesize. Since the genome is usually sequenced more than 1-fold, the number of total kmers further needs to be divided by the coverage. However, the average coverage is usually unknown and influenced by seqencing errors, heterozygosity and repetitive elements. The average coverage is thus estimated from the empirical coverage distribution at unique kmers. For a more detailed description, see this great [tutorial](https://bioinformatics.uconn.edu/genome-size-estimation-tutorial/). Genomescope calculates the estimated genome-size, the prospective ploidy level and the ratio of unique and repetitive sequences in the genome. This is summarized in a historgramm plot and a summary text file. In addition, the program [smudgeplot](https://github.com/KamilSJaron/smudgeplot) will estimate the ploidy of the dataset based on the distribution of coverages.
+After that, the pipeline uses [Jellyfish](https://github.com/gmarcais/Jellyfish) for counting k-mers in the filtered and decontaminated reads and [Genomescope](https://github.com/schatzlab/genomescope) to estimate the approximate genomesize. Conceptually, the number of unique k-mers and their coverage allows for a rough estimation of the genome-size, which is a function of the sequencing depth and the number of unique kmers. Specifcally, for a given sequence of length _L_, and a k-mer size of _k_, the total k-mer’s (_N_) possible numbers will be given by _N_ = ( _L_ – _k_ ) + 1. In genomes > 1mb, _N_ (theoretically) converges to the true genomesize. Since the genome is usually sequenced more than 1-fold, the number of total kmers further needs to be divided by the coverage. However, the average coverage is usually unknown and influenced by seqencing errors, heterozygosity and repetitive elements. The average coverage is thus estimated from the empirical coverage distribution at unique kmers. For a more detailed description, see this great [tutorial](https://bioinformatics.uconn.edu/genome-size-estimation-tutorial/). Genomescope calculates the estimated genome-size, the prospective ploidy level and the ratio of unique and repetitive sequences in the genome. This is summarized in a historgramm plot and a summary text file. Optionally, the program [smudgeplot](https://github.com/KamilSJaron/smudgeplot) will additionally estimate the ploidy of the dataset based on the distribution of coverages. However, this step is very memory and time intesive. Use with caution!
 
 ### (4) [De-novo assembly](FullPipeline/denovo.sh)
 
@@ -124,12 +132,27 @@ After the pipeline is finished, the scaffolds of the de-novo assembly and the mo
 In addition, various html-based results can be loaded in Firefox. The file `HTML_outputs.sh` in the /output folder contains all commands to load the HTML output in Firefox at a later timepoint.
 Moreover, the full pipeline including all commands will be written to a file named `pipeline.sh` in the /shell folder. In particular, this file allows to repeat certain analyses in the whole pipeline.
 
-## Future updates
+## ChangeLog
+
+v.1.0 (08/03/2022)
 
 This is just the very first version and I will implement more functionality in the near future. Additional features may include:
 
--   [ ]  Modify more parameters via the commandline or through a config file
--   [ ]  Possibility to skip certain steps of the pipeline
 -   [x]  Allow ONT or PacBio data or a combination of Illumina and single molecule sequencing data for de-novo assemblies
 
+v.2.0 (10/06/2022)
+
+Major updates with several improvements
+
+-   [x]  Define requested # of threads
+-   [x]  Define requested RAM memory for all analyses except the de-novo assembly
+-   [x]  Specifically define requested RAM memory for de-novo assembly
+-   [x]  Optionally decontaminate raw reads with Kraken
+-   [x]  Optionally estimate ploidy with SmudgePlot
+
+## Potential future updates
+
 Please le me know if you have further ideas or need help by posting an issue in this repository.
+
+-   [ ]  Modify more parameters via the commandline or through a config file
+-   [ ]  Possibility to skip certain steps of the pipeline
