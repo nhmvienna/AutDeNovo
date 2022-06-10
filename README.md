@@ -28,7 +28,15 @@ In addition, there are multiple optional parameters to be set:
 
 **(1) Threads**  The total number of cores to be used for parallel computation.
 
--   **threads**: Integer (1-230); the total number of cores used for the pipeline, :warning: Note this affects the queing of the job in OpenOPBS; 1-20 threads = short queue (highest priority); 21-50 threads = mid queue (mid priority); 51-230 threads = long queue (lowest priority) :warning:
+-   **threads**: <u>Integer (1-230; default: 10 threads) </u>. The total number of cores used for the pipeline, :warning: Note this affects the queing of the job in OpenOPBS; 1-9 threads = short queue (highest priority); 10-74 threads = mid queue (mid priority); 75-230 threads = long queue (lowest priority) :warning:; more threads will speed up the analysis but may not be necessary for medium sized assemblies, My recommendation:Genomesize 1-500mb: 10-50 threads; 500-1500mb: 50 -100threads; 1500mb + 100-200 threads
+
+**(2) RAM**  The total amount of RAM memory to be reserved for parallel computation of analyses, except for the de-novo assembly.
+
+-   **RAM**: <u>Integer in gb (1-1900; default: 20 gb RAM ) </u>. The total amount of RAM memory in gigabytes reserved for the pipeline, **except for the denovo assembly, see below**, :warning: If you want to speed up the analysis, check with `qstat` how much RAM has already been reserverd by other users, before choosing the RAM memory for your job. Note, that "only" 1900gb are available and all new jobs that exceed the sum will be queded until enough sources becaome available. :warning:; For analyses other than de-novo assemblies, no more than 200GB of RAM are usually necessary for genomes &lt;1gb size.
+
+**(2) RAM**  The total amount of RAM memory to be reserved for parallel computation of analyses, except for the de-novo assembly.
+
+-   **RAM**: <u>Integer in gb (1-1900; default: 20 gb RAM ) </u>. The total amount of RAM memory in gigabytes reserved for the pipeline, **except for the denovo assembly, see below**, :warning: If you want to speed up the analysis, check with `qstat` how much RAM has already been reserverd by other users, before choosing the RAM memory for your job. Note, that "only" 1900gb are available and all new jobs that exceed the sum will be queded until enough sources becaome available. :warning:; For analyses other than de-novo assemblies, no more than 200GB of RAM are usually necessary for genomes &lt;1gb size.
 
 **(2) BUSCO**  you can optionally also provide the name of the BUSCO database which should be used for BUSCO analyses during the quality control steps to evaluate the quality and the completeness of the denovo assembly.
 
