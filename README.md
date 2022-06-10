@@ -161,3 +161,4 @@ Please le me know if you have further ideas or need help by posting an issue in 
 
 -   [ ]  Modify more parameters via the commandline or through a config file
 -   [ ]  Possibility to skip certain steps of the pipeline
+-   [ ]  Include multiple libraries of the same type
