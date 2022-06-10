@@ -134,15 +134,15 @@ Moreover, the full pipeline including all commands will be written to a file nam
 
 ## ChangeLog
 
-v.1.0 (08/03/2022)
+### v.1.0 (08/03/2022)
 
 This is just the very first version and I will implement more functionality in the near future. Additional features may include:
 
 -   [x]  Allow ONT or PacBio data or a combination of Illumina and single molecule sequencing data for de-novo assemblies
 
-v.2.0 (10/06/2022)
+### v.2.0 (10/06/2022)
 
-Major updates with several improvements
+Major update with several improvements
 
 -   [x]  Define requested # of threads
 -   [x]  Define requested RAM memory for all analyses except the de-novo assembly
