@@ -95,7 +95,12 @@ echo """
       -m ${RAM} \
       -o ${out}/results/assembly/${name}
 
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    if [[ -f ${out}/results/assembly/${name}/scaffolds.fasta ]]
+    then
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    else
+      mv ${out}/results/assembly/${name}/contigs.fasta ${out}/output/${name}_${data}.fa
+    fi
 
   elif [[ ( $data == 'ILL_ONT' ) ]]
   then
@@ -108,7 +113,12 @@ echo """
       -m ${RAM} \
       -o ${out}/results/assembly/${name}
 
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    if [[ -f ${out}/results/assembly/${name}/scaffolds.fasta ]]
+    then
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    else
+      mv ${out}/results/assembly/${name}/contigs.fasta ${out}/output/${name}_${data}.fa
+    fi
 
   elif [[ ( $data == 'ILL_PB' ) ]]
   then
@@ -121,7 +131,12 @@ echo """
       -m ${RAM} \
       -o ${out}/results/assembly/${name}
 
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    if [[ -f ${out}/results/assembly/${name}/scaffolds.fasta ]]
+    then
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    else
+      mv ${out}/results/assembly/${name}/contigs.fasta ${out}/output/${name}_${data}.fa
+    fi
 
   elif [[ ( $data == 'ILL_ONT_PB' ) ]]
   then
@@ -135,7 +150,12 @@ echo """
       -m ${RAM} \
       -o ${out}/results/assembly/${name}
 
-    mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    if [[ -f ${out}/results/assembly/${name}/scaffolds.fasta ]]
+    then
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    else
+      mv ${out}/results/assembly/${name}/contigs.fasta ${out}/output/${name}_${data}.fa
+    fi
 
   elif [[ ( $data == 'ONT' ) ]]
   then
