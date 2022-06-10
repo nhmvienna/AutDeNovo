@@ -24,9 +24,15 @@ In addition, you need to provide the paths to **at least one input dataset**, wh
 
 -   **PB**: The full path to the folder that contains the **circular consensus sequences (CCS)** in FASTQ format generated from the raw subreads.bam file using the [ccs](https://ccs.how/) program from PacBio.
 
-In addition, you can optionally also provide the name of the BUSCO database which should be used for BUSCO analyses during the quality control steps to evaluate the quality and the completeness of the denovo assembly.
+In addition, there are multiple optional parameters to be set:
 
--   **BUSCOdb**: The name of the BUSCO database to be used for the QC analyses, a complete list can be found [here](https://busco.ezlab.org/busco_v4_data.html) and [here](https://busco.ezlab.org/list_of_lineages.html). By default, the database `vertebrata_odb10` is used.
+**(1) Threads**  The total number of cores to be used for parallel computation.
+
+-   **threads**: Integer (1-230); the total number of cores used for the pipeline, :warning: Note this affects the queing of the job in OpenOPBS; 1-20 threads = short queue (highest priority); 21-50 threads = mid queue (mid priority); 51-230 threads = long queue (lowest priority) :warning:
+
+**(2) BUSCO**  you can optionally also provide the name of the BUSCO database which should be used for BUSCO analyses during the quality control steps to evaluate the quality and the completeness of the denovo assembly.
+
+-   **BuscoDB**: The name of the BUSCO database to be used for the QC analyses, a complete list can be found [here](https://busco.ezlab.org/busco_v4_data.html) and [here](https://busco.ezlab.org/list_of_lineages.html). By default, the database `vertebrata_odb10` is used.
 
 ## Command
 
