@@ -70,7 +70,12 @@ cd AutDeNovo
   Rev=Test/subset/Illumina/Garra474_2.fq.gz \
   ONT=Test/subset/ONT \
   PB=Test/subset/PacBio \
-  BuscoDB=vertebrata_odb10
+  threads=10 \
+  RAM=20 \
+  RAMAssembly=20 \
+  decont=no \
+  SmudgePlot=no \
+  BuscoDB=vertebrata_odb10 \
 ```
 
 ## Pipeline
