@@ -80,10 +80,10 @@ Please see below, which parameter is missing:
 *******************************
 '''
 
-if [ -z "$name" ]; then echo "## ${help}Name=Yeti_01 is missing: The name of the sample needs to be specified"; exit 1 ; fi
-if [ -z "$out" ]; then echo "## ${help}OutputFolder=/media/output is missing: The full path to the output folder needs to be defined"; exit 2 ; fi
-if [[ -z "$fwd" && !(-z "$rev" ) ]]; then echo "## ${help}Fwd=/media/seq/fwd.fq.gz is missing: The full path to the Illumina raw read forward FASTQ file needs to be defined"; exit 3; fi
-if [[  -z "$rev" && !(-z "$fwd" ) ]]; then echo "## ${help}Rev=/media/seq/rev.fq.gz is missing: The full path to the Illumina raw read revese FASTQ file needs to be defined"; exit 4; fi
+if [ -z "$name" ]; then echo "## ${help}'Name' is missing: The name of the sample needs to be specified"; exit 1 ; fi
+if [ -z "$out" ]; then echo "## ${help}'OutputFolder' is missing: The full path to the output folder needs to be defined"; exit 2 ; fi
+if [[ -z "$fwd" && !(-z "$rev" ) ]]; then echo "## ${help}Fwd read is missing: The full path to the Illumina raw read forward FASTQ file needs to be defined"; exit 3; fi
+if [[  -z "$rev" && !(-z "$fwd" ) ]]; then echo "## ${help}Rev read: The full path to the Illumina raw read revese FASTQ file needs to be defined"; exit 4; fi
 if [[ -z "$rev" && -z "$fwd" && -z "$ont" && -z "$pb" ]]; then echo "## ${help}No input defined"; exit 4; fi
 if [ -z "$busco" ]; then busco="vertebrata_odb10"; fi
 if [ -z "$decont" ]; then decont="no"; fi
