@@ -6,7 +6,7 @@ pwd=$3
 threads=$4
 RAM=$5
 
-printf "sh FullPipeline/fastqc.sh $1 $2 $3 $4 $5\n# "
+printf "sh FullPipeline/fastqc.sh $1 $2 $3 2 $5\n# "
 
 #############################
 
@@ -23,7 +23,7 @@ echo """
 #PBS -j oe
 
 ## Select ${threads} cores and ${RAM}gb of RAM
-#PBS -l select=1:ncpus=${threads}:mem=${RAM}g
+#PBS -l select=1:ncpus=2:mem=${RAM}g
 
 ######## load dependencies #######
 
@@ -41,7 +41,7 @@ cd ${out}/data
 
 fastqc \
   --outdir ../results/rawQC/${name}_Illumina_fastqc \
-  --threads ${threads} \
+  --threads 2 \
   Illumina/${name}_1.fq.gz \
   Illumina/${name}_2.fq.gz
 
