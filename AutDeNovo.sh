@@ -29,7 +29,7 @@ do
     PB=*)
       pb="${i#*=}"
       ;;
-    BUSCOdb=*)
+    BuscoDB=*)
       busco="${i#*=}"
       ;;
     Decont=*)
