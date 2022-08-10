@@ -144,11 +144,12 @@ Moreover, the full pipeline including all commands will be written to a file nam
 
 ## ChangeLog
 
-### v.1.0 (08/03/2022)
+### v.2.1 (10/08/2022)
 
-This is just the very first version and I will implement more functionality in the near future. Additional features may include:
+Minor update with several improvements
 
--   [x]  Allow ONT or PacBio data or a combination of Illumina and single molecule sequencing data for de-novo assemblies
+-   [x]  Optionally choose between four different trimming programs for Illumina data
+-   [x]  Bug fixes
 
 ### v.2.0 (10/06/2022)
 
@@ -160,12 +161,11 @@ Major update with several improvements
 -   [x]  Optionally decontaminate raw reads with Kraken
 -   [x]  Optionally estimate ploidy with SmudgePlot
 
-### v.2.1 (10/08/2022)
+### v.1.0 (08/03/2022)
 
-Minor update with several improvements
+This is just the very first version and I will implement more functionality in the near future. Additional features may include:
 
--   [x]  Optionally choose between four different trimming programs for Illumina data
--   [x]  Bug fixes
+-   [x]  Allow ONT or PacBio data or a combination of Illumina and single molecule sequencing data for de-novo assemblies
 
 ## Potential future updates
 
