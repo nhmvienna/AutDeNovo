@@ -47,6 +47,9 @@ do
     SmudgePlot=*)
       SmudgePlot="${i#*=}"
       ;;
+    Trimmer=*)
+      Trimmer="${i#*=}"
+      ;;
     *)
       # unknown option
       ;;
@@ -78,6 +81,7 @@ PB=Test/subset/PacBio \         ## The full path to a folder containing reads ge
 threads=10 \                    ## The total number of cores needed [optional; default=10]
 RAM=20 \                        ## The total amount of RAM [in GB] reserved for all analyses except the denovo assembly [optional; default=20]
 RAMAssembly=20 \                ## The total amount of RAM [in GB] reserved for the denovo assembly [optional; default=20]
+Trimmer=TrimGalore \            ## The Software used for trimming Illumina data; choose one option from (Atria, FastP, UrQt and Trimgalore) [optional; default=TrimGalore]
 decont=no \                     ## optional decontamination with KRAKEN [default=no]
 SmudgePlot=no \                 ## optional estimation of ploidy with SmudgePlot [default=no]
 BuscoDB=vertebrata_odb10 \      ## The BUSCO database to be used; by default it is set to "vertebrata_odb10"; see here to pick the right one: https://busco.ezlab.org/busco_v4_data.html and here: https://busco.ezlab.org/list_of_lineages.html
@@ -87,11 +91,19 @@ Please see below, which parameter is missing:
 *******************************
 '''
 
+array=("atria" "trimgalore" "urqt" "fastp")
+
+if [[ ! " ${array[*]} " =~ " ${value} " ]]; then echo "true" else; echo "false" fi
+
+
 if [ -z "$name" ]; then echo "## ${help}'Name' is missing: The name of the sample needs to be specified"; exit 1 ; fi
 if [ -z "$out" ]; then echo "## ${help}'OutputFolder' is missing: The full path to the output folder needs to be defined"; exit 2 ; fi
 if [[ -z "$fwd" && !(-z "$rev" ) ]]; then echo "## ${help}Fwd read is missing: The full path to the Illumina raw read forward FASTQ file needs to be defined"; exit 3; fi
 if [[  -z "$rev" && !(-z "$fwd" ) ]]; then echo "## ${help}Rev read: The full path to the Illumina raw read revese FASTQ file needs to be defined"; exit 4; fi
 if [[ -z "$rev" && -z "$fwd" && -z "$ont" && -z "$pb" ]]; then echo "## ${help}No input defined"; exit 4; fi
+if [[ -z "$rev" && -z "$fwd" && -z "$ont" && -z "$pb" ]]; then echo "## ${help}No input defined"; exit 4; fi
+if [ -z "$Trimmer" ]; then Trimmer="Trimgalore"; fi
+if [[ ! " ${array[*]} " =~ " ${Trimmer,,} " ]]; then echo "## ${help}No correct Trimmer for Illumina data assigned; choose from: Atria, FastP, UrQt or Trimgalore "; exit 4; fi
 if [ -z "$busco" ]; then busco="vertebrata_odb10"; fi
 if [ -z "$decont" ]; then decont="no"; fi
 if [ -z "$threads" ]; then threads="10"; fi
@@ -256,7 +268,7 @@ then
   date \
   | tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline/trim.sh \
+  sh FullPipeline/trim_${Trimmer,,}.sh \
   $out \
   $name \
   $PWD \
