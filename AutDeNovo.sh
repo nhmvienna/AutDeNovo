@@ -93,9 +93,6 @@ Please see below, which parameter is missing:
 
 array=("atria" "trimgalore" "urqt" "fastp")
 
-if [[ ! " ${array[*]} " =~ " ${value} " ]]; then echo "true" else; echo "false" fi
-
-
 if [ -z "$name" ]; then echo "## ${help}'Name' is missing: The name of the sample needs to be specified"; exit 1 ; fi
 if [ -z "$out" ]; then echo "## ${help}'OutputFolder' is missing: The full path to the output folder needs to be defined"; exit 2 ; fi
 if [[ -z "$fwd" && !(-z "$rev" ) ]]; then echo "## ${help}Fwd read is missing: The full path to the Illumina raw read forward FASTQ file needs to be defined"; exit 3; fi
@@ -160,7 +157,7 @@ fi
 if [[ !(-z $ont) ]]
 then
   mkdir -p ${out}/data/ONT
-  cat ${ont}/*fastq.gz > ${out}/data/ONT/${name}_ont.fq.gz &
+  cat ${ont}/*q.gz > ${out}/data/ONT/${name}_ont.fq.gz &
   cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
 
   printf "## ONT data copied\n# " \
@@ -175,7 +172,7 @@ then
   module load Tools/samtools-1.12
 
   mkdir -p ${out}/data/PB
-  cat ${pb}/*fastq.gz >> ${out}/data/PB/${name}_pb.fq.gz
+  cat ${pb}/*q.gz >> ${out}/data/PB/${name}_pb.fq.gz
 
   printf "## PacBio data copied\n# " \
   | tee -a ${out}/shell/pipeline.sh

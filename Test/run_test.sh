@@ -2,7 +2,7 @@
 git clone https://github.com/nhmvienna/AutDeNovo
 
 ## change to repository folder
-cd AutDeNovo
+cd /media/inter/pipelines/AutDeNovo
 
 ## run pipeline on test dataset
 ./AutDeNovo.sh \
@@ -10,6 +10,7 @@ cd AutDeNovo
   OutputFolder=Test/SomeFish \
   Fwd=Test/subset/Illumina/Garra474_1.fq.gz \
   Rev=Test/subset/Illumina/Garra474_2.fq.gz \
-  ONT=/media/inter/mkapun/projects/AutDeNovo/Test/subset/ONT \
-  PB=/media/inter/mkapun/projects/AutDeNovo/Test/subset/PacBio \
+  ONT=/media/inter/pipelines/AutDeNovo/Test/subset/ONT \
+  PB=/media/inter/pipelines/AutDeNovo/Test/subset/PacBio \
+  Trimmer=Atria \
   BuscoDB=vertebrata_odb10

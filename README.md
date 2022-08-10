@@ -50,6 +50,10 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 -   **BuscoDB**: <u>String (default: "vertebrata_odb10")</u> The name of the BUSCO database to be used for the QC analyses, a complete list can be found [here](https://busco.ezlab.org/busco_v4_data.html) and [here](https://busco.ezlab.org/list_of_lineages.html). By default, the database `vertebrata_odb10` is used.
 
+**(7) Trimmig**  you can optionally choose between four different trimming programs for Illumina data: (1) [Atria](https://github.com/cihga39871/Atria/blob/master/docs/2.Atria_trimming_methods_and_usages.md), (2) [FastP](https://github.com/OpenGene/fastp), (3) [TrimGalore](https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/) and (4) [UrQt](https://github.com/l-modolo/UrQt). By default, TimGalore is used.
+
+-   **Trimmer**: <u>String (default: "Trimgalore")</u> Choose any of the four options: Atria, FastP, Trimgalore or UrQt. Note, the program will quit if the name is wrongly written. By default, TimGalore is used.
+
 ## Command
 
 The pipeline is a simple shell script that executes a series of sub-shell scripts that serially send jobs to OpenPBS. A typcial commandline looks like this:
@@ -84,7 +88,7 @@ Below, you will find a brief description of the consecutive analysis steps in th
 
 ### (1) [Trimming and base quality control](FullPipeline/trim.sh)
 
-In the first step, the pipeline uses [trim_galore](https://github.com/FelixKrueger/TrimGalore) for quality trimming and for quality control in case the input is Illumina sequencing data. More specifically, Trim Galore is a Perl-based wrapper around [Cutadapt](https://github.com/marcelm/cutadapt) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently apply adapter and quality trimming to FastQ files. The parameters used by AutDeNovo are (1) automated adapter detection, (2) a minimum base quality of 20 and (3) a minimum read length of 75. This means that terminal bases with base-quality &lt;20 will be trimmed away and that only intact read-pairs with a minimum length of 75bp each will be retained. After that, FASTQC is generating a html output for a visual inspection of the filtered and trimmed data quality. A browser window will autmatically load once the pipeline is finished. Please check the [trim_galore](https://github.com/FelixKrueger/TrimGalore) and [Cutadapt](https://github.com/marcelm/cutadapt) documentation for more details about the trimming algorithm. In case of ONT and PacBio data, the quality control will be carried out by [NanoPlot](https://github.com/wdecoster/NanoPlot).
+In the first step, the pipeline uses [trim_galore](https://github.com/FelixKrueger/TrimGalore) for quality trimming and for quality control in case the input is Illumina sequencing data. More specifically, Trim Galore is a Perl-based wrapper around [Cutadapt](https://github.com/marcelm/cutadapt) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently apply adapter and quality trimming to FastQ files. The parameters used by AutDeNovo are (1) automated adapter detection, (2) a minimum base quality of 20 and (3) a minimum read length of 85. This means that terminal bases with base-quality &lt;20 will be trimmed away and that only intact read-pairs with a minimum length of 85bp each will be retained. After that, FASTQC is generating a html output for a visual inspection of the filtered and trimmed data quality. A browser window will autmatically load once the pipeline is finished. Please check the [trim_galore](https://github.com/FelixKrueger/TrimGalore) and [Cutadapt](https://github.com/marcelm/cutadapt) documentation for more details about the trimming algorithm. In case of ONT and PacBio data, the quality control will be carried out by [NanoPlot](https://github.com/wdecoster/NanoPlot). Optionally, it is also possible to use three other trimming programs: [Atria](https://github.com/cihga39871/Atria/blob/master/docs/2.Atria_trimming_methods_and_usages.md), [FastP](https://github.com/OpenGene/fastp), or [UrQt](https://github.com/l-modolo/UrQt).
 
 ### (2) [\[Optional\]Detection of microbial and human contamination](FullPipeline/kraken.sh)
 
@@ -155,6 +159,13 @@ Major update with several improvements
 -   [x]  Optionally decontaminate raw reads with Kraken
 -   [x]  Optionally estimate ploidy with SmudgePlot
 
+### v.2.1 (10/08/2022)
+
+Minor update with several improvements
+
+-   [x]  Optionally choose between four different trimming programs for Illumina data
+-   [x]  Bug fixes
+
 ## Potential future updates
 
 Please le me know if you have further ideas or need help by posting an issue in this repository.
@@ -162,3 +173,4 @@ Please le me know if you have further ideas or need help by posting an issue in 
 -   [ ]  Modify more parameters via the commandline or through a config file
 -   [ ]  Possibility to skip certain steps of the pipeline
 -   [ ]  Include multiple libraries of the same type
+-   [ ]  Add additional polishing (e.g. Racon, Pilon) steps after the initial assembly

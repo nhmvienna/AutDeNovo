@@ -43,8 +43,10 @@ UrQt \
 --min_read_size 85 \
 --in ${name}_1.fq.gz \
 --inpair ${name}_2.fq.gz \
---out ${name}_1_val_1.fq.gz \
---outpair ${name}_2_val_2.fq.gz
+--out ${name}_1_val_1.fq \
+--outpair ${name}_2_val_2.fq
+
+pigz ${name}_*_val_*.fq
 
 """ > ${out}/shell/qsub_trim_${name}.sh
 
