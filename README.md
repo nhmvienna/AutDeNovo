@@ -80,6 +80,7 @@ cd AutDeNovo
   decont=no \
   SmudgePlot=no \
   BuscoDB=vertebrata_odb10 \
+  Trimmer=Atria
 ```
 
 ## Pipeline
