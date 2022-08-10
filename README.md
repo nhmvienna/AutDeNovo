@@ -66,7 +66,7 @@ git clone https://github.com/nhmvienna/AutDeNovo
 cd AutDeNovo
 
 ## run pipeline on test dataset
-## run pipeline on test dataset
+
 ./AutDeNovo.sh \
   Name=SomeFish \
   OutputFolder=Test/SomeFish \
