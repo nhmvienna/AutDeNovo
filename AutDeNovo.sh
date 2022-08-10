@@ -81,7 +81,7 @@ PB=Test/subset/PacBio \         ## The full path to a folder containing reads ge
 threads=10 \                    ## The total number of cores needed [optional; default=10]
 RAM=20 \                        ## The total amount of RAM [in GB] reserved for all analyses except the denovo assembly [optional; default=20]
 RAMAssembly=20 \                ## The total amount of RAM [in GB] reserved for the denovo assembly [optional; default=20]
-Trimmer=TrimGalore \            ## The Software used for trimming Illumina data; choose one option from (Atria, FastP, UrQt and Trimgalore) [optional; default=TrimGalore]
+Trimmer=TrimGalore \            ## The Software used for trimming Illumina data; choose one option from (Atria, FastP, Trimgalore and UrQt) [optional; default=TrimGalore]
 decont=no \                     ## optional decontamination with KRAKEN [default=no]
 SmudgePlot=no \                 ## optional estimation of ploidy with SmudgePlot [default=no]
 BuscoDB=vertebrata_odb10 \      ## The BUSCO database to be used; by default it is set to "vertebrata_odb10"; see here to pick the right one: https://busco.ezlab.org/busco_v4_data.html and here: https://busco.ezlab.org/list_of_lineages.html
