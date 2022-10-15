@@ -147,7 +147,7 @@ echo """
         -t ${threads} \
         ${out}/data/PB/${PbInp}.fq.gz \
         ${out}/results/Racon/temp_reads_to_draft.paf \
-        ${out}/output/${name}_${data}.fa
+        ${out}/output/${name}_${data}.fa \
         > ${out}/results/Racon/temp_draft_new.fa
 
     fi

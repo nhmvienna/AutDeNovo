@@ -47,4 +47,4 @@ fastqc \
 
 """ > ${out}/shell/qsub_fastqc_${name}.sh
 
-qsub -W block=true ${out}/shell/qsub_fastqc_${name}.sh
+qsub ${out}/shell/qsub_fastqc_${name}.sh
