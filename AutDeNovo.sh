@@ -50,6 +50,9 @@ do
     Trimmer=*)
       Trimmer="${i#*=}"
       ;;
+    Racon=*)
+      racon="${i#*=}"
+      ;;
     *)
       # unknown option
       ;;
@@ -107,6 +110,7 @@ if [ -z "$threads" ]; then threads="10"; fi
 if [ -z "$RAM" ]; then RAM="20"; fi
 if [ -z "$RAMAssembly" ]; then RAMAssembly="20"; fi
 if [ -z "$SmudgePlot" ]; then SmudgePlot="no"; fi
+if [ -z "$racon" ]; then racon="no"; fi
 
 ## Test which data are available
 if [[ !(-z "$fwd") && -z "$ont" && -z "$pb" ]]; then data="ILL";
@@ -352,8 +356,37 @@ $RAMAssembly \
 printf "########################\n\n" \
 | tee -a ${out}/shell/pipeline.sh
 
+
+if [[ $racon != "no" ]]
+then
+
+  ###############################################
+  ########### (5) Polishing with Racon ###############
+
+  ## denovo assembly with Spades
+
+  printf "## Starting polishing with Racon\n# " \
+  | tee -a ${out}/shell/pipeline.sh
+  date \
+  | tee -a ${out}/shell/pipeline.sh
+
+  sh FullPipeline/racon.sh \
+  $out \
+  $name \
+  $data \
+  $PWD \
+  $threads \
+  $RAMAssembly \
+  $racon \
+  $decont \
+  | tee -a ${out}/shell/pipeline.sh
+  printf "########################\n\n" \
+  | tee -a ${out}/shell/pipeline.sh
+
+fi
+
 ###############################################
-########### (5) Assembly QC ###############
+########### (6) Assembly QC ###############
 
 ## (A) QUAST analysis
 

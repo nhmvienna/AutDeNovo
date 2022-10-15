@@ -54,6 +54,10 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 -   **Trimmer**: <u>String (default: "Trimgalore")</u> Choose any of the four options: Atria, FastP, Trimgalore or UrQt. Note, the program will quit if the name is wrongly written. By default, TimGalore is used.
 
+**(8) Polishing**  you can optionally choose to polish the raw contigs with Racon:
+
+-   **Racon**: <u>Number (default: "no")</u> The number chosen defines the number of polishing iterations. For example, if you choose 3, Racon polishing will be repeated three times. If multiple datatypes are provide the following types will preferrably used for polishing ONT > PB > ILL.
+
 ## Command
 
 The pipeline is a simple shell script that executes a series of sub-shell scripts that serially send jobs to OpenPBS. A typcial commandline looks like this:
@@ -80,7 +84,8 @@ cd AutDeNovo
   decont=no \
   SmudgePlot=no \
   BuscoDB=vertebrata_odb10 \
-  Trimmer=Atria
+  Trimmer=TrimGalore \
+  Racon=4
 ```
 
 ## Pipeline
@@ -103,7 +108,11 @@ After that, the pipeline uses [Jellyfish](https://github.com/gmarcais/Jellyfish)
 
 In case Illumina high-quality sequencing data are available, the de-novo assembly is based on [SPAdes](https://github.com/ablab/spades) with standard parameters using trimmed and decontaminated reads. In case a combination of Illumina high-quality sequencing data and long-read data (ONT and/or PacBio) is available, the pipleine will nevertheless employ SPAdes for de-novo assembly based on Illumina reads. The long-read sequencing data will in this case be used for scaffolding. See [here](https://cab.spbu.ru/files/release3.15.4/manual.html) for more details on how SPAdes works. Conversely, the pipeline employs the [Flye](https://github.com/fenderglass/Flye) assembler with standard parameters for either ONT or PacBio long-read sequencing data alone or for a combination of both. If ONT and PacBio reads are processed jointly, the pipleine follows the [best practice recommendations](https://github.com/fenderglass/Flye/blob/flye/docs/FAQ.md#can-i-use-both-pacbio-and-ont-reads-for-assembly) and uses the ONT data for the initial assembly and the PacBio data for polishing.
 
-### (5) Assembly QC
+### (5) Contig polishing with [Racon](/media/inter/pipelines/AutDeNovo/Test/SomeFish)
+
+As an optional final step, the raw contigs can be polished based on the raw reads using [Racon](/media/inter/pipelines/AutDeNovo/Test/SomeFish). This step can be iterated multiple times by setting parameter Racon=<n>, where <n> is the number iterations. For example, if you choose 3, Racon polishing will be repeated three times. If multiple datatypes are provide for assembly, only one read-type will be used for polishing in the following preference order: ONT > PB > ILL.
+
+### (6) Assembly QC
 
 After the assembly is finished, the quality of the assembled genome will be assessed with a combination of different analysis tools as described below:
 
@@ -143,6 +152,13 @@ In addition, various html-based results can be loaded in Firefox. The file `HTML
 Moreover, the full pipeline including all commands will be written to a file named `pipeline.sh` in the /shell folder. In particular, this file allows to repeat certain analyses in the whole pipeline.
 
 ## ChangeLog
+
+### v.2.2 (15/10/2022)
+
+Minor update with several improvements
+
+-   [x]  Optionally perform polishing of raw contigs with Racon
+-   [x]  Bug fixes
 
 ### v.2.1 (10/08/2022)
 
