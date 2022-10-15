@@ -10,7 +10,13 @@ cd /media/inter/pipelines/AutDeNovo
   OutputFolder=Test/SomeFish \
   Fwd=Test/subset/Illumina/Garra474_1.fq.gz \
   Rev=Test/subset/Illumina/Garra474_2.fq.gz \
-  ONT=/media/inter/pipelines/AutDeNovo/Test/subset/ONT \
-  PB=/media/inter/pipelines/AutDeNovo/Test/subset/PacBio \
+  ONT=Test/subset/ONT \
+  PB=Test/subset/PacBio \
+  threads=10 \
+  RAM=20 \
+  RAMAssembly=20 \
+  decont=no \
+  SmudgePlot=no \
+  BuscoDB=vertebrata_odb10 \
   Trimmer=Atria \
-  BuscoDB=vertebrata_odb10
+  Racon=4
