@@ -54,7 +54,7 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 -   **Trimmer**: <u>String (default: "Trimgalore")</u> Choose any of the four options: Atria, FastP, Trimgalore or UrQt. Note, the program will quit if the name is wrongly written. By default, TimGalore is used.
 
-**(8) Polishing**  you can optionally choose to polish the raw contigs with Racon:
+**(8) Polishing**  you can optionally choose to polish the raw contigs with [Racon](https://github.com/isovic/racon):
 
 -   **Racon**: <u>Number (default: "no")</u> The number chosen defines the number of polishing iterations. For example, if you choose 3, Racon polishing will be repeated three times. If multiple datatypes are provide the following types will preferrably used for polishing ONT > PB > ILL.
 
@@ -96,7 +96,7 @@ Below, you will find a brief description of the consecutive analysis steps in th
 
 In the first step, the pipeline uses [trim_galore](https://github.com/FelixKrueger/TrimGalore) for quality trimming and for quality control in case the input is Illumina sequencing data. More specifically, Trim Galore is a Perl-based wrapper around [Cutadapt](https://github.com/marcelm/cutadapt) and [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to consistently apply adapter and quality trimming to FastQ files. The parameters used by AutDeNovo are (1) automated adapter detection, (2) a minimum base quality of 20 and (3) a minimum read length of 85. This means that terminal bases with base-quality &lt;20 will be trimmed away and that only intact read-pairs with a minimum length of 85bp each will be retained. After that, FASTQC is generating a html output for a visual inspection of the filtered and trimmed data quality. A browser window will autmatically load once the pipeline is finished. Please check the [trim_galore](https://github.com/FelixKrueger/TrimGalore) and [Cutadapt](https://github.com/marcelm/cutadapt) documentation for more details about the trimming algorithm. In case of ONT and PacBio data, the quality control will be carried out by [NanoPlot](https://github.com/wdecoster/NanoPlot). Optionally, it is also possible to use three other trimming programs: [Atria](https://github.com/cihga39871/Atria/blob/master/docs/2.Atria_trimming_methods_and_usages.md), [FastP](https://github.com/OpenGene/fastp), or [UrQt](https://github.com/l-modolo/UrQt).
 
-### (2) [\[Optional\]Detection of microbial and human contamination](FullPipeline/kraken.sh)
+### (2) [\[Optional\] Detection of microbial and human contamination](FullPipeline/kraken.sh)
 
 In a second step, the pipeline invoces [kraken2](https://ccb.jhu.edu/software/kraken2/), which was originally conceived for metagenomic analyses, for detecting and removing contamination with human or microbial DNA in the filtered reads. In brief, Kraken2 is a taxonomic classification system using exact k-mer matches to a reference database for high accuracy and fast classification speeds. This step retains decontaminated reads without hits in the reference database. After the pipeline is completed, Firefox will load the browser-based application [Pavian](https://ccb.jhu.edu/software/pavian/) which allows to visulaize the Kraken output, i.e. &lt;out>/results/kraken_reads/&lt;name>.report, where &lt;out> is the output directory and name is the sample name, see above. However, my experience has shown that this approach results in a high false positive rate (wrongly detected human contamination) when analysing vertebrate data. Use with caution!
 
@@ -108,9 +108,9 @@ After that, the pipeline uses [Jellyfish](https://github.com/gmarcais/Jellyfish)
 
 In case Illumina high-quality sequencing data are available, the de-novo assembly is based on [SPAdes](https://github.com/ablab/spades) with standard parameters using trimmed and decontaminated reads. In case a combination of Illumina high-quality sequencing data and long-read data (ONT and/or PacBio) is available, the pipleine will nevertheless employ SPAdes for de-novo assembly based on Illumina reads. The long-read sequencing data will in this case be used for scaffolding. See [here](https://cab.spbu.ru/files/release3.15.4/manual.html) for more details on how SPAdes works. Conversely, the pipeline employs the [Flye](https://github.com/fenderglass/Flye) assembler with standard parameters for either ONT or PacBio long-read sequencing data alone or for a combination of both. If ONT and PacBio reads are processed jointly, the pipleine follows the [best practice recommendations](https://github.com/fenderglass/Flye/blob/flye/docs/FAQ.md#can-i-use-both-pacbio-and-ont-reads-for-assembly) and uses the ONT data for the initial assembly and the PacBio data for polishing.
 
-### (5) Contig polishing with [Racon](/media/inter/pipelines/AutDeNovo/Test/SomeFish)
+### (5) [\[Optional\] Contig polishing with Racon](FullPipeline/Racon.sh)
 
-As an optional final step, the raw contigs can be polished based on the raw reads using [Racon](/media/inter/pipelines/AutDeNovo/Test/SomeFish). This step can be iterated multiple times by setting parameter Racon=<n>, where <n> is the number iterations. For example, if you choose 3, Racon polishing will be repeated three times. If multiple datatypes are provide for assembly, only one read-type will be used for polishing in the following preference order: ONT > PB > ILL.
+As an optional final step, the raw contigs can be polished based on the raw reads using [Racon](https://github.com/isovic/racon). This step can be iterated multiple times by setting parameter Racon=<n>, where <n> is the number iterations. For example, if you choose 3, Racon polishing will be repeated three times. If multiple datatypes are provide for assembly, only one read-type will be used for polishing in the following preference order: ONT > PB > ILL.
 
 ### (6) Assembly QC
 
