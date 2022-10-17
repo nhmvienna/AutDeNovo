@@ -4,12 +4,12 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 ## Input
 
-##### The pipeline requires these two obligatory input parameters:
+### The pipeline requires these two obligatory input parameters:
 
 -   **Name**:   The name (without spaces and special characters) of the sample to be used for naming the output folder, e.g. _SomeFish_
 -   **OutputFolder**: The full path to the output folder where the processed data and output will be stored, e.g. _/media/inter/SomeFish_
 
-##### In addition, you need to provide the paths to **at least one input dataset**, which can be either (1) high-quality short-read Illumina sequencing data, (2) PacBio long reads based on SMRTcell technology or (3) Oxford Nanopore long-read sequencing data after high accuracy basecalling.
+### In addition, you need to provide the paths to **at least one input dataset**, which can be either (1) high-quality short-read Illumina sequencing data, (2) PacBio long reads based on SMRTcell technology or (3) Oxford Nanopore long-read sequencing data after high accuracy basecalling.
 
 **_Illumina_**
 
@@ -24,7 +24,7 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 -   **PB**: The full path to the folder that contains the **circular consensus sequences (CCS)** in FASTQ format generated from the raw subreads.bam file using the [ccs](https://ccs.how/) program from PacBio.
 
-##### In addition, there are multiple optional parameters that can be set:
+### In addition, there are multiple optional parameters that can be set:
 
 **(1) Threads**  The total number of cores to be used for parallel computation.
 
