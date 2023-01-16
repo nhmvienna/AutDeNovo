@@ -54,6 +54,14 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 -   **Trimmer**: <u>String (default: "Trimgalore")</u> Choose any of the four options: Atria, FastP, Trimgalore or UrQt. Note, the program will quit if the name is wrongly written. By default, TimGalore is used.
 
+**(8) Base Quality**  you can optionally choose the minimum PHRED-scaled basequality for trimming.
+
+-   **BaseQuality**: <u>Number (default: 20)</u> 
+
+**(9) Minimum Read Length**  you can optionally choose the minimum read length after trimming. If a read is shorter than the threshold, the whole read-pair gets discarded.
+
+-   **MinReadLen**: <u>Number (default: 85)</u> 
+
 **(8) Polishing**  you can optionally choose to polish the raw contigs with [Racon](https://github.com/isovic/racon):
 
 -   **Racon**: <u>Number (default: "no")</u> The number chosen defines the number of polishing iterations. For example, if you choose 3, Racon polishing will be repeated three times. If multiple datatypes are provide the following types will preferrably used for polishing ONT > PB > ILL.
@@ -85,6 +93,8 @@ cd AutDeNovo
   SmudgePlot=no \
   BuscoDB=vertebrata_odb10 \
   Trimmer=TrimGalore \
+  MinReadLen=85 \
+  BaseQuality=20 \
   Racon=4
 ```
 
@@ -152,6 +162,13 @@ In addition, various html-based results can be loaded in Firefox. The file `HTML
 Moreover, the full pipeline including all commands will be written to a file named `pipeline.sh` in the /shell folder. In particular, this file allows to repeat certain analyses in the whole pipeline.
 
 ## ChangeLog
+
+### v.2.3 (16/01/2023)
+
+Minor update with several improvements
+
+-   [x]  Optionally set minimum read length and base quality thresholds for trimming of Illumina data.
+-   [x]  Bug fixes
 
 ### v.2.2 (15/10/2022)
 

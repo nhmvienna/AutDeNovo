@@ -29,7 +29,7 @@ echo """
 ######## load dependencies #######
 
 source /opt/anaconda3/etc/profile.d/conda.sh
-conda activate nanoplot_1.32.1
+conda activate nanoplot_1.39.0
 
 ######## run analyses #######
 
@@ -80,6 +80,6 @@ else
 fi
 
 
-""" > ${out}/shell/qsub_nanoplot_${name}_${type}.sh
+""" >${out}/shell/qsub_nanoplot_${name}_${type}.sh
 
 qsub -W block=true ${out}/shell/qsub_nanoplot_${name}_${type}.sh

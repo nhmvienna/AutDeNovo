@@ -5,8 +5,10 @@ name=$2
 pwd=$3
 threads=$4
 RAM=$5
+BaseQuality=$6
+MinReadLen=$7
 
-printf "sh FullPipeline/trim_urqt.sh $1 $2 $3 $4 $5\n# "
+printf "sh FullPipeline/trim_atria.sh $1 $2 $3 $4 $5 $6 $7\n# "
 
 #############################
 
@@ -38,9 +40,9 @@ cd ${out}/data/Illumina
 ## loop through all FASTQ pairs and trim by quality PHRED 20, min length 85bp
 
 UrQt \
---t 20 \
+--t ${BaseQuality} \
 --m ${threads} \
---min_read_size 85 \
+--min_read_size ${MinReadLen} \
 --in ${name}_1.fq.gz \
 --inpair ${name}_2.fq.gz \
 --out ${name}_1_val_1.fq \
@@ -48,6 +50,6 @@ UrQt \
 
 pigz ${name}_*_val_*.fq
 
-""" > ${out}/shell/qsub_trim_${name}.sh
+""" >${out}/shell/qsub_trim_${name}.sh
 
 qsub -W block=true ${out}/shell/qsub_trim_${name}.sh

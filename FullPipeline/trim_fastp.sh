@@ -5,8 +5,10 @@ name=$2
 pwd=$3
 threads=$4
 RAM=$5
+BaseQuality=$6
+MinReadLen=$7
 
-printf "sh FullPipeline/trim_fastp.sh $1 $2 $3 $4 $5\n# "
+printf "sh FullPipeline/trim_atria.sh $1 $2 $3 $4 $5 $6 $7\n# "
 
 #############################
 
@@ -39,14 +41,14 @@ cd ${out}/data/Illumina
 ## loop through all FASTQ pairs and trim by quality PHRED 20, min length 85bp and automatically detect & remove adapters
 
 fastp \
-  --qualified_quality_phred 20 \
+  --qualified_quality_phred ${BaseQuality} \
   --thread ${threads} \
-  --length_required 85 \
+  --length_required ${MinReadLen} \
   -i ${name}_1.fq.gz \
   -I ${name}_2.fq.gz \
   -o ${name}_1_val_1.fq.gz \
   -O ${name}_2_val_2.fq.gz
 
-""" > ${out}/shell/qsub_trim_${name}.sh
+""" >${out}/shell/qsub_trim_${name}.sh
 
 qsub -W block=true ${out}/shell/qsub_trim_${name}.sh
