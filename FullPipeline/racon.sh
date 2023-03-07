@@ -2,6 +2,7 @@
 
 out=$1
 name=$2
+
 data=$3
 pwd=$4
 threads=$5
@@ -11,10 +12,8 @@ decont=$8
 
 printf "sh FullPipeline/racon.sh $1 $2 $3 $4 $5 $6 $7 $8\n# "
 
-if [[ $data == *'ILL'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'ILL'* ]]; then
+  if [[ $decont == 'no' ]]; then
     IllInp1=${name}_1_val_1
     IllInp2=${name}_2_val_2
   else
@@ -23,20 +22,16 @@ then
   fi
 fi
 
-if [[ $data == *'ONT'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'ONT'* ]]; then
+  if [[ $decont == 'no' ]]; then
     OntInp=${name}_ont
   else
     OntInp=raken_ont_${name}
   fi
 fi
 
-if [[ $data == *'PB'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'PB'* ]]; then
+  if [[ $decont == 'no' ]]; then
     PbInp=${name}_pb
   else
     PbInp=raken_${name}_pb
@@ -46,8 +41,6 @@ fi
 #############################
 
 mkdir -p ${out}/results/Racon
-
-
 
 echo """
 
@@ -70,7 +63,7 @@ echo """
   source /opt/anaconda3/etc/profile.d/conda.sh
   module load NGSmapper/minimap2-2.17
   conda activate racon_1.5.0
-  conda activate medaka-1.4.4
+  # conda activate medaka-1.4.4
 
   ######## run analyses #######
 
@@ -161,6 +154,6 @@ echo """
     rm -f ${out}/results/Racon/Ill.fq.gz
   fi
 
-""" > ${out}/shell/qsub_racon_${name}.sh
+""" >${out}/shell/qsub_racon_${name}.sh
 
 qsub -W block=true ${out}/shell/qsub_racon_${name}.sh
