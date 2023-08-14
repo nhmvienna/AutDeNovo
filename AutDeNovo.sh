@@ -194,8 +194,13 @@ fi
 ## for ONT data
 if [[ !(-z $ont) ]]; then
   mkdir -p ${out}/data/ONT
-  cat ${ont}/*q.gz >${out}/data/ONT/${name}_ont.fq.gz &
-  cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
+
+  if [[ ${ont} == */ ]]; then
+    cat ${ont}/*q.gz >${out}/data/ONT/${name}_ont.fq.gz &
+    cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
+  else
+    cat ${ont} >${out}/data/ONT/${name}_ont.fq.gz
+  fi
 
   printf "## ONT data copied\n# " |
     tee -a ${out}/shell/pipeline.sh
@@ -208,7 +213,12 @@ if [[ !(-z $pb) ]]; then
   module load Tools/samtools-1.12
 
   mkdir -p ${out}/data/PB
-  cat ${pb}/*q.gz >>${out}/data/PB/${name}_pb.fq.gz
+
+  if [[ ${pb} == */ ]]; then
+    cat ${pb}/*q.gz >>${out}/data/PB/${name}_pb.fq.gz
+  else
+    cat ${pb} >${out}/data/PB/${name}_pb.fq.gz
+  fi
 
   printf "## PacBio data copied\n# " |
     tee -a ${out}/shell/pipeline.sh
