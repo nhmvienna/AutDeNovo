@@ -18,11 +18,12 @@ The purpose of this repository is to provide a simple yet state-of-the-art de-no
 
 **_Oxford Nanopore_**
 
--   **ONT**: The full path to the folder that contains the **passed** based-called reads split in one or multiple FASTQ files (a folder usually called `/PASS`) AND the `sequencing_summary.txt` output file from basecalling with [Guppy](https://denbi-nanopore-training-course.readthedocs.io/en/latest/basecalling/basecalling.html). This summary file is needed for QC of the raw reads.
+-   **ONT**: The full path to the folder that contains the **passed** based-called reads split in one or multiple FASTQ files (a folder usually called `/PASS`) AND the `sequencing_summary.txt` output file from basecalling with [Guppy](https://denbi-nanopore-training-course.readthedocs.io/en/latest/basecalling/basecalling.html). This summary file is needed for QC of the raw reads. Alternatively, you can also provide the full path to a single gzipped FASTQ file. in this case the QC of the raw read file is skipped.
 
 **_Pacific Biosciences_**
 
--   **PB**: The full path to the folder that contains the **circular consensus sequences (CCS)** in FASTQ format generated from the raw subreads.bam file using the [ccs](https://ccs.how/) program from PacBio.
+-   **PB**: The full path to the folder that contains the **circular consensus sequences (CCS)** in FASTQ format generated from the raw subreads.bam file using the [ccs](https://ccs.how/) program from PacBio. Alternatively, you can also provide the full path to a single gzipped FASTQ file. in this case the QC of the raw read file is skipped.
+
 
 ### In addition, there are multiple optional parameters that can be set:
 
