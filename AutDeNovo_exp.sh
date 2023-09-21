@@ -37,6 +37,9 @@ for i in "$@"; do
   threads=*)
     threads="${i#*=}"
     ;;
+  threadsAssembly=*)
+    threadsAssembly="${i#*=}"
+    ;;
   MinReadLen=*)
     MinReadLen="${i#*=}"
     ;;
@@ -58,6 +61,12 @@ for i in "$@"; do
   Racon=*)
     racon="${i#*=}"
     ;;
+  OpenPBS=*)
+    openpbs="${i#*=}"
+    ;;
+  BLASTdb=*)
+    BLASTdb="${i#*=}"
+    ;;
   *)
     # unknown option
     ;;
@@ -78,29 +87,32 @@ AutDeNovo v. 0.02 - 23/02/2022
 
 A typcial command line looks like this:
 
-~/AutDeNovo.sh \                ## The script name
-Name=SomeName \                 ## The sample name
-OutputFolder=/media/output \    ## The full path to the output folder
-Fwd=/media/seq/fwd.fq.gz \      ## The full path to the raw read forward FASTQ file
-Rev=/media/seq/rev.fq.gz \      ## The full path to the raw read reverse FASTQ file
-ONT=Test/subset/ONT \           ## The full path to a folder containing reads generated with ONT
-PB=Test/subset/PacBio \         ## The full path to a folder containing reads generated with PacBio
-threads=10 \                    ## The total number of cores needed [optional; default=10]
-RAM=20 \                        ## The total amount of RAM [in GB] reserved for all analyses except the denovo assembly [optional; default=20]
-RAMAssembly=20 \                ## The total amount of RAM [in GB] reserved for the denovo assembly [optional; default=20]
-Trimmer=TrimGalore \            ## The Software used for trimming Illumina data; choose one option from (Atria, FastP, Trimgalore and UrQt) [optional; default=TrimGalore]
-MinReadLen=85 \                 ## The minimmum read length accepted after trimming, otherwise the read pair gets discarded [optional; default=85]
-BaseQuality=20 \                ## The minimmum PHRED-scaled base quality for trimming [optional; default=20]
-decont=no \                     ## optional decontamination with KRAKEN [default=no]
-SmudgePlot=no \                 ## optional estimation of ploidy with SmudgePlot [default=no]
-BuscoDB=vertebrata_odb10 \      ## The BUSCO database to be used; by default it is set to "vertebrata_odb10"; see here to pick the right one: https://busco.ezlab.org/busco_v4_data.html and here: https://busco.ezlab.org/list_of_lineages.html
-
+~/AutDeNovo.sh \                                  ## The path to the shell script
+Name=SomeName \                                   ## The sample name
+OutputFolder=/media/output \                      ## The full path to the output folder
+Fwd=/media/seq/fwd.fq.gz \                        ## The full path to the raw read forward FASTQ file
+Rev=/media/seq/rev.fq.gz \                        ## The full path to the raw read reverse FASTQ file
+ONT=Test/subset/ONT \                             ## The full path to a folder containing reads generated with ONT
+PB=Test/subset/PacBio \                           ## The full path to a folder containing reads generated with PacBio
+threads=10 \                                      ## The total number of cores used [optional; default=10]
+threadsAssembly=10 \                              ## The total number of cores used for denovo assembly [optional; default=8]
+RAM=20 \                                          ## The total amount of RAM [in GB] reserved for all analyses except the denovo assembly [optional; default=20]
+RAMAssembly=20 \                                  ## The total amount of RAM [in GB] reserved for the denovo assembly [optional; default=20]
+Trimmer=TrimGalore \                              ## The Software used for trimming Illumina data; choose one option from (Atria, FastP and Trimgalore) [optional; default=TrimGalore]
+MinReadLen=85 \                                   ## The minimmum read length accepted after trimming, otherwise the read pair gets discarded [optional; default=85]
+BaseQuality=20 \                                  ## The minimmum PHRED-scaled base quality for trimming [optional; default=20]
+decont=no \                                       ## optional decontamination with KRAKEN [optional; default=no]
+Racon=4 \                                         ## optional rounds of polishing with Racon [optional; default=no]
+BuscoDB=vertebrata_odb10 \                        ## The BUSCO database to be used; by default it is set to "vertebrata_odb10"; see here to pick the right one: https://busco.ezlab.org/busco_v4_data.html and here: https://busco.ezlab.org/list_of_lineages.html
+BLASTdb=/media/scratch/NCBI_nt_DB_210714/nt \     ## The full path to the BLAST nt database, see here: https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html#id6
+OpenPBS=yes \                                     ## Whether to use the OpenPBS job managment software (needs to be preinstalled) or not [optional; default=no]
 
 Please see below, which parameter is missing:
 *******************************
 '''
+### print error message if an obligatory parameter is not set
 
-array=("atria" "trimgalore" "urqt" "fastp")
+array=("atria" "trimgalore" "fastp")
 
 if [ -z "$name" ]; then
   echo "## ${help}'Name' is missing: The name of the sample needs to be specified"
@@ -131,13 +143,20 @@ if [[ ! " ${array[*]} " =~ " ${Trimmer,,} " ]]; then
   echo "## ${help}No correct Trimmer for Illumina data assigned; choose from: Atria, FastP, UrQt or Trimgalore "
   exit 4
 fi
+if [ -z "$BLASTdb" ]; then
+  echo "## ${help}'BLASTdb' is missing: The full path to the BLAST nt database needs to be provided"
+  exit 2
+fi
+
+## set default parameters if necessary
 if [ -z "$busco" ]; then busco="vertebrata_odb10"; fi
 if [ -z "$decont" ]; then decont="no"; fi
 if [ -z "$threads" ]; then threads="10"; fi
+if [ -z "$threadsAssembly" ]; then threadsAssembly="8"; fi
 if [ -z "$RAM" ]; then RAM="20"; fi
 if [ -z "$RAMAssembly" ]; then RAMAssembly="20"; fi
 if [ -z "$SmudgePlot" ]; then SmudgePlot="no"; fi
-if [ -z "$racon" ]; then racon="no"; fi
+if [ -z "$openpbs" ]; then openpbs="no"; else openpbs="yes"; fi
 if [ -z "$MinReadLen" ]; then MinReadLen=85; fi
 if [ -z "$BaseQuality" ]; then BaseQuality=20; fi
 
@@ -165,6 +184,11 @@ echo "## Dataset consists of "$data
 ## change to home directory of scripts
 BASEDIR=$(dirname $0)
 cd $BASEDIR
+
+## get path to folder where conda is installed
+ConPath=$(whereis conda)
+tmp=${ConPath#* }
+CONDA_PREFIX=${tmp%%/bin/co*}
 
 ## (1) make folder structure
 mkdir -p ${out}/data
@@ -195,7 +219,7 @@ fi
 if [[ !(-z $ont) ]]; then
   mkdir -p ${out}/data/ONT
 
-  if [[ ${ont} == */ ]]; then
+  if [[ ${ont} != *q.gz ]]; then
     cat ${ont}/*q.gz >${out}/data/ONT/${name}_ont.fq.gz &
     cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
   else
@@ -214,7 +238,7 @@ if [[ !(-z $pb) ]]; then
 
   mkdir -p ${out}/data/PB
 
-  if [[ ${pb} == */ ]]; then
+  if [[ ${pb} != *q.gz ]]; then
     cat ${pb}/*q.gz >>${out}/data/PB/${name}_pb.fq.gz
   else
     cat ${pb} >${out}/data/PB/${name}_pb.fq.gz
@@ -245,12 +269,13 @@ if [[ !(-z $fwd) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline/fastqc.sh \
+  sh FullPipeline_exp/fastqc.sh \
     $out \
     $name \
     $PWD \
     $threads \
-    $RAM |
+    $RAM \
+    $openpbs |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -263,13 +288,14 @@ if [[ !(-z $ont) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline/nanoplot.sh \
+  sh FullPipeline_exp/nanoplot.sh \
     $out \
     $name \
     "ONT" \
     $PWD \
     $threads \
-    $RAM |
+    $RAM \
+    $openpbs |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -282,13 +308,14 @@ if [[ !(-z $pb) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline/nanoplot.sh \
+  sh FullPipeline_exp/nanoplot.sh \
     $out \
     $name \
     "PB" \
     $PWD \
     $threads \
-    $RAM |
+    $RAM \
+    $openpbs |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -307,14 +334,15 @@ if [[ !(-z $fwd) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline/trim_${Trimmer,,}.sh \
+  sh FullPipeline_exp/trim_${Trimmer,,}.sh \
     $out \
     $name \
     $PWD \
     $threads \
     $RAM \
     $BaseQuality \
-    $MinReadLen |
+    $MinReadLen \
+    $openpbs |
     tee -a ${out}/shell/pipeline.sh
 
   printf "########################\n\n" |
@@ -334,13 +362,14 @@ if [[ $decont != "no" ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline/kraken.sh \
+  sh FullPipeline_exp/kraken.sh \
     $out \
     $name \
     $data \
     $PWD \
     $threads \
-    $RAM |
+    $RAM \
+    $openpbs |
     tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" |
     tee -a ${out}/shell/pipeline.sh
@@ -357,7 +386,7 @@ printf "# Estimation of genomesize\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline/genomesize.sh \
+sh FullPipeline_exp/genomesize.sh \
   $out \
   $name \
   $data \
@@ -366,7 +395,7 @@ sh FullPipeline/genomesize.sh \
   $threads \
   $RAM \
   $RAMAssembly \
-  $SmudgePlot |
+  $openpbs |
   tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
@@ -374,21 +403,22 @@ printf "########################\n\n" |
 ###############################################
 ########### (4) Denovo assembly ###############
 
-## denovo assembly with Spades
+## denovo assembly with Spades or Flye
 
 printf "## Starting denovo assembly\n# " |
   tee -a ${out}/shell/pipeline.sh
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline/denovo.sh \
+sh FullPipeline_exp/denovo.sh \
   $out \
   $name \
   $data \
   $decont \
   $PWD \
-  $threads \
-  $RAMAssembly |
+  $threadsAssembly \
+  $RAMAssembly \
+  $openpbs |
   tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
@@ -405,7 +435,7 @@ if [[ $racon != "no" ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline/racon.sh \
+  sh FullPipeline_exp/racon.sh \
     $out \
     $name \
     $data \
@@ -413,7 +443,8 @@ if [[ $racon != "no" ]]; then
     $threads \
     $RAMAssembly \
     $racon \
-    $decont |
+    $decont \
+    $openpbs |
     tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" |
     tee -a ${out}/shell/pipeline.sh
@@ -430,13 +461,14 @@ printf "# Starting assembly QC with Quast\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline/quast.sh \
+sh FullPipeline_exp/quast.sh \
   $out \
   $name \
   $data \
   $PWD \
   $threads \
-  $RAM |
+  $RAM \
+  $openpbs |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -449,14 +481,15 @@ printf "# Starting assembly QC with BUSCO\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline/busco.sh \
+sh FullPipeline_exp/busco.sh \
   $out \
   $name \
   $busco \
   $data \
   $PWD \
   $threads \
-  $RAM |
+  $RAM \
+  $openpbs |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -469,33 +502,36 @@ printf "# Mapping reads against reference\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline/mapping.sh \
+sh FullPipeline_exp/mapping.sh \
   $out \
   $name \
   $data \
   $decont \
   $PWD \
   $threads \
-  $RAM |
+  $RAM \
+  $openpbs |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
 
-## (D) Blast genome against the nt database
+## (D) BLAST genome against the nt database
 
 printf "# BLASTing genome against the nt database\n# " |
   tee -a ${out}/shell/pipeline.sh
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline/blast.sh \
+sh FullPipeline_exp/blast.sh \
   $out \
   $name \
   $data \
   $PWD \
   $threads \
-  $RAM |
+  $RAM \
+  $BLASTdb \
+  $openpbs |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -508,14 +544,15 @@ printf "# Summarize with Blobtools\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline/blobtools.sh \
+sh FullPipeline_exp/blobtools.sh \
   $out \
   $name \
   $busco \
   $data \
   $PWD \
   $threads \
-  $RAM |
+  $RAM \
+  $openpbs |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -529,16 +566,21 @@ printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
 
 ## remove index files and gzip assembly FASTA
-rm -f ${out}/output/${name}_${data}.fa.*
-pigz ${out}/output/${name}_${data}.fa
 
+source ${CONDA_PREFIX}/etc/profile.d/conda.sh
+conda activate envs/pigz
+
+rm -f ${out}/output/${name}_${data}.fa.*
+pigz -p ${threads} ${out}/output/${name}_${data}.fa
+
+## Write commands to shell output
 printf """
 # ############### HTML output #####################
 # # run the following commands in terminal to open Firefox and view the HTML output files
 # """ >${out}/output/${name}_HTML_outputs.sh
 
 if [[ !(-z $fwd) ]]; then
-
+  ## Write commands to shell output
   printf """
 ## Illumina Data - FASTQC of raw reads
 firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.html
@@ -554,11 +596,13 @@ firefox --new-tab ${out}/data/Illumina/${name}_1_val_1_fastqc.html
 firefox --new-tab ${out}/data/Illumina/${name}_2_val_2_fastqc.html
 """ >>${out}/output/${name}_HTML_outputs.sh
 
-  cp ${out}/data/Illumina/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_Illumina_fastqc.zip &
-  cp ${out}/data/Illumina/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_Illumina_fastqc.zip
+  if [[ ${Trimmer} == "Trimgalore" ]]; then
+    cp ${out}/data/Illumina/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_Illumina_fastqc.zip &
+    cp ${out}/data/Illumina/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_Illumina_fastqc.zip
+  fi
 
   if [[ $decont != "no" ]]; then
-    ## kraken
+    ## Kraken
     cp ${out}/results/kraken_reads/${name}_Illumina_filtered.report ${out}/output/${name}_Illumina_kraken.txt
   fi
 
@@ -570,7 +614,7 @@ if [[ !(-z $ont) ]]; then
   cp -r ${out}/results/rawQC/${name}_ONT_nanoplot ${out}/output/
 
   if [[ $decont != "no" ]]; then
-    ##kraken
+    ## Kraken
     cp ${out}/results/kraken_reads/${name}_ONT_filtered.report ${out}/output/${name}_ONT_kraken.txt
   fi
 
@@ -582,7 +626,7 @@ if [[ !(-z $pb) ]]; then
   cp -r ${out}/results/rawQC/${name}_PB_nanoplot ${out}/output/
 
   if [[ $decont != "no" ]]; then
-    ##kraken
+    ## Kraken
     cp ${out}/results/kraken_reads/${name}_PB_filtered.report ${out}/output/${name}_PB_kraken.txt
   fi
 
@@ -590,19 +634,18 @@ fi
 
 ## genomesize
 cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
-#cp ${out}/results/GenomeSize/${name}_smudgeplot.png ${out}/output/${name}_genomesize
 
-##QUAST
+## QUAST
 cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
 
-##BLAST
+## BLAST
 cp ${out}/results/BLAST/blastn_${name}.txt ${out}/output/${name}_blastn.txt
-pigz ${out}/output/${name}_blastn.txt
+pigz -p ${threads} ${out}/output/${name}_blastn.txt
 
 ## BUSCO
 cp -r ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences ${out}/output/
 
-#blobtools
+## Write commands to shell output
 printf """
 ## QUAST
 firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html
@@ -610,7 +653,8 @@ firefox --new-tab ${out}/results/AssemblyQC/Quast/report.html
 
 printf """
 ## Blobtools
-source /opt/venv/blobtools-3.0.0/bin/activate
+
+conda activate ${BASEDIR}/envs/blobtools
 
 blobtools view \
   --out ${out}/results/AssemblyQC/blobtools/out \

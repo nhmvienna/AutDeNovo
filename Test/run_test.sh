@@ -1,22 +1,24 @@
 ## get repository
 git clone https://github.com/nhmvienna/AutDeNovo
 
-## change to repository folder
-cd /media/inter/pipelines/AutDeNovo
+## define repository folder
+BaseDir=/media/inter/pipelines/AutDeNovo
 
 ## run pipeline on test dataset
-./AutDeNovo.sh \
+${BaseDir}/AutDeNovo_exp.sh \
   Name=SomeFish \
-  OutputFolder=Test/SomeFish \
-  Fwd=Test/subset/Illumina/Garra474_1.fq.gz \
-  Rev=Test/subset/Illumina/Garra474_2.fq.gz \
-  ONT=Test/subset/ONT \
-  PB=Test/subset/PacBio \
+  OutputFolder=${BaseDir}/Test/SomeFish \
+  Fwd=${BaseDir}/Test/subset/Illumina/Garra474_1.fq.gz \
+  Rev=${BaseDir}/Test/subset/Illumina/Garra474_2.fq.gz \
+  ONT=${BaseDir}/Test/subset/ONT \
+  PB=${BaseDir}/Test/subset/PacBio \
   threads=10 \
+  threadsAssembly=10 \
   RAM=20 \
   RAMAssembly=20 \
   decont=no \
   SmudgePlot=no \
   BuscoDB=vertebrata_odb10 \
+  BLASTdb=/media/scratch/NCBI_nt_DB_210714/nt \
   Trimmer=Atria \
   Racon=4

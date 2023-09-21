@@ -6,8 +6,10 @@ data=$3
 pwd=$4
 threads=$5
 RAM=$6
+BLASTdb=$7
+openpbs=$8
 
-printf "sh FullPipeline/blast.sh $1 $2 $3 $4 $5 $6\n# "
+printf "sh FullPipeline/blast.sh $1 $2 $3 $4 $5 $6 $7\n# "
 
 #############################
 
@@ -28,14 +30,19 @@ echo """
   ## Select ${threads} cores and ${RAM}gb of RAM
   #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
-  ######## load dependencies #######
-
-  module load Alignment/ncbi-BLAST-2.12.0
-
-  ######## run analyses #######
-
   ## Go to pwd
   cd ${pwd}
+
+  ConPath=\$(whereis conda)
+  tmp=\${ConPath#* }
+  CONDA_PREFIX=\${tmp%%/bin/co*}
+
+  ######## load dependencies #######
+
+  source ${CONDA_PREFIX}/etc/profile.d/conda.sh
+  conda activate envs/blast
+
+  ######## run analyses #######
 
   blastn \
     -num_threads ${threads} \
@@ -43,10 +50,14 @@ echo """
     -max_target_seqs 10 \
     -max_hsps 1 \
     -evalue 1e-25 \
-    -db /media/scratch/NCBI_nt_DB_210714/nt \
+    -db ${BLASTdb} \
     -query ${out}/output/${name}_${data}.fa \
     > ${out}/results/BLAST/blastn_${name}.txt
 
 """ >${out}/shell/qsub_blastn_${name}.sh
 
-qsub -W block=true ${out}/shell/qsub_blastn_${name}.sh
+if [[ $openpbs != "no" ]]; then
+  qsub -W block=true ${out}/shell/qsub_blastn_${name}.sh
+else
+  sh ${out}/shell/qsub_blastn_${name}.sh &>${out}/log/BLAST_${name}_log.txt
+fi
