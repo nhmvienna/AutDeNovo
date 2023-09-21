@@ -6,6 +6,7 @@ pwd=$3
 threads=$4
 RAM=$5
 openpbs=$6
+Conda=$7
 
 printf "sh FullPipeline/fastqc.sh $1 $2 $3 2 $5\n# "
 
@@ -29,13 +30,9 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  ConPath=\$(whereis conda)
-  tmp=\${ConPath#* }
-  CONDA_PREFIX=\${tmp%%/bin/co*}
-
   ######## load dependencies #######
 
-  source ${CONDA_PREFIX}/etc/profile.d/conda.sh
+  source ${Conda}/etc/profile.d/conda.sh
   conda activate envs/fastqc
 
   mkdir -p ${out}/results/rawQC/${name}_Illumina_fastqc

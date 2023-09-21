@@ -8,6 +8,7 @@ pwd=$5
 threads=$6
 RAM=$7
 openpbs=$8
+Conda=$9
 
 printf "sh FullPipeline/blobtools.sh $1 $2 $3 $4 $5 $6 $7\n# "
 
@@ -31,16 +32,12 @@ echo """
   ## Select ${threads} cores and ${RAM}gb of RAM
   #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
-  ConPath=\$(whereis conda)
-  tmp=\${ConPath#* }
-  CONDA_PREFIX=\${tmp%%/bin/co*}
-
   ## Go to pwd
   cd ${pwd}
 
   ######## load dependencies #######
 
-  source ${CONDA_PREFIX}/etc/profile.d/conda.sh
+  source ${Conda}/etc/profile.d/conda.sh
   conda activate envs/blobtools
 
   mkdir ${out}/results/AssemblyQC/blobtools

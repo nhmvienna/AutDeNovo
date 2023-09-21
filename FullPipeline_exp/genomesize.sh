@@ -9,6 +9,7 @@ threads=$6
 RAM=$7
 RAMAssembly=$8
 openpbs=$9
+Conda=$10
 
 printf "sh FullPipeline/genomesize.sh $1 $2 $3 $4 $5 $6 $7 $8\n# "
 
@@ -65,13 +66,9 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  ConPath=\$(whereis conda)
-  tmp=\${ConPath#* }
-  CONDA_PREFIX=\${tmp%%/bin/co*}
-
   ######## load dependencies #######
 
-  source ${CONDA_PREFIX}/etc/profile.d/conda.sh
+  source ${Conda}/etc/profile.d/conda.sh
   conda activate envs/jellyfish
 
   if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]

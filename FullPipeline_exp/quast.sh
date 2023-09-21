@@ -6,7 +6,8 @@ data=$3
 pwd=$4
 threads=$5
 RAM=$6
-openpbs=$9
+openpbs=$7
+Conda=$8
 
 if [ $RAM -gt 64 ]; then
   RAM=64
@@ -43,13 +44,9 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  ConPath=\$(whereis conda)
-  tmp=\${ConPath#* }
-  CONDA_PREFIX=\${tmp%%/bin/co*}
-
   ######## load dependencies #######
 
-  source ${CONDA_PREFIX}/etc/profile.d/conda.sh
+  source ${Conda}/etc/profile.d/conda.sh
   conda activate envs/quast
 
   ######## run analyses #######

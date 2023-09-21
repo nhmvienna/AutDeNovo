@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## AutDeNovo -v 0.2.0 - 30/05/2022
 
@@ -98,7 +98,7 @@ threads=10 \                                      ## The total number of cores u
 threadsAssembly=10 \                              ## The total number of cores used for denovo assembly [optional; default=8]
 RAM=20 \                                          ## The total amount of RAM [in GB] reserved for all analyses except the denovo assembly [optional; default=20]
 RAMAssembly=20 \                                  ## The total amount of RAM [in GB] reserved for the denovo assembly [optional; default=20]
-Trimmer=TrimGalore \                              ## The Software used for trimming Illumina data; choose one option from (Atria, FastP and Trimgalore) [optional; default=TrimGalore]
+Trimmer=trimgalore \                              ## The Software used for trimming Illumina data; choose one option from (atria, fastp and trimgalore) [optional; default=trimgalore]
 MinReadLen=85 \                                   ## The minimmum read length accepted after trimming, otherwise the read pair gets discarded [optional; default=85]
 BaseQuality=20 \                                  ## The minimmum PHRED-scaled base quality for trimming [optional; default=20]
 decont=no \                                       ## optional decontamination with KRAKEN [optional; default=no]
@@ -138,8 +138,8 @@ if [[ -z "$rev" && -z "$fwd" && -z "$ont" && -z "$pb" ]]; then
   echo "## ${help}No input defined"
   exit 4
 fi
-if [ -z "$Trimmer" ]; then Trimmer="Trimgalore"; fi
-if [[ ! " ${array[*]} " =~ " ${Trimmer,,} " ]]; then
+if [ -z "$Trimmer" ]; then Trimmer="trimgalore"; fi
+if [[ ! " ${array[*]} " =~ " ${Trimmer} " ]]; then
   echo "## ${help}No correct Trimmer for Illumina data assigned; choose from: Atria, FastP, UrQt or Trimgalore "
   exit 4
 fi
@@ -186,9 +186,9 @@ BASEDIR=$(dirname $0)
 cd $BASEDIR
 
 ## get path to folder where conda is installed
-ConPath=$(whereis conda)
-tmp=${ConPath#* }
-CONDA_PREFIX=${tmp%%/bin/co*}
+Conda=$CONDA_PREFIX
+
+source ${Conda}/etc/profile.d/conda.sh
 
 ## (1) make folder structure
 mkdir -p ${out}/data
@@ -234,7 +234,7 @@ fi
 
 ## for PacBio
 if [[ !(-z $pb) ]]; then
-  module load Tools/samtools-1.12
+  conda activate envs/bwa
 
   mkdir -p ${out}/data/PB
 
@@ -275,7 +275,8 @@ if [[ !(-z $fwd) ]]; then
     $PWD \
     $threads \
     $RAM \
-    $openpbs |
+    $openpbs \
+    $Conda |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -295,7 +296,8 @@ if [[ !(-z $ont) ]]; then
     $PWD \
     $threads \
     $RAM \
-    $openpbs |
+    $openpbs \
+    $Conda |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -315,7 +317,8 @@ if [[ !(-z $pb) ]]; then
     $PWD \
     $threads \
     $RAM \
-    $openpbs |
+    $openpbs \
+    $Conda |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -334,7 +337,7 @@ if [[ !(-z $fwd) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline_exp/trim_${Trimmer,,}.sh \
+  sh FullPipeline_exp/trim_${Trimmer}.sh \
     $out \
     $name \
     $PWD \
@@ -342,7 +345,8 @@ if [[ !(-z $fwd) ]]; then
     $RAM \
     $BaseQuality \
     $MinReadLen \
-    $openpbs |
+    $openpbs \
+    $Conda |
     tee -a ${out}/shell/pipeline.sh
 
   printf "########################\n\n" |
@@ -369,7 +373,8 @@ if [[ $decont != "no" ]]; then
     $PWD \
     $threads \
     $RAM \
-    $openpbs |
+    $openpbs \
+    $Conda |
     tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" |
     tee -a ${out}/shell/pipeline.sh
@@ -395,7 +400,8 @@ sh FullPipeline_exp/genomesize.sh \
   $threads \
   $RAM \
   $RAMAssembly \
-  $openpbs |
+  $openpbs \
+  $Conda |
   tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
@@ -418,7 +424,8 @@ sh FullPipeline_exp/denovo.sh \
   $PWD \
   $threadsAssembly \
   $RAMAssembly \
-  $openpbs |
+  $openpbs \
+  $Conda |
   tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
@@ -444,7 +451,8 @@ if [[ $racon != "no" ]]; then
     $RAMAssembly \
     $racon \
     $decont \
-    $openpbs |
+    $openpbs \
+    $Conda |
     tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" |
     tee -a ${out}/shell/pipeline.sh
@@ -468,7 +476,8 @@ sh FullPipeline_exp/quast.sh \
   $PWD \
   $threads \
   $RAM \
-  $openpbs |
+  $openpbs \
+  $Conda |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -489,7 +498,8 @@ sh FullPipeline_exp/busco.sh \
   $PWD \
   $threads \
   $RAM \
-  $openpbs |
+  $openpbs \
+  $Conda |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -510,7 +520,8 @@ sh FullPipeline_exp/mapping.sh \
   $PWD \
   $threads \
   $RAM \
-  $openpbs |
+  $openpbs \
+  $Conda |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -531,7 +542,8 @@ sh FullPipeline_exp/blast.sh \
   $threads \
   $RAM \
   $BLASTdb \
-  $openpbs |
+  $openpbs \
+  $Conda |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -552,7 +564,8 @@ sh FullPipeline_exp/blobtools.sh \
   $PWD \
   $threads \
   $RAM \
-  $openpbs |
+  $openpbs \
+  $Conda |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -567,7 +580,6 @@ printf "########################\n\n" |
 
 ## remove index files and gzip assembly FASTA
 
-source ${CONDA_PREFIX}/etc/profile.d/conda.sh
 conda activate envs/pigz
 
 rm -f ${out}/output/${name}_${data}.fa.*

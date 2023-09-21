@@ -8,6 +8,7 @@ threads=$5
 RAM=$6
 BLASTdb=$7
 openpbs=$8
+Conda=$9
 
 printf "sh FullPipeline/blast.sh $1 $2 $3 $4 $5 $6 $7\n# "
 
@@ -33,13 +34,9 @@ echo """
   ## Go to pwd
   cd ${pwd}
 
-  ConPath=\$(whereis conda)
-  tmp=\${ConPath#* }
-  CONDA_PREFIX=\${tmp%%/bin/co*}
-
   ######## load dependencies #######
 
-  source ${CONDA_PREFIX}/etc/profile.d/conda.sh
+  source ${Conda}/etc/profile.d/conda.sh
   conda activate envs/blast
 
   ######## run analyses #######

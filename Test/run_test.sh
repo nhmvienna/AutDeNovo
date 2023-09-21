@@ -2,10 +2,10 @@
 git clone https://github.com/nhmvienna/AutDeNovo
 
 ## define repository folder
-BaseDir=/media/inter/pipelines/AutDeNovo
+BaseDir=/Users/martinkapun/Documents/GitHub/AutDeNovo
 
 ## run pipeline on test dataset
-${BaseDir}/AutDeNovo_exp.sh \
+bash ${BaseDir}/AutDeNovo_exp.sh \
   Name=SomeFish \
   OutputFolder=${BaseDir}/Test/SomeFish \
   Fwd=${BaseDir}/Test/subset/Illumina/Garra474_1.fq.gz \
@@ -17,8 +17,7 @@ ${BaseDir}/AutDeNovo_exp.sh \
   RAM=20 \
   RAMAssembly=20 \
   decont=no \
-  SmudgePlot=no \
+  Trimmer=trimgalore \
   BuscoDB=vertebrata_odb10 \
   BLASTdb=/media/scratch/NCBI_nt_DB_210714/nt \
-  Trimmer=Atria \
   Racon=4
