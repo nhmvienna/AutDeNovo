@@ -121,7 +121,7 @@ In case Illumina high-quality sequencing data are available, the de-novo assembl
 
 ### (5) [\[Optional\] Contig polishing with Racon](FullPipeline/Racon.sh)
 
-As an optional final step, the raw contigs can be polished based on the raw reads using [Racon](https://github.com/isovic/racon). This step can be iterated multiple times by setting parameter Racon=<n>, where <n> is the number iterations. For example, if you choose 3, Racon polishing will be repeated three times. If multiple datatypes are provide for assembly, only one read-type will be used for polishing in the following preference order: ONT > PB > ILL.
+As an optional final step, the raw contigs can be polished based on the raw reads using [Racon](https://github.com/isovic/racon). This step can be iterated multiple times by setting parameter Racon=\<n\>, where \<n\> is the number iterations. For example, if you choose 3, Racon polishing will be repeated three times. If multiple datatypes are provide for assembly, only one read-type will be used for polishing in the following preference order: ONT > PB > ILL.
 
 ### (6) Assembly QC
 
