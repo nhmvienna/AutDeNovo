@@ -9,8 +9,9 @@ BaseQuality=$6
 MinReadLen=$7
 openpbs=$8
 Conda=$9
+PrintOnly=$10
 
-printf "sh FullPipeline/trim_atria.sh $1 $2 $3 $4 $5 $6 $7\n# "
+printf "sh FullPipeline_exp/trim_atria.sh $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10}\n# "
 
 #############################
 
@@ -57,8 +58,10 @@ echo """
 
 """ >${out}/shell/qsub_trim_${name}.sh
 
-if [[ $openpbs != "no" ]]; then
-  qsub -W block=true ${out}/shell/qsub_trim_${name}.sh
-else
-  sh ${out}/shell/qsub_trim_${name}.sh &>${out}/log/trim_atria_${name}_log.txt
+if [[ $PrintOnly == "yes" ]]; then
+  if [[ $openpbs != "no" ]]; then
+    qsub -W block=true ${out}/shell/qsub_trim_${name}.sh
+  else
+    sh ${out}/shell/qsub_trim_${name}.sh &>${out}/log/trim_atria_${name}_log.txt
+  fi
 fi

@@ -195,13 +195,13 @@ fi
 if [[ !(-z $ont) ]]; then
   mkdir -p ${out}/data/ONT
 
-  if [[ ${ont} == */ ]]; then
+  if [[ ${ont} != *q.gz ]]; then
     cat ${ont}/*q.gz >${out}/data/ONT/${name}_ont.fq.gz &
     cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
   else
     cat ${ont} >${out}/data/ONT/${name}_ont.fq.gz
-  fi
 
+  fi
   printf "## ONT data copied\n# " |
     tee -a ${out}/shell/pipeline.sh
   date |
@@ -593,7 +593,7 @@ cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
 #cp ${out}/results/GenomeSize/${name}_smudgeplot.png ${out}/output/${name}_genomesize
 
 ##QUAST
-cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
+#cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
 
 ##BLAST
 cp ${out}/results/BLAST/blastn_${name}.txt ${out}/output/${name}_blastn.txt

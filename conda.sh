@@ -1,8 +1,8 @@
 ## Install all required software
-
-echo "...testing if Conda and Mamba are installed"
+echo "Installing necessary software"
 echo "*********************"
 echo ""
+echo "testing if Conda and Mamba are installed..."
 
 command -v conda >/dev/null 2>&1 || {
     echo >&2 "The installation pipeline requires Anaconda/Miniconda but it is not installed. Please check here: https://anaconda.org/ for more details. Aborting."
@@ -11,10 +11,12 @@ command -v conda >/dev/null 2>&1 || {
 
 command -v mamba >/dev/null 2>&1 || {
     echo >&2 "The installation pipeline requires Mamba but it is not installed. Please check here: https://github.com/conda-forge/miniforge#mambaforge for more details. Aborting."
-    exit 1
+    exit 2
 }
 
-printf "successfully done\n"
+printf "...successfully done!\n"
+echo "*********************"
+echo ""
 echo "Have a cup of coffee, this may take a while... "
 echo '''
    ( (
@@ -53,14 +55,18 @@ mamba create \
 mamba create \
     -p ${BASEDIR}/envs/blobtools \
     -y \
-    pip
+    python=3.9
 
 source ${Conda}/etc/profile.d/conda.sh
 
 conda activate \
     ${BASEDIR}/envs/blobtools
 
-${Conda}/bin/pip install \
+mamba install \
+    -y \
+    tqdm==4.64.1
+
+${BASEDIR}/envs/blobtools/bin/pip install \
     blobtoolkit[full]==4.2.1
 
 conda deactivate
@@ -124,6 +130,8 @@ mamba install \
     -c conda-forge \
     -c bioconda \
     samtools=1.17
+
+conda deactivate
 
 ## install Jellyfish
 mamba create \
@@ -192,7 +200,7 @@ mamba create \
     -y \
     -c conda-forge \
     -c bioconda \
-    pigz pbzip2
+    pigz pbzip2 julia
 
 source ${Conda}/etc/profile.d/conda.sh
 

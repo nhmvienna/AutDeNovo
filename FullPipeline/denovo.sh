@@ -14,11 +14,8 @@ printf "sh FullPipeline/denovo.sh $1 $2 $3 $4 $5 $6 $7\n"
 
 mkdir ${out}/results/assembly
 
-
-if [[ $data == *'ILL'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'ILL'* ]]; then
+  if [[ $decont == 'no' ]]; then
     IllInp1=${name}_1_val_1
     IllInp2=${name}_2_val_2
   else
@@ -27,29 +24,23 @@ then
   fi
 fi
 
-if [[ $data == *'ONT'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'ONT'* ]]; then
+  if [[ $decont == 'no' ]]; then
     OntInp=${name}_ont
   else
     OntInp=raken_ont_${name}
   fi
 fi
 
-if [[ $data == *'PB'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'PB'* ]]; then
+  if [[ $decont == 'no' ]]; then
     PbInp=${name}_pb
   else
     PbInp=raken_${name}_pb
   fi
 fi
 
-
-if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
-then
+if [[ ($data == 'ILL') || ($data == 'ILL_ONT') || ($data == 'ILL_PB') || ($data == 'ILL_ONT_PB') ]]; then
 
   printf "# Assembly of $data with Spades\n# "
   date
@@ -80,7 +71,7 @@ echo """
   #PBS -l select=1:ncpus=${threads}:mem=${RAM}g
 
   ## load all necessary software into environment
-  module load Assembly/SPAdes_3.15.3
+  module load Assembly/SPAdes_3.15.4
 
   ## Go to pwd
   cd ${pwd}
@@ -227,7 +218,7 @@ echo """
 
     mv ${out}/results/assembly/${name}/assembly.fasta ${out}/output/${name}_${data}.fa
   fi
-""" > ${out}/shell/qsub_assembly_${name}.sh
+""" >${out}/shell/qsub_assembly_${name}.sh
 
 printf "# "
 qsub -W block=true ${out}/shell/qsub_assembly_${name}.sh

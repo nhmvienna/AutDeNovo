@@ -8,12 +8,13 @@ threads=$5
 RAM=$6
 openpbs=$7
 Conda=$8
+PrintOnly=$9
 
 if [ $RAM -gt 64 ]; then
   RAM=64
 fi
 
-printf "sh FullPipeline/quast.sh $1 $2 $3 $4 $5 $6\n# "
+printf "sh FullPipeline_exp/quast.sh $1 $2 $3 $4 $5 $6 $7 $8 $9\n# "
 
 #############################
 
@@ -60,8 +61,10 @@ echo """
 
 """ >${out}/shell/qsub_quast_${name}.sh
 
-if [[ $openpbs != "no" ]]; then
-  qsub ${out}/shell/qsub_quast_${name}.sh
-else
-  sh ${out}/shell/qsub_quast_${name}.sh &>${out}/log/Quast_${name}_log.txt
+if [[ $PrintOnly == "no" ]]; then
+  if [[ $openpbs != "no" ]]; then
+    qsub ${out}/shell/qsub_quast_${name}.sh
+  else
+    sh ${out}/shell/qsub_quast_${name}.sh &>${out}/log/Quast_${name}_log.txt
+  fi
 fi

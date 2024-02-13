@@ -8,8 +8,9 @@ threads=$5
 RAM=$6
 openpbs=$7
 Conda=$8
+PrintOnly=$9
 
-printf "sh FullPipeline/kraken.sh $1 $2 $3 $4 $5 $6\n# "
+printf "sh FullPipeline_exp/kraken.sh $1 $2 $3 $4 $5 $6 $7 $8 $9\n# "
 
 #############################
 
@@ -110,8 +111,10 @@ echo """
 
 """ >${out}/shell/qsub_kraken_reads_${name}.sh
 
-if [[ $openpbs != "no" ]]; then
-  qsub -W block=true ${out}/shell/qsub_kraken_reads_${name}.sh
-else
-  sh ${out}/shell/qsub_kraken_reads_${name}.sh &>${out}/log/kraken_reads_${name}_log.txt
+if [[ $PrintOnly == "no" ]]; then
+  if [[ $openpbs != "no" ]]; then
+    qsub -W block=true ${out}/shell/qsub_kraken_reads_${name}.sh
+  else
+    sh ${out}/shell/qsub_kraken_reads_${name}.sh &>${out}/log/kraken_reads_${name}_log.txt
+  fi
 fi

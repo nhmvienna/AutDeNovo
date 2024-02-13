@@ -9,8 +9,9 @@ threads=$6
 RAM=$7
 openpbs=$8
 Conda=$9
+PrintOnly=$10
 
-printf "sh FullPipeline/denovo.sh $1 $2 $3 $4 $5 $6 $7\n"
+printf "sh FullPipeline_exp/denovo.sh $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10}\n"
 
 #############################
 
@@ -228,9 +229,11 @@ echo """
   fi
 """ >${out}/shell/qsub_assembly_${name}.sh
 
-printf "# "
-if [[ $openpbs != "no" ]]; then
-  qsub -W block=true ${out}/shell/qsub_assembly_${name}.sh
-else
-  sh ${out}/shell/qsub_assembly_${name}.sh &>${out}/log/assembly_${name}_log.txt
+if [[ $PrintOnly == "no" ]]; then
+  printf "# "
+  if [[ $openpbs != "no" ]]; then
+    qsub -W block=true ${out}/shell/qsub_assembly_${name}.sh
+  else
+    sh ${out}/shell/qsub_assembly_${name}.sh &>${out}/log/assembly_${name}_log.txt
+  fi
 fi

@@ -9,8 +9,9 @@ threads=$6
 RAM=$7
 openpbs=$8
 Conda=$9
+PrintOnly=$10
 
-printf "sh FullPipeline/blobtools.sh $1 $2 $3 $4 $5 $6 $7\n# "
+printf "sh FullPipeline_exp/blobtools.sh $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10}\n# "
 
 ##########################
 
@@ -68,8 +69,10 @@ echo """
 
 """ >${out}/shell/qsub_blobtools_${name}.sh
 
-if [[ $openpbs != "no" ]]; then
-    qsub -W block=true ${out}/shell/qsub_blobtools_${name}.sh
-else
-    sh ${out}/shell/qsub_blobtools_${name}.sh &>${out}/log/blobtools_${name}_log.txt
+if [[ $PrintOnly == "no" ]]; then
+    if [[ $openpbs != "no" ]]; then
+        qsub -W block=true ${out}/shell/qsub_blobtools_${name}.sh
+    else
+        sh ${out}/shell/qsub_blobtools_${name}.sh &>${out}/log/blobtools_${name}_log.txt
+    fi
 fi

@@ -10,8 +10,9 @@ RAM=$7
 RAMAssembly=$8
 openpbs=$9
 Conda=$10
+PrintOnly=$11
 
-printf "sh FullPipeline/genomesize.sh $1 $2 $3 $4 $5 $6 $7 $8\n# "
+printf "sh FullPipeline_exp/genomesize.sh $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10} ${11}\n# "
 
 #############################
 
@@ -169,8 +170,10 @@ echo """
   -o ${out}/results/GenomeSize/${name}
 """ >${out}/shell/qsub_genomesize_${name}.sh
 
-if [[ $openpbs != "no" ]]; then
-  qsub -W block=true ${out}/shell/qsub_genomesize_${name}.sh
-else
-  sh ${out}/shell/qsub_genomesize_${name}.sh &>${out}/log/GenomeSize_${name}_log.txt
+if [[ $PrintOnly == "no" ]]; then
+  if [[ $openpbs != "no" ]]; then
+    qsub -W block=true ${out}/shell/qsub_genomesize_${name}.sh
+  else
+    sh ${out}/shell/qsub_genomesize_${name}.sh &>${out}/log/GenomeSize_${name}_log.txt
+  fi
 fi

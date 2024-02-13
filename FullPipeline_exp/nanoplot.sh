@@ -8,8 +8,9 @@ threads=$5
 RAM=$6
 openpbs=$7
 Conda=$8
+PrintOnly=$9
 
-printf "sh FullPipeline/nanoplot.sh $1 $2 $3 $4 $5 $6\n# "
+printf "sh FullPipeline_exp/nanoplot.sh $1 $2 $3 $4 $5 $6 $7 $8 $9\n# "
 
 #############################
 
@@ -82,8 +83,10 @@ echo """
   fi
 """ >${out}/shell/qsub_nanoplot_${name}_${type}.sh
 
-if [[ $openpbs != "no" ]]; then
-  qsub -W block=true ${out}/shell/qsub_nanoplot_${name}_${type}.sh
-else
-  sh ${out}/shell/qsub_nanoplot_${name}_${type}.sh &>${out}/log/raw_nanoplot_${name}_${type}_log.txt
+if [[ $PrintOnly == "no" ]]; then
+  if [[ $openpbs != "no" ]]; then
+    qsub -W block=true ${out}/shell/qsub_nanoplot_${name}_${type}.sh
+  else
+    sh ${out}/shell/qsub_nanoplot_${name}_${type}.sh &>${out}/log/raw_nanoplot_${name}_${type}_log.txt
+  fi
 fi

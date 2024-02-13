@@ -67,6 +67,9 @@ for i in "$@"; do
   BLASTdb=*)
     BLASTdb="${i#*=}"
     ;;
+  PrintOnly=*)
+    PrintOnly="${i#*=}"
+    ;;
   *)
     # unknown option
     ;;
@@ -156,7 +159,8 @@ if [ -z "$threadsAssembly" ]; then threadsAssembly="8"; fi
 if [ -z "$RAM" ]; then RAM="20"; fi
 if [ -z "$RAMAssembly" ]; then RAMAssembly="20"; fi
 if [ -z "$SmudgePlot" ]; then SmudgePlot="no"; fi
-if [ -z "$openpbs" ]; then openpbs="no"; else openpbs="yes"; fi
+if [ -z "$openpbs" ]; then openpbs="no"; fi
+if [ -z "$PrintOnly" ]; then PrintOnly="no"; fi
 if [ -z "$MinReadLen" ]; then MinReadLen=85; fi
 if [ -z "$BaseQuality" ]; then BaseQuality=20; fi
 
@@ -182,18 +186,26 @@ echo "## Dataset consists of "$data
 ###############################################
 
 ## change to home directory of scripts
-BASEDIR=$(dirname $0)
+BASEDIR=$(realpath $(dirname $0))
 cd $BASEDIR
+
+## (0) Set working directory
+mkdir -p ${out}/shell
+printf "# Change to working directory\ncd ${BASEDIR}\n\n# " |
+  tee -a ${out}/shell/pipeline.sh
+date |
+  tee -a ${out}/shell/pipeline.sh
 
 ## get path to folder where conda is installed
 Conda=$CONDA_PREFIX
 
 source ${Conda}/etc/profile.d/conda.sh
+eval "$(conda shell.bash hook)"
 
 ## (1) make folder structure
-mkdir -p ${out}/data
+
+mkdir ${out}/data
 mkdir ${out}/results
-mkdir ${out}/shell
 mkdir ${out}/log
 mkdir ${out}/output
 
@@ -205,9 +217,11 @@ date |
 
 ## for Illumina data
 if [[ !(-z $fwd) ]]; then
-  mkdir -p ${out}/data/Illumina
-  cp ${fwd} ${out}/data/Illumina/${name}_1.fq.gz &
-  cp ${rev} ${out}/data/Illumina/${name}_2.fq.gz
+  if [[ $PrintOnly == "no" ]]; then
+    mkdir -p ${out}/data/Illumina
+    cp ${fwd} ${out}/data/Illumina/${name}_1.fq.gz &
+    cp ${rev} ${out}/data/Illumina/${name}_2.fq.gz
+  fi
 
   printf "## Illumina data copied\n# " |
     tee -a ${out}/shell/pipeline.sh
@@ -217,13 +231,15 @@ fi
 
 ## for ONT data
 if [[ !(-z $ont) ]]; then
-  mkdir -p ${out}/data/ONT
+  if [[ $PrintOnly == "no" ]]; then
+    mkdir -p ${out}/data/ONT
 
-  if [[ ${ont} != *q.gz ]]; then
-    cat ${ont}/*q.gz >${out}/data/ONT/${name}_ont.fq.gz &
-    cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
-  else
-    cat ${ont} >${out}/data/ONT/${name}_ont.fq.gz
+    if [[ ${ont} != *q.gz ]]; then
+      cat ${ont}/*q.gz >${out}/data/ONT/${name}_ont.fq.gz &
+      cp ${ont}/sequencing_summary.txt ${out}/data/ONT/${name}_sequencing_summary.txt
+    else
+      cat ${ont} >${out}/data/ONT/${name}_ont.fq.gz
+    fi
   fi
 
   printf "## ONT data copied\n# " |
@@ -234,16 +250,17 @@ fi
 
 ## for PacBio
 if [[ !(-z $pb) ]]; then
-  conda activate envs/bwa
+  if [[ $PrintOnly == "no" ]]; then
+    conda activate envs/bwa
 
-  mkdir -p ${out}/data/PB
+    mkdir -p ${out}/data/PB
 
-  if [[ ${pb} != *q.gz ]]; then
-    cat ${pb}/*q.gz >>${out}/data/PB/${name}_pb.fq.gz
-  else
-    cat ${pb} >${out}/data/PB/${name}_pb.fq.gz
+    if [[ ${pb} != *q.gz ]]; then
+      cat ${pb}/*q.gz >>${out}/data/PB/${name}_pb.fq.gz
+    else
+      cat ${pb} >${out}/data/PB/${name}_pb.fq.gz
+    fi
   fi
-
   printf "## PacBio data copied\n# " |
     tee -a ${out}/shell/pipeline.sh
   date |
@@ -276,7 +293,8 @@ if [[ !(-z $fwd) ]]; then
     $threads \
     $RAM \
     $openpbs \
-    $Conda |
+    $Conda \
+    $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -297,7 +315,8 @@ if [[ !(-z $ont) ]]; then
     $threads \
     $RAM \
     $openpbs \
-    $Conda |
+    $Conda \
+    $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -318,7 +337,8 @@ if [[ !(-z $pb) ]]; then
     $threads \
     $RAM \
     $openpbs \
-    $Conda |
+    $Conda \
+    $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
 
 fi
@@ -346,7 +366,8 @@ if [[ !(-z $fwd) ]]; then
     $BaseQuality \
     $MinReadLen \
     $openpbs \
-    $Conda |
+    $Conda \
+    $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
 
   printf "########################\n\n" |
@@ -374,7 +395,8 @@ if [[ $decont != "no" ]]; then
     $threads \
     $RAM \
     $openpbs \
-    $Conda |
+    $Conda \
+    $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" |
     tee -a ${out}/shell/pipeline.sh
@@ -401,7 +423,8 @@ sh FullPipeline_exp/genomesize.sh \
   $RAM \
   $RAMAssembly \
   $openpbs \
-  $Conda |
+  $Conda \
+  $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
@@ -425,7 +448,8 @@ sh FullPipeline_exp/denovo.sh \
   $threadsAssembly \
   $RAMAssembly \
   $openpbs \
-  $Conda |
+  $Conda \
+  $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
@@ -452,7 +476,8 @@ if [[ $racon != "no" ]]; then
     $racon \
     $decont \
     $openpbs \
-    $Conda |
+    $Conda \
+    $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" |
     tee -a ${out}/shell/pipeline.sh
@@ -477,7 +502,8 @@ sh FullPipeline_exp/quast.sh \
   $threads \
   $RAM \
   $openpbs \
-  $Conda |
+  $Conda \
+  $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -499,7 +525,8 @@ sh FullPipeline_exp/busco.sh \
   $threads \
   $RAM \
   $openpbs \
-  $Conda |
+  $Conda \
+  $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -521,7 +548,8 @@ sh FullPipeline_exp/mapping.sh \
   $threads \
   $RAM \
   $openpbs \
-  $Conda |
+  $Conda \
+  $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -543,7 +571,8 @@ sh FullPipeline_exp/blast.sh \
   $RAM \
   $BLASTdb \
   $openpbs \
-  $Conda |
+  $Conda \
+  $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -565,7 +594,8 @@ sh FullPipeline_exp/blobtools.sh \
   $threads \
   $RAM \
   $openpbs \
-  $Conda |
+  $Conda \
+  $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
 printf "########################\n\n" |
@@ -578,13 +608,14 @@ date |
 printf "########################\n\n" |
   tee -a ${out}/shell/pipeline.sh
 
-## remove index files and gzip assembly FASTA
+if [[ $PrintOnly == "no" ]]; then
+  ## remove index files and gzip assembly FASTA
 
-conda activate envs/pigz
+  conda activate envs/pigz
 
-rm -f ${out}/output/${name}_${data}.fa.*
-pigz -p ${threads} ${out}/output/${name}_${data}.fa
-
+  rm -f ${out}/output/${name}_${data}.fa.*
+  pigz -p ${threads} ${out}/output/${name}_${data}.fa
+fi
 ## Write commands to shell output
 printf """
 # ############### HTML output #####################
@@ -599,64 +630,66 @@ firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.
 firefox --new-tab ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.html
 """ >>${out}/output/${name}_HTML_outputs.sh
 
-  cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.zip ${out}/output/${name}_1_raw_Illumina_fastqc.zip &
-  cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.zip ${out}/output/${name}_2_raw_Illumina_fastqc.zip
-
+  if [[ $PrintOnly == "no" ]]; then
+    cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_1_fastqc.zip ${out}/output/${name}_1_raw_Illumina_fastqc.zip &
+    cp ${out}/results/rawQC/${name}_Illumina_fastqc/${name}_2_fastqc.zip ${out}/output/${name}_2_raw_Illumina_fastqc.zip
+  fi
   printf """
 ## Illumina Data - FASTQC after trimming
 firefox --new-tab ${out}/data/Illumina/${name}_1_val_1_fastqc.html
 firefox --new-tab ${out}/data/Illumina/${name}_2_val_2_fastqc.html
 """ >>${out}/output/${name}_HTML_outputs.sh
 
-  if [[ ${Trimmer} == "Trimgalore" ]]; then
-    cp ${out}/data/Illumina/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_Illumina_fastqc.zip &
-    cp ${out}/data/Illumina/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_Illumina_fastqc.zip
+  if [[ $PrintOnly == "no" ]]; then
+    if [[ ${Trimmer} == "Trimgalore" ]]; then
+      cp ${out}/data/Illumina/${name}_1_val_1_fastqc.zip ${out}/output/${name}_1_trimmed_Illumina_fastqc.zip &
+      cp ${out}/data/Illumina/${name}_2_val_2_fastqc.zip ${out}/output/${name}_2_trimmed_Illumina_fastqc.zip
+    fi
+
+    if [[ $decont != "no" ]]; then
+      ## Kraken
+      cp ${out}/results/kraken_reads/${name}_Illumina_filtered.report ${out}/output/${name}_Illumina_kraken.txt
+    fi
+
   fi
 
-  if [[ $decont != "no" ]]; then
-    ## Kraken
-    cp ${out}/results/kraken_reads/${name}_Illumina_filtered.report ${out}/output/${name}_Illumina_kraken.txt
+  if [[ !(-z $ont) ]]; then
+
+    ## Nanoplot
+    cp -r ${out}/results/rawQC/${name}_ONT_nanoplot ${out}/output/
+
+    if [[ $decont != "no" ]]; then
+      ## Kraken
+      cp ${out}/results/kraken_reads/${name}_ONT_filtered.report ${out}/output/${name}_ONT_kraken.txt
+    fi
+
   fi
 
+  if [[ !(-z $pb) ]]; then
+
+    ## Nanoplot
+    cp -r ${out}/results/rawQC/${name}_PB_nanoplot ${out}/output/
+
+    if [[ $decont != "no" ]]; then
+      ## Kraken
+      cp ${out}/results/kraken_reads/${name}_PB_filtered.report ${out}/output/${name}_PB_kraken.txt
+    fi
+
+  fi
+
+  ## genomesize
+  cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
+
+  ## QUAST
+  cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
+
+  ## BLAST
+  cp ${out}/results/BLAST/blastn_${name}.txt ${out}/output/${name}_blastn.txt
+  pigz -p ${threads} ${out}/output/${name}_blastn.txt
+
+  ## BUSCO
+  cp -r ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences ${out}/output/
 fi
-
-if [[ !(-z $ont) ]]; then
-
-  ## Nanoplot
-  cp -r ${out}/results/rawQC/${name}_ONT_nanoplot ${out}/output/
-
-  if [[ $decont != "no" ]]; then
-    ## Kraken
-    cp ${out}/results/kraken_reads/${name}_ONT_filtered.report ${out}/output/${name}_ONT_kraken.txt
-  fi
-
-fi
-
-if [[ !(-z $pb) ]]; then
-
-  ## Nanoplot
-  cp -r ${out}/results/rawQC/${name}_PB_nanoplot ${out}/output/
-
-  if [[ $decont != "no" ]]; then
-    ## Kraken
-    cp ${out}/results/kraken_reads/${name}_PB_filtered.report ${out}/output/${name}_PB_kraken.txt
-  fi
-
-fi
-
-## genomesize
-cp -r ${out}/results/GenomeSize/${name} ${out}/output/${name}_genomesize
-
-## QUAST
-cp ${out}/results/AssemblyQC/Quast/report.pdf ${out}/output/${name}_quast.pdf
-
-## BLAST
-cp ${out}/results/BLAST/blastn_${name}.txt ${out}/output/${name}_blastn.txt
-pigz -p ${threads} ${out}/output/${name}_blastn.txt
-
-## BUSCO
-cp -r ${out}/results/AssemblyQC/Busco/${name}/run_${busco}/busco_sequences ${out}/output/
-
 ## Write commands to shell output
 printf """
 ## QUAST

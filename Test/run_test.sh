@@ -2,7 +2,7 @@
 git clone https://github.com/nhmvienna/AutDeNovo
 
 ## define repository folder
-BaseDir=/Users/martinkapun/Documents/GitHub/AutDeNovo
+BaseDir=/media/inter/pipelines/AutDeNovo
 
 ## run pipeline on test dataset
 bash ${BaseDir}/AutDeNovo_exp.sh \
