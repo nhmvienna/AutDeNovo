@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## AutDeNovo -v 0.2.0 - 30/05/2022
+## AutDeNovo -v 0.2.3 - 16/01/2023
 
 ## Author: Martin Kapun, based on the pipeline of TBG Loewe@Senkenberg/Frankfurt from Tilman Schell
 
