@@ -199,7 +199,6 @@ date |
 ## get path to folder where conda is installed
 Conda=$CONDA_PREFIX
 
-source ${Conda}/etc/profile.d/conda.sh
 eval "$(conda shell.bash hook)"
 
 ## (1) make folder structure
