@@ -7,15 +7,14 @@ pwd=$4
 threads=$5
 RAM=$6
 openpbs=$7
-Conda=$8
-PrintOnly=$9
+PrintOnly=$8
 
-printf "sh FullPipeline_exp/nanoplot.sh $1 $2 $3 $4 $5 $6 $7 $8 $9\n# "
+printf "bash FullPipeline_exp/nanoplot.sh $1 $2 $3 $4 $5 $6 $7 $8\n# "
 
 #############################
 
 echo """
-  #!/bin/sh
+  #!/usr/bin/env bash
 
   ## name of Job
   #PBS -N nanoplot_${name}
@@ -87,6 +86,6 @@ if [[ $PrintOnly == "no" ]]; then
   if [[ $openpbs != "no" ]]; then
     qsub -W block=true ${out}/shell/qsub_nanoplot_${name}_${type}.sh
   else
-    sh ${out}/shell/qsub_nanoplot_${name}_${type}.sh &>${out}/log/raw_nanoplot_${name}_${type}_log.txt
+    bash ${out}/shell/qsub_nanoplot_${name}_${type}.sh &>${out}/log/raw_nanoplot_${name}_${type}_log.txt
   fi
 fi

@@ -8,15 +8,14 @@ RAM=$5
 BaseQuality=$6
 MinReadLen=$7
 openpbs=$8
-Conda=$9
-PrintOnly=$10
+PrintOnly=$9
 
-printf "sh FullPipeline_exp/trim_atria.sh $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10}\n# "
+printf "bash FullPipeline_exp/trim_fastp.sh $1 $2 $3 $4 $5 $6 $7 $8 $9\n# "
 
 #############################
 
 echo """
-  #!/bin/sh
+  #!/usr/bin/env bash
 
   ## name of Job
   #PBS -N trim_fastp_${name}
@@ -58,6 +57,6 @@ if [[ $PrintOnly == "yes" ]]; then
   if [[ $openpbs != "no" ]]; then
     qsub -W block=true ${out}/shell/qsub_trim_${name}.sh
   else
-    sh ${out}/shell/qsub_trim_${name}.sh &>${out}/log/trim_fastp_${name}_log.txt
+    bash ${out}/shell/qsub_trim_${name}.sh &>${out}/log/trim_fastp_${name}_log.txt
   fi
 fi

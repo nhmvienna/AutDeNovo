@@ -8,10 +8,9 @@ pwd=$5
 threads=$6
 RAM=$7
 openpbs=$8
-Conda=$9
-PrintOnly=$10
+PrintOnly=$9
 
-printf "sh FullPipeline_exp/busco.sh $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10}\n# "
+printf "bash FullPipeline_exp/busco.sh $1 $2 $3 $4 $5 $6 $7 $8 $9\n# "
 
 #############################
 
@@ -19,7 +18,7 @@ mkdir -p ${out}/results/AssemblyQC/Busco
 
 echo """
 
-  #!/bin/sh
+  #!/usr/bin/env bash
 
   ## name of Job
   #PBS -N BUSCO_${name}
@@ -58,6 +57,6 @@ if [[ $PrintOnly == "no" ]]; then
   if [[ $openpbs != "no" ]]; then
     qsub -W block=true ${out}/shell/qsub_busco_${name}.sh
   else
-    sh ${out}/shell/qsub_busco_${name}.sh &>${out}/log/Busco_${name}_log.txt
+    bash ${out}/shell/qsub_busco_${name}.sh &>${out}/log/Busco_${name}_log.txt
   fi
 fi

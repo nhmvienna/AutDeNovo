@@ -6,15 +6,14 @@ pwd=$3
 threads=$4
 RAM=$5
 openpbs=$6
-Conda=$7
-PrintOnly=$8
+PrintOnly=$7
 
-printf "sh FullPipeline_exp/fastqc.sh $1 $2 $3 2 $5 $6 $7 $8\n# "
+printf "bash FullPipeline_exp/fastqc.sh $1 $2 $3 2 $5 $6 $7\n# "
 
 #############################
 
 echo """
-  #!/bin/sh
+  #!/usr/bin/env bash
 
   ## name of Job
   #PBS -N fastqc_${name}
@@ -55,6 +54,6 @@ if [[ $PrintOnly == "no" ]]; then
   if [[ $openpbs != "no" ]]; then
     qsub ${out}/shell/qsub_fastqc_${name}.sh
   else
-    sh ${out}/shell/qsub_fastqc_${name}.sh &>${out}/log/raw_fastqc_${name}_log.txt
+    bash ${out}/shell/qsub_fastqc_${name}.sh &>${out}/log/raw_fastqc_${name}_log.txt
   fi
 fi

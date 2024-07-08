@@ -2,7 +2,7 @@
 git clone https://github.com/nhmvienna/AutDeNovo
 
 ## define repository folder
-BaseDir=/media/inter/pipelines/AutDeNovo
+BaseDir=/home/clusteradmin/github/AutDeNovo
 
 ## run pipeline on test dataset
 bash ${BaseDir}/AutDeNovo_exp.sh \
@@ -17,7 +17,6 @@ bash ${BaseDir}/AutDeNovo_exp.sh \
   RAM=20 \
   RAMAssembly=20 \
   decont=no \
-  Trimmer=trimgalore \
   BuscoDB=vertebrata_odb10 \
   BLASTdb=/media/scratch/NCBI_nt_DB_210714/nt \
   Racon=4

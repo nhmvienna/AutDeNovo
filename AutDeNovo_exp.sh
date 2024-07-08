@@ -285,14 +285,13 @@ if [[ !(-z $fwd) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline_exp/fastqc.sh \
+  bash FullPipeline_exp/fastqc.sh \
     $out \
     $name \
     $PWD \
     $threads \
     $RAM \
     $openpbs \
-    $Conda \
     $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
 
@@ -306,7 +305,7 @@ if [[ !(-z $ont) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline_exp/nanoplot.sh \
+  bash FullPipeline_exp/nanoplot.sh \
     $out \
     $name \
     "ONT" \
@@ -314,7 +313,6 @@ if [[ !(-z $ont) ]]; then
     $threads \
     $RAM \
     $openpbs \
-    $Conda \
     $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
 
@@ -328,7 +326,7 @@ if [[ !(-z $pb) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline_exp/nanoplot.sh \
+  bash FullPipeline_exp/nanoplot.sh \
     $out \
     $name \
     "PB" \
@@ -336,7 +334,6 @@ if [[ !(-z $pb) ]]; then
     $threads \
     $RAM \
     $openpbs \
-    $Conda \
     $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
 
@@ -356,7 +353,7 @@ if [[ !(-z $fwd) ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline_exp/trim_${Trimmer}.sh \
+  bash FullPipeline_exp/trim_${Trimmer}.sh \
     $out \
     $name \
     $PWD \
@@ -365,7 +362,6 @@ if [[ !(-z $fwd) ]]; then
     $BaseQuality \
     $MinReadLen \
     $openpbs \
-    $Conda \
     $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
 
@@ -386,7 +382,7 @@ if [[ $decont != "no" ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline_exp/kraken.sh \
+  bash FullPipeline_exp/kraken.sh \
     $out \
     $name \
     $data \
@@ -394,7 +390,6 @@ if [[ $decont != "no" ]]; then
     $threads \
     $RAM \
     $openpbs \
-    $Conda \
     $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" |
@@ -412,7 +407,7 @@ printf "# Estimation of genomesize\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline_exp/genomesize.sh \
+bash FullPipeline_exp/genomesize.sh \
   $out \
   $name \
   $data \
@@ -422,7 +417,6 @@ sh FullPipeline_exp/genomesize.sh \
   $RAM \
   $RAMAssembly \
   $openpbs \
-  $Conda \
   $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" |
@@ -438,7 +432,7 @@ printf "## Starting denovo assembly\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline_exp/denovo.sh \
+bash FullPipeline_exp/denovo.sh \
   $out \
   $name \
   $data \
@@ -447,7 +441,6 @@ sh FullPipeline_exp/denovo.sh \
   $threadsAssembly \
   $RAMAssembly \
   $openpbs \
-  $Conda \
   $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 printf "########################\n\n" |
@@ -465,7 +458,7 @@ if [[ $racon != "no" ]]; then
   date |
     tee -a ${out}/shell/pipeline.sh
 
-  sh FullPipeline_exp/racon.sh \
+  bash FullPipeline_exp/racon.sh \
     $out \
     $name \
     $data \
@@ -475,7 +468,6 @@ if [[ $racon != "no" ]]; then
     $racon \
     $decont \
     $openpbs \
-    $Conda \
     $PrintOnly |
     tee -a ${out}/shell/pipeline.sh
   printf "########################\n\n" |
@@ -493,7 +485,7 @@ printf "# Starting assembly QC with Quast\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline_exp/quast.sh \
+bash FullPipeline_exp/quast.sh \
   $out \
   $name \
   $data \
@@ -501,7 +493,6 @@ sh FullPipeline_exp/quast.sh \
   $threads \
   $RAM \
   $openpbs \
-  $Conda \
   $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
@@ -515,7 +506,7 @@ printf "# Starting assembly QC with BUSCO\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline_exp/busco.sh \
+bash FullPipeline_exp/busco.sh \
   $out \
   $name \
   $busco \
@@ -524,7 +515,6 @@ sh FullPipeline_exp/busco.sh \
   $threads \
   $RAM \
   $openpbs \
-  $Conda \
   $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
@@ -538,7 +528,7 @@ printf "# Mapping reads against reference\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline_exp/mapping.sh \
+bash FullPipeline_exp/mapping.sh \
   $out \
   $name \
   $data \
@@ -547,7 +537,6 @@ sh FullPipeline_exp/mapping.sh \
   $threads \
   $RAM \
   $openpbs \
-  $Conda \
   $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
@@ -561,7 +550,7 @@ printf "# BLASTing genome against the nt database\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline_exp/blast.sh \
+bash FullPipeline_exp/blast.sh \
   $out \
   $name \
   $data \
@@ -570,7 +559,6 @@ sh FullPipeline_exp/blast.sh \
   $RAM \
   $BLASTdb \
   $openpbs \
-  $Conda \
   $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
@@ -584,7 +572,7 @@ printf "# Summarize with Blobtools\n# " |
 date |
   tee -a ${out}/shell/pipeline.sh
 
-sh FullPipeline_exp/blobtools.sh \
+bash FullPipeline_exp/blobtools.sh \
   $out \
   $name \
   $busco \
@@ -593,7 +581,6 @@ sh FullPipeline_exp/blobtools.sh \
   $threads \
   $RAM \
   $openpbs \
-  $Conda \
   $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 

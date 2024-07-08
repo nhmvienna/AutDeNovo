@@ -7,14 +7,13 @@ pwd=$4
 threads=$5
 RAM=$6
 openpbs=$7
-Conda=$8
-PrintOnly=$9
+PrintOnly=$8
 
 if [ $RAM -gt 64 ]; then
   RAM=64
 fi
 
-printf "sh FullPipeline_exp/quast.sh $1 $2 $3 $4 $5 $6 $7 $8 $9\n# "
+printf "bash FullPipeline_exp/quast.sh $1 $2 $3 $4 $5 $6 $7 $8\n# "
 
 #############################
 
@@ -28,7 +27,7 @@ fi
 
 echo """
 
-  #!/bin/sh
+  #!/usr/bin/env bash
 
   ## name of Job
   #PBS -N QUAST_${name}
@@ -65,6 +64,6 @@ if [[ $PrintOnly == "no" ]]; then
   if [[ $openpbs != "no" ]]; then
     qsub ${out}/shell/qsub_quast_${name}.sh
   else
-    sh ${out}/shell/qsub_quast_${name}.sh &>${out}/log/Quast_${name}_log.txt
+    bash ${out}/shell/qsub_quast_${name}.sh &>${out}/log/Quast_${name}_log.txt
   fi
 fi

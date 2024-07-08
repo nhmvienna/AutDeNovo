@@ -9,10 +9,9 @@ RAM=$6
 racon=$7
 decont=$8
 openpbs=$9
-Conda=$10
-PrintOnly=$11
+PrintOnly=${10}
 
-printf "sh FullPipeline_exp/racon.sh $1 $2 $3 $4 $5 $6 $7 $8 $8 ${10} ${11}\n# "
+printf "bash FullPipeline_exp/racon.sh $1 $2 $3 $4 $5 $6 $7 $8 $8 ${10}\n# "
 
 if [[ $data == *'ILL'* ]]; then
   if [[ $decont == 'no' ]]; then
@@ -46,7 +45,7 @@ mkdir -p ${out}/results/Racon
 
 echo """
 
-  #!/bin/sh
+  #!/usr/bin/env bash
 
   ## name of Job
   #PBS -N Racon_${name}
@@ -178,6 +177,6 @@ if [[ $PrintOnly == "no" ]]; then
   if [[ $openpbs != "no" ]]; then
     qsub -W block=true ${out}/shell/qsub_racon_${name}.sh
   else
-    sh ${out}/shell/qsub_racon_${name}.sh &>${out}/log/Racon_${name}_log.txt
+    bash ${out}/shell/qsub_racon_${name}.sh &>${out}/log/Racon_${name}_log.txt
   fi
 fi
