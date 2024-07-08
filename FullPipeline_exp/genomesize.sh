@@ -69,7 +69,7 @@ echo """
 
   ######## load dependencies #######
 
-  source ${Conda}/etc/profile.d/conda.sh
+  eval \"\$(conda shell.bash hook)\"
   conda activate envs/jellyfish
 
   if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
