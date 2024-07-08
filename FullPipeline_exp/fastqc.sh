@@ -9,7 +9,7 @@ openpbs=$6
 Conda=$7
 PrintOnly=$8
 
-printf "sh FullPipeline/fastqc.sh $1 $2 $3 2 $5 $6 $7 $8\n# "
+printf "sh FullPipeline_exp/fastqc.sh $1 $2 $3 2 $5 $6 $7 $8\n# "
 
 #############################
 
