@@ -57,7 +57,7 @@ mamba create \
     -y \
     python=3.9
 
-source ${Conda}/etc/profile.d/conda.sh
+eval "$(conda shell.bash hook)"
 
 conda activate \
     ${BASEDIR}/envs/blobtools
