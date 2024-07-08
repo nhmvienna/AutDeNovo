@@ -58,7 +58,6 @@ mamba create \
     python=3.9
 
 eval "$(conda shell.bash hook)"
-
 conda activate \
     ${BASEDIR}/envs/blobtools
 
@@ -103,7 +102,7 @@ mamba create \
     -c bioconda \
     minimap2=2.26
 
-source ${Conda}/etc/profile.d/conda.sh
+eval "$(conda shell.bash hook)"
 conda activate \
     ${BASEDIR}/envs/minimap
 
@@ -121,7 +120,7 @@ mamba create \
     -c bioconda \
     bwa=0.7.17
 
-source ${Conda}/etc/profile.d/conda.sh
+eval "$(conda shell.bash hook)"
 conda activate \
     ${BASEDIR}/envs/bwa
 
@@ -202,8 +201,7 @@ mamba create \
     -c bioconda \
     pigz pbzip2 julia
 
-source ${Conda}/etc/profile.d/conda.sh
-
+eval "$(conda shell.bash hook)"
 conda activate \
     ${BASEDIR}/envs/atria
 
