@@ -13,11 +13,11 @@ group = OptionGroup(parser, "< put description here >")
 
 #########################################################   CODE   #########################################################################
 
-parser.add_option("--BLAST", dest="BL", help="Input file")
+parser.add_option("--Tax", dest="BL", help="Input file")
 parser.add_option("--FASTA", dest="FA", help="Input file")
-parser.add_option("--Folder", dest="FO",
+parser.add_option("--Foldernames", dest="FO",
                   help="Taxonomic level for folder name")
-parser.add_option("--Filename", dest="FI",
+parser.add_option("--Filenames", dest="FI",
                   help="Taxonomic level for file name")
 parser.add_option(
     "--Remove", dest="RE", help="List of Taxa to remove, separated by a comma"
@@ -41,7 +41,10 @@ def load_data(x):
     return y
 
 
-RemList = options.RE.split(",")
+if options.RE == None:
+    RemList = []
+else:
+    RemList = options.RE.split(",")
 BL = d(list)
 OutH = d(str)
 for l in load_data(options.BL):
@@ -86,7 +89,7 @@ for l in load_data(options.BL):
                 # Create a new directory because it does not exist
                 os.makedirs(options.OUT+"/keep/"+FO)
             OutH["_".join(["keep", FO, FI])] = gzip.open(
-                options.OUT+"/keep/"+FO+"/"+FI.replace(" ", "_")+".fa.gz", "wt")
+                options.OUT+"/keep/"+FO+"/"+FI.replace(" ", "_").replace("/", "_")+".fa.gz", "wt")
 if not os.path.exists(options.OUT+"/NoHit/"):
     os.makedirs(options.OUT+"/NoHit/")
 OutH["NoHit"] = gzip.open(

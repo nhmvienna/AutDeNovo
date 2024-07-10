@@ -10,7 +10,7 @@ group = OptionGroup(parser, '< put description here >')
 
 #########################################################   CODE   #########################################################################
 
-parser.add_option("--Tax", dest="Tax", help="NCBI node dmp file")
+parser.add_option("--Nodes", dest="Tax", help="NCBI node dmp file")
 parser.add_option("--Names", dest="Names", help="NCBI names dmp file")
 parser.add_option("--BLAST", dest="BLAST",
                   help="BLAST output file with SeqID in column1 and TaxID in column2")
