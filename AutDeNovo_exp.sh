@@ -212,6 +212,11 @@ mkdir ${out}/results
 mkdir ${out}/log
 mkdir ${out}/output
 
+## remove pipeline.sh to start from scratch
+if [[ -f ${out}/shell/pipeline.sh ]]; then
+  rm -f ${out}/shell/pipeline.sh
+fi
+
 ## (1) make copy of original reads
 printf "# Copying data\n# " |
   tee -a ${out}/shell/pipeline.sh
