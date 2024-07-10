@@ -9,9 +9,9 @@ threads=$6
 RAM=$7
 openpbs=$8
 taxdump=$9
-PrintOnly=$10
+PrintOnly=${10}
 
-printf "bash FullPipeline_exp/blobtools.sh $1 $2 $3 $4 $5 $6 $7 $8 $9 $\n# "
+printf "bash FullPipeline_exp/blobtools.sh $1 $2 $3 $4 $5 $6 $7 $8 $9 ${10} $\n# "
 
 ##########################
 
