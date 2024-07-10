@@ -67,6 +67,9 @@ for i in "$@"; do
   BLASTdb=*)
     BLASTdb="${i#*=}"
     ;;
+  Taxdump=*)
+    taxdump="${i#*=}"
+    ;;
   PrintOnly=*)
     PrintOnly="${i#*=}"
     ;;
@@ -108,6 +111,7 @@ decont=no \                                       ## optional decontamination wi
 Racon=4 \                                         ## optional rounds of polishing with Racon [optional; default=no]
 BuscoDB=vertebrata_odb10 \                        ## The BUSCO database to be used; by default it is set to "vertebrata_odb10"; see here to pick the right one: https://busco.ezlab.org/busco_v4_data.html and here: https://busco.ezlab.org/list_of_lineages.html
 BLASTdb=/media/scratch/NCBI_nt_DB_210714/nt \     ## The full path to the BLAST nt database, see here: https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html#id6
+Taxdump=/media/scratch/NCBI_taxdump/ \            ## The full path to the Taxdump database, see here: https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html#id6
 OpenPBS=yes \                                     ## Whether to use the OpenPBS job managment software (needs to be preinstalled) or not [optional; default=no]
 
 Please see below, which parameter is missing:
@@ -581,6 +585,7 @@ bash FullPipeline_exp/blobtools.sh \
   $threads \
   $RAM \
   $openpbs \
+  $taxdump \
   $PrintOnly |
   tee -a ${out}/shell/pipeline.sh
 
