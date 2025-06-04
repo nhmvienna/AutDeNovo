@@ -14,10 +14,8 @@ printf "sh FullPipeline/mapping.sh $1 $2 $3 $4 $5 $6 $7\n# "
 
 mkdir ${out}/results/mapping
 
-if [[ $data == *'ILL'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'ILL'* ]]; then
+  if [[ $decont == 'no' ]]; then
     IllInp1=${name}_1_val_1
     IllInp2=${name}_2_val_2
   else
@@ -26,26 +24,21 @@ then
   fi
 fi
 
-if [[ $data == *'ONT'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'ONT'* ]]; then
+  if [[ $decont == 'no' ]]; then
     OntInp=${name}_ont
   else
     OntInp=raken_ont_${name}
   fi
 fi
 
-if [[ $data == *'PB'* ]]
-then
-  if [[ $decont == 'no' ]]
-  then
+if [[ $data == *'PB'* ]]; then
+  if [[ $decont == 'no' ]]; then
     PbInp=${name}_pb
   else
     PbInp=raken_${name}_pb
   fi
 fi
-
 
 echo """
   #!/bin/sh
@@ -84,7 +77,7 @@ echo """
       ${out}/output/${name}_${data}.fa \
       ${out}/data/Illumina/${IllInp1}.fq.gz \
       ${out}/data/Illumina/${IllInp2}.fq.gz \
-      | samtools view -bh | samtools sort \
+      | samtools view -bh | samtools sort -T ${out} \
       > ${out}/results/mapping/${name}.bam
 
   elif [[ ( $data == 'ONT' ) || ( $data == 'ONT_PB' ) ]]
@@ -98,7 +91,7 @@ echo """
     -t ${threads} \
     ${out}/output/${name}_${data}.fa \
     ${out}/data/ONT/${OntInp}.fq.gz \
-    | samtools view -bh | samtools sort \
+    | samtools view -bh | samtools sort -T ${out} \
     > ${out}/results/mapping/${name}.bam
 
   else
@@ -111,10 +104,10 @@ echo """
     -t ${threads} \
     ${out}/output/${name}_${data}.fa \
     ${out}/data/PB/${PbInp}.fq.gz \
-    | samtools view -bh | samtools sort \
+    | samtools view -bh | samtools sort -T ${out} \
     > ${out}/results/mapping/${name}.bam
   fi
 
-""" > ${out}/shell/qsub_bwa_${name}.sh
+""" >${out}/shell/qsub_bwa_${name}.sh
 
 qsub -W block=true ${out}/shell/qsub_bwa_${name}.sh
