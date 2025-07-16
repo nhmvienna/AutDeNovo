@@ -71,13 +71,17 @@ echo """
   eval \"\$(conda shell.bash hook)\"
   conda activate envs/jellyfish
 
-  if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]
+  if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) || ( $data == 'ILL_SE' ) || ( $data == 'ILL_SE_ONT' ) || ( $data == 'ILL_SE_PB' ) || ( $data == 'ILL_SE_ONT_PB' ) ]]
   then
 
     ## unzip files
 
     gunzip -c ${out}/data/Illumina/${IllInp1}.fq.gz > ${out}/data/Illumina/${IllInp1}.fq &
-    gunzip -c ${out}/data/Illumina/${IllInp2}.fq.gz > ${out}/data/Illumina/${IllInp2}.fq
+    
+    # Only process second file if it exists (for paired-end data)
+    if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]; then
+      gunzip -c ${out}/data/Illumina/${IllInp2}.fq.gz > ${out}/data/Illumina/${IllInp2}.fq
+    fi
 
     wait
 
@@ -87,17 +91,33 @@ echo """
     # -C canononical; count both strands
     # -m 31 Length of mers
     # -s initial hash size
-    jellyfish count \
-      -C \
-      -m 31 \
-      -s 100M \
-      -t ${threads} \
-      -F 2 \
-      -o ${out}/results/GenomeSize/${name}_reads.jf \
-      ${out}/data/Illumina/${IllInp1}.fq \
-      ${out}/data/Illumina/${IllInp2}.fq
+    
+    if [[ ( $data == 'ILL' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) ]]; then
+      # Paired-end
+      jellyfish count \
+        -C \
+        -m 31 \
+        -s 100M \
+        -t ${threads} \
+        -F 2 \
+        -o ${out}/results/GenomeSize/${name}_reads.jf \
+        ${out}/data/Illumina/${IllInp1}.fq \
+        ${out}/data/Illumina/${IllInp2}.fq
 
-    rm -f ${out}/data/Illumina/${IllInp1}.fq ${out}/data/Illumina/${IllInp2}.fq
+      rm -f ${out}/data/Illumina/${IllInp1}.fq ${out}/data/Illumina/${IllInp2}.fq
+    else
+      # Single-end
+      jellyfish count \
+        -C \
+        -m 31 \
+        -s 100M \
+        -t ${threads} \
+        -F 2 \
+        -o ${out}/results/GenomeSize/${name}_reads.jf \
+        ${out}/data/Illumina/${IllInp1}.fq
+
+      rm -f ${out}/data/Illumina/${IllInp1}.fq
+    fi
 
   fi
 

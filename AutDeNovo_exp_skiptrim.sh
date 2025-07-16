@@ -177,14 +177,16 @@ if [[ -z "$fwd" && !(-z "$rev" ) ]]; then
   echo "## ${help}Fwd read is missing: The full path to the Illumina raw read forward FASTQ file needs to be defined"
   exit 3
 fi
-if [[ -z "$rev" && !(-z "$fwd" ) && "$SingleEnd" != "yes" ]]; then
-  echo "## ${help}Rev read: The full path to the Illumina raw read revese FASTQ file needs to be defined, or set SingleEnd=yes for single-end processing"
-  exit 4
-fi
-# Auto-detect single-end if Rev is empty
+
+# Auto-detect single-end if Rev is empty but Fwd is provided
 if [[ !(-z "$fwd") && -z "$rev" ]]; then
   SingleEnd="yes"
   echo "## Auto-detected single-end mode: Rev read not provided"
+fi
+
+if [[ -z "$rev" && !(-z "$fwd" ) && "$SingleEnd" != "yes" ]]; then
+  echo "## ${help}Rev read: The full path to the Illumina raw read revese FASTQ file needs to be defined, or set SingleEnd=yes for single-end processing"
+  exit 4
 fi
 if [[ -z "$rev" && -z "$fwd" && -z "$ont" && -z "$pb" ]]; then
   echo "## ${help}No input defined"

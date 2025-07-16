@@ -65,7 +65,28 @@ echo """
     rm -f ${out}/data/Illumina/kraken*.fq
   fi
 
-  if [[ ( $data == 'ONT' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_ONT_PB' ) || ( $data == 'ONT_PB' ) ]]
+  if [[ ( $data == 'ILL_SE' ) || ( $data == 'ILL_SE_ONT' ) || ( $data == 'ILL_SE_PB' ) || ( $data == 'ILL_SE_ONT_PB' ) ]]
+  then
+
+    kraken2 \
+    --threads ${threads} \
+    --output - \
+    --report ${out}/results/kraken_reads/${name}_Illumina.report \
+    --use-names \
+    --gzip-compressed \
+    --unclassified-out ${out}/data/Illumina/kraken_illumina_${name}_1.fq \
+    --db /media/scratch/kraken-2.1.2/db/standard_20210517 \
+    ${out}/data/Illumina/${name}_1_val_1.fq.gz
+
+    awk '\$1> 0.0' ${out}/results/kraken_reads/${name}_Illumina.report \
+    > ${out}/results/kraken_reads/${name}_Illumina_filtered.report
+
+    pigz -p200 ${out}/data/Illumina/kraken*.fq
+
+    rm -f ${out}/data/Illumina/kraken*.fq
+  fi
+
+  if [[ ( $data == 'ONT' ) || ( $data == 'ILL_ONT' ) || ( $data == 'ILL_ONT_PB' ) || ( $data == 'ONT_PB' ) || ( $data == 'ILL_SE_ONT' ) || ( $data == 'ILL_SE_ONT_PB' ) ]]
   then
 
     kraken2 \
@@ -87,7 +108,7 @@ echo """
 
   fi
 
-  if [[ ( $data == 'PB' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) || ( $data == 'ONT_PB' ) ]]
+  if [[ ( $data == 'PB' ) || ( $data == 'ILL_PB' ) || ( $data == 'ILL_ONT_PB' ) || ( $data == 'ONT_PB' ) || ( $data == 'ILL_SE_PB' ) || ( $data == 'ILL_SE_ONT_PB' ) ]]
     then
 
       kraken2 \

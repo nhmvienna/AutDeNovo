@@ -82,6 +82,21 @@ echo """
       | samtools view -bh | samtools sort \
       > ${out}/results/mapping/${name}.bam
 
+  elif [[ ( $data == 'ILL_SE' ) || ( $data == 'ILL_SE_ONT' ) || ( $data == 'ILL_SE_PB' ) || ( $data == 'ILL_SE_ONT_PB' ) ]]
+  then
+
+    conda activate envs/bwa
+
+    ## index reference
+    bwa index ${out}/output/${name}_${data}.fa
+
+    bwa mem \
+      -t ${threads} \
+      ${out}/output/${name}_${data}.fa \
+      ${out}/data/Illumina/${IllInp1}.fq.gz \
+      | samtools view -bh | samtools sort \
+      > ${out}/results/mapping/${name}.bam
+
   elif [[ ( $data == 'ONT' ) || ( $data == 'ONT_PB' ) ]]
   then
 

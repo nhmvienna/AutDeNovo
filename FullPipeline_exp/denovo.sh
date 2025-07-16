@@ -42,7 +42,7 @@ if [[ $data == *'PB'* ]]; then
   fi
 fi
 
-if [[ ($data == 'ILL') || ($data == 'ILL_ONT') || ($data == 'ILL_PB') || ($data == 'ILL_ONT_PB') ]]; then
+if [[ ($data == 'ILL') || ($data == 'ILL_ONT') || ($data == 'ILL_PB') || ($data == 'ILL_ONT_PB') || ($data == 'ILL_SE') || ($data == 'ILL_SE_ONT') || ($data == 'ILL_SE_PB') || ($data == 'ILL_SE_ONT_PB') ]]; then
 
   printf "# Assembly of $data with Spades\n# "
   date
@@ -146,6 +146,82 @@ echo """
     spades.py \
       -1 ${out}/data/Illumina/${IllInp1}.fq.gz \
       -2 ${out}/data/Illumina/${IllInp2}.fq.gz \
+      --pacbio ${out}/data/PB/${PbInp}.fq.gz \
+      --nanopore ${out}/data/ONT/${OntInp}.fq.gz \
+      -t ${threads} \
+      -m ${RAM} \
+      -o ${out}/results/assembly/${name}
+
+    if [[ -f ${out}/results/assembly/${name}/scaffolds.fasta ]]
+    then
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    else
+      mv ${out}/results/assembly/${name}/contigs.fasta ${out}/output/${name}_${data}.fa
+    fi
+
+  elif [[ ( $data == 'ILL_SE' ) ]]
+  then
+
+    conda activate envs/spades
+
+    spades.py \
+      -s ${out}/data/Illumina/${IllInp1}.fq.gz \
+      -t ${threads} \
+      -m ${RAM} \
+      -o ${out}/results/assembly/${name}
+
+    if [[ -f ${out}/results/assembly/${name}/scaffolds.fasta ]]
+    then
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    else
+      mv ${out}/results/assembly/${name}/contigs.fasta ${out}/output/${name}_${data}.fa
+    fi
+
+  elif [[ ( $data == 'ILL_SE_ONT' ) ]]
+  then
+
+    conda activate envs/spades
+
+    spades.py \
+      -s ${out}/data/Illumina/${IllInp1}.fq.gz \
+      --nanopore ${out}/data/ONT/${OntInp}.fq.gz \
+      -t ${threads} \
+      -m ${RAM} \
+      -o ${out}/results/assembly/${name}
+
+    if [[ -f ${out}/results/assembly/${name}/scaffolds.fasta ]]
+    then
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    else
+      mv ${out}/results/assembly/${name}/contigs.fasta ${out}/output/${name}_${data}.fa
+    fi
+
+  elif [[ ( $data == 'ILL_SE_PB' ) ]]
+  then
+
+    conda activate envs/spades
+
+    spades.py \
+      -s ${out}/data/Illumina/${IllInp1}.fq.gz \
+      --pacbio ${out}/data/PB/${PbInp}.fq.gz \
+      -t ${threads} \
+      -m ${RAM} \
+      -o ${out}/results/assembly/${name}
+
+    if [[ -f ${out}/results/assembly/${name}/scaffolds.fasta ]]
+    then
+      mv ${out}/results/assembly/${name}/scaffolds.fasta ${out}/output/${name}_${data}.fa
+    else
+      mv ${out}/results/assembly/${name}/contigs.fasta ${out}/output/${name}_${data}.fa
+    fi
+
+  elif [[ ( $data == 'ILL_SE_ONT_PB' ) ]]
+  then
+
+    conda activate envs/spades
+
+    spades.py \
+      -s ${out}/data/Illumina/${IllInp1}.fq.gz \
       --pacbio ${out}/data/PB/${PbInp}.fq.gz \
       --nanopore ${out}/data/ONT/${OntInp}.fq.gz \
       -t ${threads} \
